@@ -1,1 +1,0 @@
-IDRViewer.config = {"pagecount":14,"title":"","author":"Lawrence Furlong","fileName":"CommsManager_Customer_Agreement__02_07_2018_.pdf","bounds":[[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286]],"bookmarks":[],"thumbnailType":"jpg","pageType":"html","pageLabels":[]};
