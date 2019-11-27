@@ -1,0 +1,131 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+    <div class="form-inline label-inline">
+        <div class="form-group" [ngClass]="{ 'has-danger':error}">
+            <label>   From Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="fromdate" name="invoicemonth" (onChange)="onInvoiceMonthChange($event)"  filter="filter">
+
+            </p-dropdown>
+        </div>
+
+        <div class="form-group" [ngClass]="{ 'has-danger':error}">
+            <label>   To Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="todate" name="invoicemonth" (onChange)="onInvoiceMonthChange($event)"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+
+    </div>
+
+    <div class="form-inline label-inline">
+        <div class="form-group">
+            <label>   Filtered By Usage</label>
+
+            <p-dropdown [options]="filtertypelist" [(ngModel)]="filtertype" name="filtertype" (onChange)="onFilterTypeChange()"  filter="filter">
+
+            </p-dropdown>
+        </div>
+
+        <div class="form-group">
+            <label>   Network</label>
+
+            <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="onNetworkChange()"  filter="filter">
+            </p-dropdown>
+        </div>
+
+        <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+            <label>   Billing Platform</label>
+
+            <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()"  filter="filter">
+            </p-dropdown>
+        </div>
+
+        <div class="form-group" *ngIf="benArray?.length > 1">
+            <label> BEN</label>
+
+            <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown" (onChange)="onChangeBen()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="banArray?.length > 1">
+            <label> BAN</label>
+
+            <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown" (onChange)="onChangeBan()"  filter="filter">
+            </p-dropdown>
+
+        </div>
+
+    </div>
+
+    <div class="form-inline label-inline">
+        <div class="form-group">
+            <label>   Top Usage</label>
+
+            <input name="toprecord" [(ngModel)]="topRecord" class="form-control" (change)="onChangeTopUsage()" maxlength="3" pInputText pKeyFilter="int" [pValidateOnly]="false" />
+        </div>
+
+    </div>
+
+    <div *ngIf="error" class="error">{{error}}</div>
+
+
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" selectionMode="single" (onRowSelect)="handleRowSelect($event)" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" scrollWidth="100%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'180px'}" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" field="employeename" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[0].active" field="{{ reportingList[0].description.toLowerCase()+'description' }}" header="{{ reportingList[0].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[1].active" field="{{ reportingList[1].description.toLowerCase()+'description' }}" header="{{ reportingList[1].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[2].active" field="{{ reportingList[2].description.toLowerCase()+'description' }}" header="{{ reportingList[2].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[3].active" field="{{ reportingList[3].description.toLowerCase()+'description' }}" header="{{ reportingList[3].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[4].active" field="{{ reportingList[4].description.toLowerCase()+'description' }}" header="{{ reportingList[4].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[5].active" field="{{ reportingList[5].description.toLowerCase()+'description' }}" header="{{ reportingList[5].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+
+        <p-column styleClass="text-right" [style]="{'width':'100px'}" field="bendescription" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true"
+                  *ngIf="isbenexist">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'100px'}" field="bandescription" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true"
+                  *ngIf="isbanexist">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBanFilter!=null" (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="eligibleminutes" header="Minutes" [sortable]="true" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | number:'1.2-2' }}</span>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="eligiblesms" header="Text" [sortable]="true" displaysum="true"></p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="eligibledata" header="Data(MB)" [sortable]="true" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | number:'1.2-2' }}</span>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="usagecharge" header="UsageCharge" [sortable]="true" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+
+        </p-column>
+    </p-dataTable>
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

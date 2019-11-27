@@ -1,0 +1,174 @@
+<input type="button" class="btn btn-primary" (click)="goback()" value="Back" />
+<div class="row col-lg-12">
+
+    <div class="form-inline">
+
+        <div class="form-group display-flex" *ngIf="mobilenumber!=''">
+
+            <label>Itemised Bill for - {{mobilenumber}} {{invoicemodel?.username}} -   </label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="invoicedateguid" name="invoicemonth" (onChange)="refreshdata()"  filter="filter">
+
+            </p-dropdown>
+        </div>
+
+    </div>
+
+    <div class="row col-lg-12 vert-offset-top-1" *ngIf="invoicemodel as cc">
+        <div class="col-lg-6">
+            <div class=" col-lg-12 text-left">
+                <h5>Usage Summary:</h5>
+            </div>
+            <label class="col-lg-4 col-sm-4">Calls</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.eligibleminutes || 0) | number:'1.2-2' }} Mins</label>
+
+            <label class="col-lg-4 col-sm-4">Text</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.eligiblesms || 0) | number }} Texts</label>
+
+            <label class="col-lg-4 col-sm-4">Data</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.eligibledata  || 0) | number:'1.2-2' }} MB</label>
+            <label class="col-lg-4 col-sm-4">Network</label>
+            <label class="col-lg-6 col-sm-6">{{ cc.networkdescription}} </label>
+
+            <div *ngIf="isbillingplatformexist">
+                <label class="col-lg-4 col-sm-4">Billing Platform</label>
+                <label class="col-lg-6 col-sm-6">{{cc.billingplatformdescription}} </label>
+            </div>
+            <div *ngIf="cc.ben">
+                <label class="col-lg-4 col-sm-4">BEN</label>
+                <label class="col-lg-6 col-sm-6">{{cc.ben}} </label>
+            </div>
+            <div *ngIf="isbandisplay">
+                <label class="col-lg-4 col-sm-4">BAN</label>
+                <label class="col-lg-6 col-sm-6">{{cc.ban}} </label>
+            </div>
+        </div>
+        <div class="col-lg-6 float-right">
+            <div class=" col-lg-12 text-left">
+                <h5>Invoice Breakdown:</h5>
+            </div>
+            <label class="col-lg-4 col-sm-4">Service Charge</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.monthlinerental  || 0 ) | currencyFormat  }} </label>
+
+            <label class="col-lg-4 col-sm-4">Service Credit</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.linerentalcredit || 0 ) | currencyFormat  }} </label>
+
+            <label class="col-lg-4 col-sm-4">Usage Charge</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.totalusagecost || 0 ) | currencyFormat  }} </label>
+
+            <label class="col-lg-4 col-sm-4"> Usage Credit </label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.usagecredit || 0 ) | currencyFormat  }} </label>
+
+            <label class="col-lg-4 col-sm-4">Other Charges</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.othercharges || 0 ) | currencyFormat  }} </label>
+
+            <label class="col-lg-4 col-sm-4">Other Credits</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.othercredits || 0 ) | currencyFormat  }} </label>
+
+            <label class="col-lg-4 col-sm-4">Total</label>
+            <label class="col-lg-6 col-sm-6">{{ (cc.totalcost  || 0 ) | currencyFormat  }} </label>
+        </div>
+    </div>
+
+
+    <div class="row col-lg-12 vert-offset-top-1">
+        <div *ngIf="dashboardOption" class="col-lg-12">
+
+            <label class="col-lg-3 col-sm-2">Network</label>
+            <label class="col-lg-3 col-sm-3">{{ networkdescription}}</label>
+
+            <label *ngIf="isbillingplatformexist" class="col-lg-3 col-sm-2">Billing Platform</label>
+            <label *ngIf="isbillingplatformexist" class="col-lg-3 col-sm-3">{{billingplatformdescription}} </label>
+
+            <label class="col-lg-3 col-sm-2">BEN</label>
+            <label class="col-lg-3 col-sm-3">{{bendescription}} </label>
+
+            <label *ngIf="isbandisplay" class="col-lg-3 col-sm-2">BAN</label>
+            <label *ngIf="isbandisplay" class="col-lg-3 col-sm-3">{{bandescription}} </label>
+
+            <label class="col-lg-3 col-sm-2">{{r1desc}}</label>
+            <label *ngIf="r1desc" class="col-lg- col-sm-3">{{ reportinggroup1description}}</label>
+
+            <label class="col-lg-3 col-sm-2">{{r2desc}}</label>
+            <label *ngIf="r2desc" class="col-lg-3 col-sm-3">{{ reportinggroup2description}}</label>
+
+            <label class="col-lg-3 col-sm-2">{{r3desc}}</label>
+            <label *ngIf="r3desc" class="col-lg-3 col-sm-3">{{ reportinggroup3description}}</label>
+
+            <label class="col-lg-3 col-sm-2">{{r4desc}}</label>
+            <label *ngIf="r4desc" class="col-lg-3 col-sm-3">{{ reportinggroup4description}}</label>
+
+            <label class="col-lg-3 col-sm-2">{{r5desc}}</label>
+            <label *ngIf="r5desc" class="col-lg-3 col-sm-3">{{ reportinggroup5description}}</label>
+
+            <label class="col-lg-3 col-sm-2">{{r6desc}}</label>
+            <label *ngIf="r6desc" class="col-lg-3 col-sm-3">{{ reportinggroup6description}}</label>
+
+        </div>
+
+
+        <div class="vert-offset-top-1">
+            <p-dataTable #dt
+                         [value]="invoiceitemisedmodel"
+                         [rows]="10"
+                         [paginator]="true"
+                         [responsive]="true"
+                         [rowsPerPageOptions]="[5,10,20]" exportFilename="{{csvfilename}}">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel " (click)="dt.exportExcel(true)" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'80px'}" field="calldatetime" header="Date + Time" filter="true" filterMatchMode="contains" sortable="true"></p-column>
+
+                <p-column [style]="{'width':'120px'}" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" sortable="true" *ngIf="dashboardOption !=''"></p-column>
+
+                <p-column field="calltype" header="Category" filter="true" filterMatchMode="contains" [sortable]="true" [style]="{'width':'100px'}">
+
+                    <ng-template pTemplate="filter" typeof="body" let-col>
+                        <i class="fa fa-close" *ngIf="categoryFilter!=null" (click)="categoryFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                        <p-dropdown appendTo="body" [options]="categoryfilterset" [style]="{'width':'80px'}" [(ngModel)]="categoryFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                    </ng-template>
+                </p-column>
+                <p-column field="subcalltype" header="Type" filter="true" filterMatchMode="contains" [sortable]="true" [style]="{'width':'100px'}">
+
+                    <ng-template pTemplate="filter" typeof="body" let-col>
+                        <i class="fa fa-close" *ngIf="subcallTypeFilter!=null" (click)="subcallTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                        <p-dropdown appendTo="body" [options]="subcalltypefilterset" [style]="{'width':'80px'}" [(ngModel)]="subcallTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                    </ng-template>
+
+                </p-column>
+                <p-column field="destination" [style]="{'width':'100px'}" header="Description" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column field="notes" [style]="{'width':'80px'}" header="Notes" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column field="numberdialled" [style]="{'width':'100px'}" header="Number Dialled" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+                <p-column styleClass="text-right" field="duration" header="Duration" [sortable]="true" displaysum="true" [style]="{'width':'80px'}"></p-column>
+                <p-column styleClass="text-right" field="datavolume" header="Data(MB)" [sortable]="true" displaysum="true" [style]="{'width':'60px'}">
+                    <ng-template let-col let-cc="rowData" pTemplate="body">
+                        <span>{{cc[col.field] |  number:'1.2-2' }}</span>
+                    </ng-template>
+                </p-column>
+                <p-column styleClass="text-right" [style]="{'width':'80px'}" field="usagecharge" header="UsageCharge" [sortable]="true" displaysum="true">
+                    <ng-template let-col let-cc="rowData" pTemplate="body">
+                        <span>{{cc[col.field] | currencyFormat }}</span>
+                    </ng-template>
+                </p-column>
+                <p-column field="countryoforigin" [style]="{'width':'140px'}" header="Country Of Origin" filter="false" filterMatchMode="contains" [sortable]="true">
+                    <ng-template pTemplate="filter" typeof="body" let-col>
+                        <i class="fa fa-close" *ngIf="countryFilter!=null" (click)="countryFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                        <p-dropdown appendTo="body" [options]="countryoforiginfilterset" [style]="{'width':'100px'}" [(ngModel)]="countryFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                    </ng-template>
+                </p-column>
+
+            </p-dataTable>
+
+        </div>
+        <div class="vert-offset-top-1 text-center col-lg-12 ">
+            <span >
+                There may be a slight discrepancy between the reports and the invoice, due to the
+                rounding rules used to display the report information.<br />
+                The amount you are charged is as shown on your invoice.
+            </span>
+
+        </div>
+    </div>

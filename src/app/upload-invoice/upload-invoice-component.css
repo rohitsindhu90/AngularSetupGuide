@@ -1,0 +1,24 @@
+﻿/*.network-dropdown > div, .billingplatorm-dropdown > div {
+    width: 240px !important;
+}
+
+.invoiceMonth-dropdown > div {
+    width: 240px !important;
+}*/
+
+.no-border {
+  border: 0;
+}
+
+#file-container-panel > div div.ui-panel-content {
+  padding: 0;
+}
+
+#file-container-panel > div > div.ui-panel-titlebar {
+  padding: 0;
+  border: 0;
+}
+
+.ui-messages > ul {
+  display: inline-block !important; 
+}

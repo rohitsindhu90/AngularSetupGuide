@@ -1,0 +1,127 @@
+﻿<div class="form-group" id="calls-file-container" *ngIf="!model.batchid">
+    <label class="control-label col-sm-3">
+        File:
+    </label>
+    <div class="col-md-offset-5 col-sm-7">
+
+        <div class="text-message" *ngIf="processingMessage" [innerHTML]="processingMessage"></div>
+
+        <!-- <p-panel #fileContainer id="file-container-panel"> -->
+        <div [ngClass]="'ui-fileupload ui-widget'" id="file-container">
+            <div class="ui-fileupload-buttonbar ui-widget-header ui-corner-top no-border">
+                <div icon="fa fa-plus" pButton class="ui-fileupload-choose" (click)="onChooseClick($event, fileinput)">
+                    <input #fileinput type="file" (change)="onFileSelect($event)" [accept]="'.xlsx'">
+                </div>
+                <button type="button" icon="fa fa-upload" pButton (click)="upload()" [disabled]="!hasFiles()"></button>
+                <button type="button" icon="fa fa-close" pButton (click)="clear()" [disabled]="!hasFiles()"></button>
+
+                <!-- <p-templateLoader [template]="toolbarTemplate"></p-templateLoader> -->
+            </div>
+            <div class="no-border">
+                <p-messages [value]="msgs"></p-messages>
+                <div class="ui-fileupload-files" *ngIf="files">
+                    <div>
+                        <div>
+                            <div class="ui-fileupload-row" *ngFor="let file of files; let i = index;">
+                                <div>{{file.name}}</div>
+                                <div>{{formatSize(file.size)}}</div>
+                                <div><button type="button" icon="fa fa-close" pButton (click)="remove(i)"></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div *ngIf="fileTemplate">
+                                <ng-template ngFor [ngForOf]="files" [ngForTemplate]="fileTemplate"></ng-template>
+                            </div> -->
+                    </div>
+                    <!-- <p-templateLoader [template]="contentTemplate"></p-templateLoader> -->
+                </div>
+            </div>
+        </div>
+        <!-- </p-panel> -->
+    </div>
+    <div class="form-group row">
+    </div>
+    <div class="form-group row">
+        <!--<div class="col-sm-3"></div>-->
+        <!--<div class="col-sm-3 ">
+            <a href="/Prototype/Add CTN Template.xlsx" download class="btn btn-primary zeromarginleft">  Download sample template</a>
+        </div>-->
+
+        <div class="col-sm-3 ">
+            <input type="button" value=" Download sample template" class="btn btn-primary zeromarginleft"
+                (click)="DownloadFile()" />
+        </div>
+    </div>
+</div>
+
+<div class="vert-offset-top-2" [hidden]="!model.batchid">
+    <h2 class="control-label col-sm-3">
+        Validate Data
+    </h2>
+    <p-tabView (onChange)="onTabChange($event)" [activeIndex]="selectedIndex">
+        <p-tabPanel *ngFor="let tt of GetVisibleTabs();let i = index" [header]="tt" [selected]="i == 0">
+            <p-dataTable #dt [value]="model.addctnrawviewmodellst" [rows]="10" [paginator]="true" scrollable="true"
+                scrollWidth="100%" [style]="{'margin-top':'30px'}" class="ui-datatable-scroll-margin-fix"
+                [responsive]="true" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                            (click)="dt.exportExcel(true)" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'80px'}" field="excelrownumber" header="Excel Row" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="mobilenumber" header="Mobile Number" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="employeename" header="Employee Name" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="staffid" header="Staff ID" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="email" header="Email" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup1" header="Reporting Group1" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup2" header="Reporting Group2" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup3" header="Reporting Group3" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup4" header="Reporting Group4" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup5" header="Reporting Group5" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup6" header="Reporting Group6" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="simnumber" header="SIM Number" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="tariff" header="Tariff" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="network" header="Network" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="billingplatform" header="Billing Platform" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="ben" header="BEN" filter="true" filterMatchMode="contains"
+                    [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="errormessage" header="Error Message" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+
+            </p-dataTable>
+            <!--</div>-->
+        </p-tabPanel>
+    </p-tabView>
+
+    <div class="form-group row">
+
+        <div class="col-sm-3">
+
+        </div>
+    </div>
+    <div class="form-group row">
+
+        <div class="col-sm-4">
+            <input type="button" value="Proceed with valid data" class="btn btn-primary" (click)="saveValidateCTN()"
+                [disabled]="!hasValidRecord()" />
+            &nbsp;&nbsp;
+            <input type="button" value="Back" class="btn btn-primary" (click)="resetAfterSave()" />
+        </div>
+    </div>
+</div>

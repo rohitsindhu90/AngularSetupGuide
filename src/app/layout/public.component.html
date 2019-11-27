@@ -1,0 +1,25 @@
+﻿
+<div class="layout-wrapper public">
+    <div id="layout-sidebar" class="active">
+        <div class="layout-logo">
+            <div class="sidebar-logo">
+            </div>
+            <!--<a href="#" id="menu-button-mobile" (click)="toggleMenu($event)" [ngClass]="{'active':mobileMenuActive}">
+                <img alt="logo" src="../../resources/images/menuicon.svg" />
+            </a>-->
+        </div>
+        <router-outlet></router-outlet>
+    </div>
+    <div id="layout-content">
+        <router-outlet name="errorRoute"></router-outlet>
+    </div>
+</div>
+<!-- <p-confirmDialog key="publicdialog" #dialog>
+    <p-footer>
+        <div class="form-inline">
+            <div class="form-group margin-auto">
+                <input type="button" class="btn btn-secondary" (click)="dialog.accept()" value="OK" />
+            </div>
+        </div>
+    </p-footer>
+</p-confirmDialog> -->

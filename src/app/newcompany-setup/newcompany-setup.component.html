@@ -1,0 +1,309 @@
+﻿<!-- <p-blockUI [target]="frmNewCompanySetup" [blocked]="blockedPanel"></p-blockUI> -->
+<div class="col-sm-12" *ngIf="!validateModel.newcompanysetupmodel">
+
+    <form id="frmNewCompanySetup" name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !name.valid }">
+            <label for="name" class="col-sm-2">Company Name:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="name" [(ngModel)]="model.name" #name="ngModel" required
+                    maxlength="100" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !name.valid">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !dns.valid }">
+            <label for="dns" class="col-sm-2">Company Url:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="dns" [(ngModel)]="model.dns" #dns="ngModel" required
+                    maxlength="100" pInputText [pKeyFilter]="dnsNameRegx" [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && dns.errors && dns.errors?.required">This field is required</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && dns.errors && dns.errors?.validatePattern">DNS is invalid</span>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && ip.errors?.required }">
+            <label for="ip" class="col-sm-2">IP Address:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="ip" [(ngModel)]="model.ip" #ip="ngModel" required
+                    maxlength="100" disabled />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && ip.errors?.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !emailto.valid }">
+            <label for="emailto" class="col-sm-2">Email To:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="emailto" [(ngModel)]="model.emailto" #emailto="ngModel"
+                    required maxlength="100" pInputText [pKeyFilter]="multipleEmailAddressregx"
+                    [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && emailto.errors && emailto.errors?.required">This field is required</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && emailto.errors && emailto.errors?.validatePattern===false">
+                    Email is invalid</span>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !emailcc.valid }">
+            <label for="emailcc" class="col-sm-2">Email CC:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="emailcc" [(ngModel)]="model.emailcc" #emailcc="ngModel"
+                    maxlength="100" pInputText [pKeyFilter]="multipleEmailAddressregx" [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && emailcc.errors && emailcc.errors?.validatePattern===false">Email is
+                    invalid</span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="isemailenable" class="col-sm-2">Enable Email Service/Dispatch:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <label>
+                    <p-checkbox [(ngModel)]="model.isemailenable" name="isemailenable" binary="true"></p-checkbox>
+                </label>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !emailcc.valid }">
+            <label for="emailcc" class="col-sm-2">Files:</label>
+            <div class="col-md-offset-3 col-sm-9" style="display:flex;">
+
+                <div class="col-md-offset-3 col-sm-9 no-padding">
+
+                    <div class="text-message" *ngIf="processingMessage" [innerHTML]="processingMessage"></div>
+
+                    <div [ngClass]="'ui-fileupload ui-widget'" id="file-container">
+                        <div class="ui-fileupload-buttonbar ui-widget-header ui-corner-top no-border">
+                            <div icon="fa fa-plus" pButton class="ui-fileupload-choose"
+                                (click)="onChooseClick($event, fileinput)">
+                                <input #fileinput type="file" (change)="onFileSelect($event)" [multiple]="multiple">
+                            </div>
+
+                            <button type="button" icon="fa fa-close" pButton (click)="clear()"
+                                [disabled]="!hasFiles()"></button>
+
+                            <!-- <p-templateLoader [template]="toolbarTemplate"></p-templateLoader> -->
+                        </div>
+                        <div [ngClass]="{'ui-fileupload-content ui-widget-content ui-corner-bottom':true}"
+                            class="no-border">
+                            <p-progressBar [showValue]="false" *ngIf="hasFiles()"></p-progressBar>
+
+                            <p-messages [value]="msgs"></p-messages>
+
+                            <div class="ui-fileupload-files" *ngIf="hasFiles()">
+                                <div>
+                                    <div class="ui-fileupload-row" *ngFor="let file of files; let i = index;">
+
+                                        <div>{{file.name}}</div>
+                                        <div>{{formatSize(file.size)}}</div>
+                                        <div><button type="button" icon="fa fa-close" pButton
+                                                (click)="remove(i)"></button></div>
+                                    </div>
+                                </div>
+                                <!-- <div *ngIf="fileTemplate">
+                                    <ng-template ngFor [ngForOf]="files" [ngForTemplate]="fileTemplate"></ng-template>
+                                </div> -->
+                            </div>
+
+                            <!-- <p-templateLoader [template]="contentTemplate"></p-templateLoader> -->
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+        <div class="form-group row ">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+
+                <input type="submit" [disabled]="blockedPanel" value="Next" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+    <div class="form-group row">
+    </div>
+    <div class="form-group row">
+
+        <div class="col-sm-3 ">
+            <input type="button" value=" Download sample template" class="btn btn-primary zeromarginleft"
+                (click)="downloadTemplateFile()" />
+        </div>
+    </div>
+
+</div>
+
+<div class="vert-offset-top-2" [hidden]="!validateModel.newcompanysetupmodel">
+    <h2 class="control-label col-sm-3">
+        Validate Data
+    </h2>
+    <div class="form-group row">
+        <div class="col-sm-8" style="display:flex;">
+            <p-dropdown [options]="getValidateDataDropDown()" name="validData" [(ngModel)]="validateDDID"
+                [filter]="true" (onChange)="onDropDownChange()">
+            </p-dropdown>
+
+        </div>
+    </div>
+    <p-tabView (onChange)="onTabChange($event)">
+        <p-tabPanel *ngFor="let tt of getVisibleTabs();let i = index" [header]="tt" [selected]="i == 0">
+            <p-dataTable #dt [value]="validateModel.lstmaindataimportviewmodel" [rows]="10" [paginator]="true"
+                scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" *ngIf="tabIndex==0"
+                class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="exportFilename()"
+                [rowsPerPageOptions]="[5,10,20]">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                            (click)="getValidationExcel()" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'100px'}" field="excelrownumber" header="Excel Row" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="mobilenumber" header="Mobile Number" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="name" header="Name" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="staffid" header="StaffID" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="email" header="Email" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup1" header="ReportingGroup1" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup2" header="ReportingGroup2" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup3" header="ReportingGroup3" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="reportinggroup4" header="ReportingGroup4" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="reportinggroup5" header="ReportingGroup5" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="reportinggroup6" header="ReportingGroup6" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+
+                <p-column [style]="{'width':'180px'}" field="device" header="Device" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="imei" header="IMEI" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="serialnumber" header="Serial Number" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="sim" header="SIM" filter="true" filterMatchMode="contains"
+                    [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="tariff" header="Tariff" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="network" header="Network" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="billingplatform" header="Billing Platform" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="ben" header="Ben" filter="true" filterMatchMode="contains"
+                    [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="ban" header="Ban" filter="true" filterMatchMode="contains"
+                    [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="errormessage" header="Error Message" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+            </p-dataTable>
+
+            <p-dataTable #dt [value]="validateModel.lstaddressimportviewmodel" [rows]="10" [paginator]="true"
+                scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" *ngIf="tabIndex==1"
+                class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="exportFilename()"
+                [rowsPerPageOptions]="[5,10,20]">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                            (click)="getValidationExcel()" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'100px'}" field="excelrownumber" header="Excel Row" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="addressshortname" header="Address ShortName" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="address1" header="Address1" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="address2" header="Address2" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="address3" header="Address3" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="address1" header="Address4" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="city" header="City" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="county" header="County" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="country" header="Country" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="postcode" header="Postcode" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="errormessage" header="Error Message" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+            </p-dataTable>
+
+            <p-dataTable #dt [value]="validateModel.lsttariffimportviewmodel" [rows]="10" [paginator]="true"
+                scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" *ngIf="tabIndex==2"
+                class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="exportFilename()"
+                [rowsPerPageOptions]="[5,10,20]">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                            (click)="getValidationExcel()" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'100px'}" field="excelrownumber" header="Excel Row" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="tariffname" header="Tariff Name" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="linerental" header="Linerental" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="cashback" header="Cashback" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="voiceordata" header="VoiceorData" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="network" header="Network" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="billingplatform" header="Billing Platform" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="tariffstatus" header="Tariff Status" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="errormessage" header="Error Message" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+            </p-dataTable>
+
+            <p-dataTable #dt [value]="validateModel.lstproductimportviewmodel" [rows]="10" [paginator]="true"
+                scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" *ngIf="tabIndex==3"
+                class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="exportFilename()"
+                [rowsPerPageOptions]="[5,10,20]">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                            (click)="getValidationExcel()" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'100px'}" field="excelrownumber" header="Excel Row" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="productname" header="Product Name" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="cost" header="Cost" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="connectiontype" header="Connection Type" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="producttype" header="Product Type" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="errormessage" header="Error Message" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+            </p-dataTable>
+        </p-tabPanel>
+    </p-tabView>
+
+    <div class="form-group row">
+
+        <div class="col-sm-3">
+
+        </div>
+    </div>
+    <div class="form-group row">
+
+        <div class="col-sm-4">
+            <input type="button" value="Setup" class="btn btn-primary" (click)="processValidateData()"
+                [disabled]="!hasValidRecord()" />
+            &nbsp;&nbsp;
+            <input type="button" value="Back" class="btn btn-primary" (click)="resetAfterSave()" />
+        </div>
+    </div>
+</div>

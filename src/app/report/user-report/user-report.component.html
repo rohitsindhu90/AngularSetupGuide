@@ -1,0 +1,40 @@
+﻿<input *ngIf="roleDescription" type="button" class="btn btn-primary" (click)="goback()" value="Back" />
+
+<div class="row col-lg-12 vert-offset-top-1" *ngIf="roleDescription">
+    <h5>Current Role:  {{roleDescription}}</h5>
+</div>
+
+<p-dataTable *ngIf="model" #dt
+             [value]="model"
+             [rows]="10"
+             [paginator]="true"
+             [responsive]="true"
+             scrollable="true"
+             [style]="{'margin-top':'30px'}"
+             [rowsPerPageOptions]="[5,10,20]"
+             selectionMode="single"
+             (onRowSelect)="onRowSelect($event)"
+             exportFilename="{{(!!roleDescription ? ''+roleDescription+'-' : 'user-') | lowercase }}report">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column field="name" header="Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="staffid" header="StaffID" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="username" header="Username" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'250px'}" field="emailaddress" header="Email" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="role" header="Role" filter="true" filterMatchMode="contains" [sortable]="true">
+    </p-column>
+    <p-column field="status" [style]="{'width':'100px'}" header="Status" filter="true" filterMatchMode="equals" [sortable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="statusFilter!=null" (click)="statusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="statusFilterset" [style]="{'width':'100%'}" [(ngModel)]="statusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'100px'}" field="ctncount" header="Mobile Number Count" [sortable]="true">
+    </p-column>
+    <p-column field="lastaccessed" header="Last Accessed" filter="true" filterMatchMode="contains">
+    </p-column>
+</p-dataTable>

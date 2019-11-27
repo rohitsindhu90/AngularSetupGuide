@@ -1,0 +1,33 @@
+﻿
+<div class="col-lg-12 col-md-12 no-padding">
+    <p-dataTable #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" [style]="{'margin-top':'30px'}"
+                 exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]" scrollable="true" scrollWidth="100%">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'200px'}" field="company" header="Company" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'100px'}" field="ordertype" header="OrderType" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'130px'}" field="orderreferencenumber" header="Order Reference" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'250px'}" field="orderguid" header="Order Guid" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'100px'}" field="createddatestring" header="Date" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <!--<p-column  field="" header="" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>-->
+        <p-column  [style]="{'width':'100px'}"  styleClass="text-right1" field="totalcost" header="Cost" >
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'80px'}" header="Action" field="createdby" [exportColumn]="false">
+            <ng-template let-data="rowData" pTemplate="item">
+                <div class="ui-helper-clearfix">
+                    <i class="fa fa-clone fa-lg" (click)="onCopyGuid(data)" style="cursor:pointer" title="Click here to copy OrderGuid"></i>
+                    &nbsp; &nbsp; <i class="fa fa-list-ul fa-lg" (click)="onRowSelect(data)" style="cursor:pointer" title="Click here to view OrderDetail"></i>
+                    &nbsp; &nbsp;<i class="fa fa-times fa-lg" (click)="onDelete(data)" style="cursor:pointer" title="Click here to cancel Order"></i>
+
+                </div>
+            </ng-template>
+        </p-column>
+    </p-dataTable>
+</div>

@@ -1,0 +1,74 @@
+﻿<form name="form" (ngSubmit)="(f.form.valid && save(f))" #f="ngForm" novalidate class="modal-form">
+    <div *ngIf="reportingGroupRelSet == 0">
+        <div class="row">
+            <div class="col-xs-3 col-md-2">
+                <p-radioButton name="group1" value="1" [(ngModel)]="selectedRelation" inputId="opt1"></p-radioButton>
+                <label>Daisy Chain</label>
+            </div>
+            <div class="col-xs-3 col-md-2">
+                <p-radioButton name="group1" value="2" [(ngModel)]="selectedRelation" inputId="opt2"></p-radioButton>
+                <label>Parent/Children</label>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-3 col-md-2">
+                <input type="button" value="Save" class="btn btn-primary" (click)="saveRel();" [disabled]="!selectedRelation" />
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="reportingGroupRelSet == 1">
+        <div class="row">
+            <b> <label class="col-lg-12 col-md-12">Current Relationship: {{ selectedRelation == 1 ? "Daisy Chain" : "Parent/Children" }}</label></b>
+        </div>
+    </div>
+    <br />
+    <div *ngIf="reportingGroupRelSet == 1">
+        <div *ngFor="let q of rgGroupDetails; let i = index">
+
+
+            <div class="row">
+                <div class="label-inline col-sm-4">
+                    <div class="form-inline label-inline">
+                        <div class="form-group" [ngClass]="{ 'has-danger': f.submitted && reportinggroup.errors && reportinggroup.errors.required }">
+                            <label>{{ rgGroupDetails[i].parentitem.item.reportinggroupdisplayname }}</label>
+                            <p-dropdown [options]="rgGroupDetails[i].parentitem.items" #reportinggroup="ngModel" [(ngModel)]="rgGroupDetails[i].parentitem.selecteditem.reportinggroupguid" name="rgGroupDetails_{{i}}"  filter="filter"
+                                        (onChange)="onChangeDD(i)" >
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>                
+                <div class="col-sm-8">
+                    <p-pickList [sourceStyle]="{'height':'250px'}"
+                                [targetStyle]="{'height':'250px'}"
+                                sourceFilterPlaceholder="Serach by name"
+                                targetFilterPlaceholder="Serach by name"
+                                [showSourceControls]="false"
+                                [showTargetControls]="false"
+                                sourceHeader="{{ rgGroupDetails[i].childitem.childname }} Available"
+                                targetHeader="{{ rgGroupDetails[i].childitem.childname }} Selected"
+                                [source]="rgGroupDetails[i].childitem.childitems"
+                                [target]="rgGroupDetails[i].childitem.selecteditems"
+                                dragdrop="true"
+                                [responsive]="true"
+                                filterBy="description"
+                                [disabled]="!rgGroupDetails[i].parentitem.selecteditem.reportinggroupguid"
+                                (onMoveToTarget)="addSelected($event, i)"
+                                (onMoveToSource)="removeSelected($event, i)">
+                        <ng-template let-rg pTemplate="item">
+                            <div class="ui-helper-clearfix">
+                                <div>{{rg.description}}</div>
+                            </div>
+                        </ng-template>
+                    </p-pickList>
+                </div>
+            </div>
+            <br />
+        </div>
+    </div>
+    <br />
+    <div class="col-sm-12" *ngIf="rgGroupDetails && rgGroupDetails.length > 0">
+        <input type="submit" value="Save" class="btn btn-primary" [disabled]="saveDisabled" />
+    </div>
+</form>

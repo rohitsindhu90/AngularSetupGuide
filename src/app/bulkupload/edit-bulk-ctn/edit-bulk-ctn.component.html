@@ -1,0 +1,175 @@
+﻿<div class="col-md-7 col-md-offset-3" *ngIf="!model.batchid">
+    <form name="form" (ngSubmit)="theForm.form.valid " #theForm="ngForm" novalidate class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-12 ">
+                <p-panel *ngIf="colitems?.length && colitems?.length > 0">
+                    <p-header>
+                        <div class="ui-helper-clearfix">
+                            <span class="ui-panel-title"
+                                style="font-size:14px;display:inline-block;margin-top:2px">Please Select Columns to
+                                Update:</span>
+
+                            <div style="float:right;">
+                                <p-checkbox binary="true" [(ngModel)]="selectAll" name="selectallchk"
+                                    (onChange)="selectAllChange()">
+                                </p-checkbox> Select/UnSelect All
+                            </div>
+                        </div>
+                    </p-header>
+                    <span *ngIf="checkBoxNotSelected" class="form-label error">Please select at least a checkbox from
+                        below for which you wish to update the data</span>
+                    <div class="row">
+                        <div *ngFor="let item of filtergetEditCTNColumnDetails(); let i = index"
+                            class="col-sm-4 col-md-4 col-lg-4 form-group">
+                            <p-checkbox [(ngModel)]="item.ischecked" binary="true" name="item.columnname_{{i}}"
+                                [disabled]="item.isrequired" (onChange)="onChangeChk(item,$event)">
+                            </p-checkbox> {{item.columnname}}
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-sm-4 col-md-4 col-lg-4 form-group">
+                            <p-checkbox [(ngModel)]="colitems[12].ischecked" binary="true" name="columnname_12"
+                                [disabled]="colitems[12].isrequired"
+                                (onChange)="onChangeCTNStatus(colitems[12],$event)">
+                            </p-checkbox> {{colitems[12].columnname}}
+                        </div>
+                        <div class="col-sm-4 col-md-4 col-lg-4 form-group">
+                            <p-checkbox [(ngModel)]="colitems[13].ischecked" binary="true" name="columnname_13"
+                                [disabled]="colitems[13].isrequired" (onChange)="onChangeChkAsset(colitems[13],$event)">
+                            </p-checkbox> {{colitems[13].columnname}}
+                        </div>
+                    </div>
+                </p-panel>
+            </div>
+        </div>
+        <div class="form-group" id="file-container">
+            <br />
+            <label for="network" class="control-label col-sm-3">
+                Files:
+            </label>
+            <div class="col-sm-9">
+                <div class="text-message" *ngIf="processingMessage" [innerHTML]="processingMessage"></div>
+                <div [ngClass]="'ui-fileupload ui-widget'" id="file-container">
+                    <div class="ui-fileupload-buttonbar ui-widget-header ui-corner-top no-border">
+                        <div icon="fa fa-plus" pButton class="ui-fileupload-choose"
+                            (click)="onChooseClick($event, fileinput)">
+                            <input #fileinput type="file" (change)="onFileSelect($event)"
+                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                        </div>
+                        <button type="button" icon="fa fa-upload" pButton (click)="upload()"
+                            [disabled]="!hasFiles()"></button>
+                        <button type="button" icon="fa fa-close" pButton (click)="clear()"
+                            [disabled]="!hasFiles()"></button>
+
+
+                    </div>
+                    <div class="no-border">
+                        <p-progressBar [value]="progress" [showValue]="false" *ngIf="hasFiles()"></p-progressBar>
+
+                        <p-messages [value]="msgs"></p-messages>
+
+                        <div class="ui-fileupload-files" *ngIf="hasFiles()">
+                            <div>
+                                <div class="ui-fileupload-row" *ngFor="let file of files; let i = index;">
+                                    <div>{{file.name}}</div>
+                                    <div>{{formatSize(file.size)}}</div>
+                                    <div><button type="button" icon="fa fa-close" pButton (click)="remove(i)"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-3 ">
+                <input type="button" value=" Download sample template" class="btn btn-primary zeromarginleft"
+                    (click)="DownloadFile()" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="vert-offset-top-2" [hidden]="!model.batchid">
+    <h2 class="control-label col-sm-3">
+        Validate Data
+    </h2>
+    <p-tabView (onChange)="onTabChange($event)" [activeIndex]="selectedIndex">
+        <p-tabPanel *ngFor="let tt of GetVisibleTabs();let i = index" [header]="tt" [selected]="i == 0">
+            <p-dataTable #dt *ngIf="model.editctnrawviewmodellst" [value]="model.editctnrawviewmodellst" [rows]="10"
+                [paginator]="true" scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}"
+                class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="{{csvfilename}}"
+                [rowsPerPageOptions]="[5,10,20]">
+                <p-header>
+                    <div class="ui-helper-clearfix">
+                        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                            (click)="dt.exportExcel(true)" style="float:left"></button>
+                    </div>
+                </p-header>
+                <p-column [style]="{'width':'90px'}" field="excelrownumber" header="Excel Row" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="mobilenumber" header="Mobile Number" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="employeename" header="Employee Name" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="staffid" header="Staff ID" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="email" header="Email" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup1" header="Reporting Group1" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup2" header="Reporting Group2" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup3" header="Reporting Group3" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup4" header="Reporting Group4" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup5" header="Reporting Group5" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="reportinggroup6" header="Reporting Group6" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="simnumber" header="SIM Number" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="tariff" header="Tariff" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="network" header="Network" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="billingplatform" header="Billing Platform" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="ben" header="BEN" filter="true" filterMatchMode="contains"
+                    [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="ctnstatus" header="CTNStatus" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="device" header="Device" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'180px'}" field="imei" header="IMEI" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+                <p-column [style]="{'width':'300px'}" field="errormessage" header="Error Message" filter="true"
+                    filterMatchMode="contains" [sortable]="true"></p-column>
+
+            </p-dataTable>
+        </p-tabPanel>
+    </p-tabView>
+
+    <div class="form-group row">
+
+        <div class="col-sm-3">
+
+        </div>
+    </div>
+    <div class="form-group row">
+
+        <div class="col-sm-4">
+            <input type="button" value="Proceed with valid data" class="btn btn-primary" (click)="saveValidateCTN()"
+                [disabled]="!hasValidRecord()" />
+            &nbsp;&nbsp;
+            <input type="button" value="Back" class="btn btn-primary" (click)="resetAfterSave()" />
+        </div>
+    </div>
+</div>

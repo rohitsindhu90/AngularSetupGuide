@@ -1,0 +1,38 @@
+﻿<div class="row col-lg-8 vert-offset-top-1">
+    <div class="form-group" [ngClass]="{ 'has-danger':error}" style="padding-right: 5%;">
+        <label class="col-lg-5 col-sm-5">From Date</label>
+
+        <p-calendar [(ngModel)]="fromdate" showIcon="true" yearNavigator="true" monthNavigator="true"
+            readonlyInput="false" [maxDate]="todaydate" name="fromdate" yearRange="2017:2080"
+            dateFormat="dd/mm/yy" (onSelect)="refreshData()"></p-calendar>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 col-sm-5">To Date</label>
+
+        <p-calendar [(ngModel)]="todate" showIcon="true" yearNavigator="true" monthNavigator="true"
+            readonlyInput="false" [maxDate]="todaydate" name="todate" yearRange="2017:2080" dateFormat="dd/mm/yy"
+            (onSelect)="refreshData()"></p-calendar>
+    </div>
+
+    <div *ngIf="error" class="error">{{error}}</div>
+
+</div>
+
+
+<p-dataTable #dt [value]="model" selectionMode="single" (onRowSelect)="handleRowSelect($event)" [rows]="10"
+    [paginator]="true" [responsive]="true" scrollable="true" scrollWidth="100%" class="ui-datatable-scroll-margin-fix"
+    [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column [style]="{'width':'180px'}" field="companyguid" header="CompanyGUID" filter="true"
+        filterMatchMode="contains" [sortable]="true" *ngIf="false"></p-column>
+    <p-column [style]="{'width':'250px'}" field="companydescription" header="Company" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'250px'}" field="count" header="Total Login Count" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+</p-dataTable>

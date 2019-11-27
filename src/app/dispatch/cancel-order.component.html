@@ -1,0 +1,34 @@
+﻿
+<div class="col-sm-12">
+    <div>
+        Are you sure you want to cancel
+        <label> {{company}}</label> order 
+        <label> {{orderRefNo}}</label> ?
+    </div>
+    <form name="form" (ngSubmit)="f.form.valid && cancelOrder()" #f="ngForm" novalidate>
+        <div class="form-group row ">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+
+            </div>
+        </div>
+        <div class="form-group row required" [ngClass]="{ 'has-danger': (f.submitted && !cancelreason.valid) || ((cancelreason.dirty || cancelreason.touched)) }">
+            <label for="cancelreason" class="col-sm-2">Reason:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <!--<input type="text" class="form-control" name="cancelreason" [(ngModel)]="cancellationreason" #cancelreason="ngModel" required maxlength="10" />-->
+                <textarea class="form-control" name="cancelreason" [(ngModel)]="cancellationreason" #cancelreason="ngModel" rows="05" cols="100" maxlength="400" required>
+                </textarea>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && cancelreason.errors?.required">This field is required</span>
+
+            </div>
+        </div>
+
+        <div class="form-group row ">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit"  value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+</div>

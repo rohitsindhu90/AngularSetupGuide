@@ -1,0 +1,30 @@
+﻿<input *ngIf="model" type="button" class="btn btn-primary" (click)="goback()" value="Back" />
+<div class="row col-lg-12 vert-offset-top-1"*ngIf="model">
+        <h5>Current User:  {{model.name}}</h5>
+</div>
+
+<p-dataTable *ngIf="model" #dt
+             [value]="model.ctndetails"
+             [rows]="10"
+             [paginator]="true"
+             [responsive]="true"
+             scrollable="true"
+             [style]="{'margin-top':'30px'}"
+             [rowsPerPageOptions]="[5,10,20]"
+             exportFilename="{{(!!model?.name ? ''+model.name+'' : 'user') | lowercase }}-mobilenumber-report">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column field="mobilenumber" [style]="{'width':'150px'}" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="status" [style]="{'width':'100px'}" header="Status" filter="true" filterMatchMode="contains" [sortable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="statusFilter!=null" (click)="statusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="statusFilterset" [style]="{'width':'100%'}" [(ngModel)]="statusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column field="device" [style]="{'width':'180px'}" header="Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'200px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [sortable]="true">
+    </p-column>
+</p-dataTable>

@@ -1,0 +1,19 @@
+﻿<div>
+    Please click on below link to view the respective report.
+</div>
+<p-dataTable #dt [value]="model" [responsive]="true" scrollable="true" scrollWidth="100%"
+    class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px', 'max-width':'300px'}"
+    exportFilename="{{csvfilename}}">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column [style]="{'width':'100px','cursor': 'pointer'}" field="name" header="Url" [sortable]="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+
+            <span (click)="onClick(cc)">{{cc.name}}</span>
+        </ng-template>
+    </p-column>
+</p-dataTable>

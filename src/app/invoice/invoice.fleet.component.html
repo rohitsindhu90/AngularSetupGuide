@@ -1,0 +1,203 @@
+﻿
+<p-dataTable class="ui-datatable-scroll-margin-fix" *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true"
+             [responsive]="true"
+             scrollable="true"
+             frozenWidth="150px"
+             unfrozenWidth="100%"
+             selectionMode="single"
+             (onRowSelect)="handleRowSelect($event)"
+             [style]="{'margin-top':'30px'}"
+             [filters]="filters"
+             exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel " (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-headerColumnGroup>
+        <p-row>
+            <p-column [style]="{'width': gridwidth+'px'}" styleClass="col-group-header" colspan="{{gridcolumn}}"></p-column>
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'150px'}" frozen="true" field="mobilenumber" rowspan="3" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column [style]="{'width':'150px'}" field="networkdescription" rowspan="3" header="Network" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+                <ng-template pTemplate="filter" typeof="body" let-col>
+                    <i class="fa fa-close" *ngIf="networkFilter!=null" (click)="networkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                    <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="networkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                </ng-template>
+
+            </p-column>
+            <p-column [style]="{'width':'150px'}" field="billingplatformdescription" rowspan="3" header="Billing Platform" filter="true" filterMatchMode="contains" [sortable]="true"
+                      *ngIf="isbillingplatformxist">
+                <ng-template pTemplate="filter" typeof="body" let-col>
+                    <i class="fa fa-close" *ngIf="billingFilter!=null" (click)="billingFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                    <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}" [(ngModel)]="billingFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'150px'}" field="username" rowspan="3" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column [style]="{'width':'150px'}" field="staffid" rowspan="3" header="StaffID" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column [style]="{'width':'150px'}" field="invoicetariff" rowspan="3" header="Current Tariff" filter="true" filterMatchMode="contains" [sortable]="true">
+            </p-column>
+            <p-column [style]="{'width':'150px'}" field="device" header="Device" rowspan="3" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="table-border-right" *ngFor="let column of datacolumns" [field]="column.field" rowspan="3" [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" [filterMatchMode]="column.filtermode" [sortable]="column.sortable">
+            </p-column>
+            <p-column styleClass="text-right table-border-right" [style]="{'width':'150px'}" field="bendescription" rowspan="3" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true"
+                      *ngIf="isbendisplay">
+                <ng-template pTemplate="filter" let-col>
+                    <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                    <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                </ng-template>
+            </p-column>
+            <p-column styleClass="text-right table-border-right" [style]="{'width':'150px'}" field="ban" rowspan="3" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true"
+                      *ngIf="isbandisplay">
+                <ng-template pTemplate="filter" let-col>
+                    <i class="fa fa-close" *ngIf="qBanFilter!=null" (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                    <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                </ng-template>
+            </p-column>
+
+
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Mintues" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Text" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Data(UK)" colspan="2"></p-column>
+            <p-column [style]="{'width':'450px'}" styleClass="text-center" header="Roamed" colspan="3"></p-column>
+
+            <!--<p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="invoicetariff" header="Tariff" sortable="true">
+
+            </p-column>-->
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="monthlinerental" header="Service Charge" sortable="true">
+
+            </p-column>
+
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="linerentalcredit" header="Service Credit" sortable="true">
+
+            </p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="usagecharge" header="Usage Charge" sortable="true">
+
+            </p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="othercharge" header="Other Charge" sortable="true">
+
+            </p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="totalcost" header="Total" sortable="true">
+
+            </p-column>
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="minutesduration" header="Duration(Mins.)" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="minutescost" header="Cost" sortable="true"></p-column>
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="text" header="Count" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="textcost" header="Cost" sortable="true"></p-column>
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="data" header="MB" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="datacost" header="Cost" sortable="true"></p-column>
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roameddata" header="MB" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedduration" header="Duration(Mins.)" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedcost" header="Cost" sortable="true"></p-column>
+        </p-row>
+
+    </p-headerColumnGroup>
+    <p-column [style]="{'width':'150px'}" frozen="true" field="mobilenumber" header="Mobile Number"></p-column>
+    <p-column [style]="{'width':'150px'}" field="networkdescription" header="Network" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="networkFilter!=null" (click)="networkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="networkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="billingplatformdescription" header="Billing Platform"
+              *ngIf="isbillingplatformxist">
+
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="username" header="Employee Name"></p-column>
+    <p-column [style]="{'width':'150px'}" field="staffid" header="StaffID"></p-column>
+    <p-column [style]="{'width':'150px'}" field="invoicetariff" header="Current Tariff" filter="true" filterMatchMode="contains" [sortable]="true">
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="device" header="Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'150px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden">
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="bendescription" header="BEN" *ngIf="isbendisplay">
+
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="ban" header="BAN" *ngIf="isbandisplay">
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="minutesduration" header="Minutes - Duration(Mins.)" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="minutescost" header="Mintues - Cost" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="text" header="Text - Count" sortable="true" displaysum="true"></p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="textcost" header="Text - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="data" header="Data - MB" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="datacost" header="Data - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roameddata" header="Roamed - MB" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedduration" header="Roamed - Duration(Mins.)" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedcost" header="Roamed - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <!--<p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="invoicetariff" header="Tariff" sortable="true">
+
+    </p-column>-->
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="monthlinerental" header="Service Charge" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="linerentalcredit" header="Service Credit" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="usagecharge" header="Usage Charge" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="othercharge" header="Other Charge" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="totalcost" header="Total" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+</p-dataTable>

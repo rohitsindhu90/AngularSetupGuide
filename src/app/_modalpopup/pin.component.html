@@ -1,0 +1,23 @@
+﻿<div class="modal-body">
+    <div class="row" style="color:red" *ngIf="errormsg">{{ errormsg }}</div>
+    <br *ngIf="errormsg" />
+    <div class="row">
+        <p class="form-label">A message with a verification code has been sent to your email. Enter the code to continue.</p>
+    </div>
+    <div class="row">
+        <input type="hidden" [(ngModel)]="username" name="username" />
+        <input type="text" class="form-control" [(ngModel)]="PIN" name="PIN" maxlength="10" />
+    </div>
+    <br />
+    <div class="row">
+        <button id="btnYes" class="btn btn-primary button pull-right" (click)="onSubmit()">Submit</button>
+    </div>
+    <br />
+    <div class="row">
+        <a *ngIf="!disable" (click)="resendVerificationCode()" style="text-decoration:underline">Didn't get verification code?</a>
+        <span *ngIf="disable">Didn't get verification code?</span>
+    </div>
+    <div class="row">
+        <label> Send Again :</label>
+        <span *ngIf="disable">{{message}}</span>
+    </div>

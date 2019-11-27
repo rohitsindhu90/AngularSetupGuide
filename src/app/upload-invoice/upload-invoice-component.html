@@ -1,0 +1,129 @@
+<div class="col-md-6 col-md-offset-3">
+    <form name="form" (ngSubmit)="theForm.form.valid" #theForm="ngForm" novalidate class="form-horizontal">
+        <div class="form-group" id="company-container">
+            <label for="company" class="col-sm-4 control-label">
+                Company
+            </label>
+            <div class="col-sm-offset-4 col-sm-8">
+                <p-dropdown [options]="companies" [(ngModel)]="selectedCompany" name="company"
+                    (onChange)="populateNetworkDropdown($event)" class="" filter="filter"
+                    [disabled]="blockedPanel && hasFiles()">
+
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form-group" id="network-container" *ngIf="networks?.length > 1">
+            <label for="network" class="control-label col-sm-4">
+                Network
+            </label>
+            <div class="col-sm-offset-4 col-sm-8">
+                <p-dropdown [options]="networks" [(ngModel)]="selectedNetwork" name="network"
+                    (onChange)="loadBillingPlatformOrMonth()" class="" [disabled]="blockedPanel && hasFiles()">
+
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form-group" id="billingplatform-container" *ngIf="billingPlatforms?.length > 1">
+            <label for="billingPlatform" class="control-label col-sm-4">
+                Billing Platform
+            </label>
+            <div class="col-md-offset-4 col-sm-8">
+                <p-dropdown [options]="billingPlatforms" [(ngModel)]="selectedBillingPlatform" name="billingPlatform"
+                    (onChange)="onChangeBillingplatform()" class="" [disabled]="blockedPanel && hasFiles()">
+
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form-group" id="billingplatform-container" *ngIf="geminiFormatTypes">
+            <label for="billingplatform" class="control-label col-sm-4">
+                Gemini Format
+            </label>
+            <div class="col-md-offset-4 col-sm-8">
+                <p-dropdown [options]="geminiFormatTypes" [(ngModel)]="selectedgeminiFormatType" name="geminiFormatType"
+                    (onChange)="loadBillingMonths()" class="" [disabled]="blockedPanel && hasFiles()">
+
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form-group" id="billingplatform-container" *ngIf="invoicemonths?.length > 1">
+            <label for="invoicemonth" class="control-label col-sm-4">
+                Invoice Month
+            </label>
+            <div class="col-md-offset-4 col-sm-8">
+                <p-dropdown [options]="invoicemonths" [(ngModel)]="selectedInvoiceMonth" name="invoicemonth"
+                    (onChange)="showFileUploadInputs()" class="" [disabled]="blockedPanel && hasFiles()">
+
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form-group" id="calls-file-container" *ngIf="selectedInvoiceMonth && showCallsFile">
+            <label for="network" class="control-label col-sm-4">
+                Files:
+            </label>
+            <div class="col-md-offset-4 col-sm-8">
+                <p-blockUI [blocked]="blockedPanel"></p-blockUI>
+                <div class="text-message" *ngIf="processingMessage" [innerHTML]="processingMessage"></div>
+
+                <div [ngClass]="'ui-fileupload ui-widget'" id="file-container">
+                    <div class="ui-fileupload-buttonbar ui-widget-header ui-corner-top no-border">
+                        <div icon="fa fa-plus" pButton class="ui-fileupload-choose"
+                            (click)="onChooseClick($event, fileinput)">
+                            <input #fileinput type="file" (change)="onFileSelect($event)" [multiple]="multiple">
+                        </div>
+                        <button type="button" icon="fa fa-upload" pButton (click)="upload()"
+                            [disabled]="!hasFiles()"></button>
+                        <button type="button" icon="fa fa-close" pButton (click)="clear()"
+                            [disabled]="!hasFiles()"></button>
+
+                        <!-- <p-templateLoader [template]="toolbarTemplate"></p-templateLoader> -->
+                    </div>
+                    <div [ngClass]="{'ui-fileupload-content ui-widget-content ui-corner-bottom':true}"
+                        class="no-border">
+                        <p-progressBar [value]="progress" [showValue]="false" *ngIf="hasFiles()"></p-progressBar>
+
+                        <p-messages [value]="msgs" [closable]='false'></p-messages>
+
+                        <div class="ui-fileupload-files" *ngIf="hasFiles()">
+                            <div>
+                                <div class="ui-fileupload-row" *ngFor="let file of files; let i = index;">
+                                    <div>{{file.name}}</div>
+                                    <div>{{formatSize(file.size)}}</div>
+                                    <div><button type="button" icon="fa fa-close" pButton (click)="remove(i)"></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div *ngIf="fileTemplate">
+                                <ng-template ngFor [ngForOf]="files" [ngForTemplate]="fileTemplate"></ng-template>
+                            </div> -->
+                        </div>
+
+                        <!-- <p-templateLoader [template]="contentTemplate"></p-templateLoader> -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<p-dialog header="Success" [(visible)]="uploadsuccessdisplay" modal="modal" width="600" responsive="true">
+    <p>
+        Files have been uploaded Successfully! We will notify you once the whole process is finished.
+    </p>
+    <p-footer>
+
+        <button type="button" pButton icon="fa fa-check" (click)="resetPage()" label="Okay"></button>
+
+    </p-footer>
+</p-dialog>
+<p-dialog header="In Process" [(visible)]="inprocess" modal="modal" width="600" responsive="true">
+    <p>
+        File(s) for selected month have been already uploaded!
+    </p>
+    <p-footer>
+
+        <button type="button" pButton icon="fa fa-check" (click)="inprocess=false" label="Okay"></button>
+
+    </p-footer>
+</p-dialog>

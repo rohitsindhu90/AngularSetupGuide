@@ -1,0 +1,180 @@
+<div *ngIf="noInvoiceAvailable==false">
+  <div class="row col-lg-12 form-inline label-inline">
+
+    <div class="form-group" [ngClass]="{ 'has-danger':error}">
+      <label>   From Month</label>
+
+      <p-dropdown [options]="invoicemonthArray" [(ngModel)]="fromdate" name="invoicemonth" (onChange)="onInvoiceMonthChange()" filter="filter">
+
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" [ngClass]="{ 'has-danger':error}">
+      <label>   To Month</label>
+
+      <p-dropdown [options]="invoicemonthArray" [(ngModel)]="todate" name="invoicemonth" (onChange)="onInvoiceMonthChange()" filter="filter">
+
+      </p-dropdown>
+
+    </div>
+
+  </div>
+  <div class="form-inline label-inline">
+    <div class="form-group">
+      <label>   Network</label>
+
+      <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="OnNetworkChange()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+      <label>   Billing Platform</label>
+
+      <p-dropdown [options]="billingPlatformArray" [(ngModel)]="selectedbillingPlatfrom" name="billingPlatform" (onChange)="onChangeBillingPlatForm()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" *ngIf="benArray?.length > 1">
+      <label> BEN</label>
+
+      <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown" (onChange)="RefreshData()" filter="filter">
+
+      </p-dropdown>
+
+    </div>
+    <div class="form-group" *ngIf="banArray?.length > 1">
+      <label> BAN</label>
+
+      <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown" (onChange)="RefreshData()" filter="filter">
+      </p-dropdown>
+
+    </div>
+
+  </div>
+
+  <div *ngIf="error" class="error">{{error}}</div>
+
+  <div class="vert-offset-top-2 col-lg-12 no-padding">
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" scrollable="true" frozenWidth="150px" unfrozenWidth="100%" [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+      <p-header>
+        <div class="ui-helper-clearfix">
+          <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+      </p-header>
+      <p-column [style]="{'width':'150px'}" frozen="true" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+      <p-column [style]="{'width':'250px'}" field="employeename" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+      <p-column [style]="{'width':'200px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [filter]="column.filter" [hidden]="column.hidden" [sortable]="true">
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'100px'}" field="bendescription" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true"
+                *ngIf="benArray?.length > 1">
+        <ng-template pTemplate="filter" let-col>
+          <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+          <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" [style]="{'width':'100px'}" field="ban" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true"
+                *ngIf="banArray?.length > 1">
+        <ng-template pTemplate="filter" let-col>
+          <i class="fa fa-close" *ngIf="qBanFilter!=null" (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+          <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="totalusagecost" header="Usage Charges" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="monthlinerental" header="Recurring Charges" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="othercharges" header="Other Charges" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="usagecredit" header="Usage Credits" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="linerentalcredit" header="Recurring Credits" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="othercredits" header="Other Credits" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="totalcost" header="Total(Pre Tax)" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" *ngIf="!hidetaxcolumn" [style]="{'width':'130px'}" field="totalvatwithna" header="Total Tax"
+                sortable="custom" displaysum="true" (sortFunction)="onStringCustomSort($event)">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | stringToCurrencyFormatDecimal }}</span>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" *ngIf="!hidetaxcolumn" [style]="{'width':'130px'}" field="totalinctaxwithna" header="Total(Inc Tax)"
+                sortable="custom" (sortFunction)="onStringCustomSort($event)" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | stringToCurrencyFormatDecimal }}</span>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="eligibleminutes" header="Minutes" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="eligiblesms" header="Text" [sortable]="true" displaysum="true">
+
+      </p-column>
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" field="eligibledata" header="Data(MB)" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" *ngIf="!hidetaxcolumn" field="stdtaxcallchargeswithna" header="Standard Tax Call Charges" sortable="custom"
+                (sortFunction)="onStringCustomSort($event)" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | stringToCurrencyFormat }}</span>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" *ngIf="!hidetaxcolumn" field="zerotaxcallchargeswithna" header="Zero Tax Call Charges"
+                sortable="custom" (sortFunction)="onStringCustomSort($event)" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | stringToCurrencyFormat }}</span>
+        </ng-template>
+      </p-column>
+
+      <p-column styleClass="text-right" [style]="{'width':'130px'}" *ngIf="!hidetaxcolumn" field="calltaxwithna" header="Call Tax"
+                sortable="custom" (sortFunction)="onStringCustomSort($event)" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field] | stringToCurrencyFormatDecimal }}</span>
+        </ng-template>
+      </p-column>
+
+
+    </p-dataTable>
+
+
+  </div>
+
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+  <app-no-invoice-available></app-no-invoice-available>
+</div>

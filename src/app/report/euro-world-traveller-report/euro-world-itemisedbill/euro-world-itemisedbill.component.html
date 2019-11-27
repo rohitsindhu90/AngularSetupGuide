@@ -1,0 +1,75 @@
+﻿<input type="button" class="btn btn-primary" (click)="goback()" value="Back" />
+<div class="row col-lg-6 vert-offset-top-1">
+    <div class="col-lg-12">
+        <label class="col-lg-4 col-sm-5">Itemised Bill for - </label>
+        <label class="col-lg-6 col-sm-6">{{ countryoforigin }}</label>
+
+        <label class="col-lg-4 col-sm-5">Month</label>
+        <label class="col-lg-6 col-sm-6">{{ monthname }}</label>
+
+        <label class="col-lg-4 col-sm-5">Network</label>
+        <label class="col-lg-6 col-sm-6">{{ networkdescription }}</label>
+
+        <div *ngIf="billingplatformdescription">
+            <label class="col-lg-4 col-sm-5">Billing Platform</label>
+            <label class="col-lg-6 col-sm-6">{{billingplatformdescription}}</label>
+        </div>
+        <div *ngIf="bendescription">
+            <label class="col-lg-4 col-sm-5">Ben</label>
+            <label class="col-lg-6 col-sm-6">{{bendescription}}</label>
+        </div>
+        <div *ngIf="bandescription">
+            <label class="col-lg-4 col-sm-5">BAN</label>
+            <label class="col-lg-6 col-sm-6">{{bandescription}}</label>
+        </div>
+    </div>
+</div>
+<p-dataTable #dt
+             [value]="invoiceitemisedmodel"
+             [rows]="10"
+             [paginator]="true"
+             [responsive]="true"
+             [rowsPerPageOptions]="[5,10,20]" exportFilename="{{csvfilename}}"
+             scrollable="true" frozenWidth="150px" unfrozenWidth="100%"
+             class="ui-datatable-scroll-margin-fix">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column [style]="{'width':'150px'}" frozen="true" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'200px'}" field="username" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'130px'}" field="calldatetimestring" header="Date + Time" filter="true" filterMatchMode="contains" sortable="true"></p-column>
+    <p-column field="calltype" header="Category" filter="true" filterMatchMode="contains" [sortable]="true" [style]="{'width':'130px'}">
+
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="categoryFilter!=null" (click)="categoryFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="categoryfilterset" [style]="{'width':'100%'}" [(ngModel)]="categoryFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column field="subcalltype" header="Type" filter="true" filterMatchMode="contains" [sortable]="true" [style]="{'width':'130px'}">
+
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="subcallTypeFilter!=null" (click)="subcallTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="subcalltypefilterset" [style]="{'width':'100%'}" [(ngModel)]="subcallTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+
+    </p-column>
+    <p-column field="destination" [style]="{'width':'250px'}" header="Description" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="notes" [style]="{'width':'180px'}" header="Notes" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="numberdialled" [style]="{'width':'130px'}" header="Number Dialled" [sortable]="true" filter="true" filterMatchMode="contains"></p-column>
+
+    <p-column styleClass="text-right" [style]="{'width':'130px'}" field="duration" header="Duration" [sortable]="true" displaysum="true"></p-column>
+    <p-column styleClass="text-right" [style]="{'width':'130px'}" field="datavolume" header="Data(MB)" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'130px'}" field="usagecharge" header="UsageCharge" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+</p-dataTable>

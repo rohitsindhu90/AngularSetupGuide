@@ -1,0 +1,7 @@
+﻿
+<div id="ban-container" class="form-group" *ngIf="banArray?.length > 1">
+    <label>BAN</label>
+
+    <p-dropdown [options]="banArray" [(ngModel)]="banGuid" name="banGuid"  filter="filter" (onChange)="onChangeBan()">
+    </p-dropdown>
+</div>

@@ -1,0 +1,451 @@
+﻿<p-dataTable *ngIf="callclassreportviewmodel != null" #dt id="grid-call-class" class="ui-datatable-scroll-margin-fix"
+             [value]="callclassreportviewmodel"
+             [rows]="10"
+             [paginator]="true"
+             [rowsPerPageOptions]="[5,10,20]"
+             scrollable="true"
+             frozenWidth="150px"
+             unfrozenWidth="100%"
+             [style]="{'margin-top':'30px'}"
+             selectionMode="single"
+             (onRowSelect)="onRowSelect($event)"
+             [responsive]="true"
+             exportFilename="total-billing-information">
+
+    <p-header>
+        <div class="ui-helper-clearfix">
+
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel " (click)="dt.exportExcel(true)" style="float:left"></button>
+            <button type="button" class="float-right" pButton iconPos="left" label="Full Itemisation" (click)="navigateToItemised()" style="float:left"></button>
+        </div>
+    </p-header>
+
+    <p-headerColumnGroup>
+        <p-row>
+            <p-column [style]="{'width':'8250px'}" styleClass="col-group-header" colspan="55"></p-column>
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'150px'}" frozen="true" header="Description" field="description" rowspan="3" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="No. of Mobile Numbers" field="count" rowspan="3" sortable="true" displaysum="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="Recurring Charges" field="monthlinerental" rowspan="3" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="Recurring Credits" field="linerentalcredit" rowspan="3" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="Other Charges" field="othercharges" rowspan="3" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="Other Credits" field="othercredits" rowspan="3" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="Total Recurring Charge" field="totallinerental" rowspan="3" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" header="Total Call Cost" field="totalcallcost" rowspan="3" sortable="true"  *ngIf="istotalbillingcallcostvisible"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right table-border-right" header="Total Usage Cost" field="totalusagecost" rowspan="3" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right table-border-right" header="Total Cost" field="total" rowspan="3" sortable="true"></p-column>
+
+
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="National" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Within Company" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Same Network" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Cross Net" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Voicemail" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="SMS" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Non Geographic" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Directory Enquiries" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Premium Service" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Personal Number" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="MMS" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Premium SMS" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="International" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="International SMS" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Roamed Outgoing" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Roamed Received" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Roamed SMS" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Data" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Roamed Data" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Uncategorised" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" *ngIf="ismpayexist" header="MPAY" colspan="2"></p-column>
+
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Bundle Eligibility" colspan="2"></p-column>
+
+        </p-row>
+        <p-row>
+            <!--national-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nationalcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nationalduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Within Company-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="withincompanycost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="withincompanyduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Same Network-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="samenetworkcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="samenetworkduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Cross Network-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="othernetworkcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="othernetworkduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--voice mail-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="voicemailcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="voicemailduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--SMS-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutvolume" header="Volume" sortable="true"></p-column>
+
+            <!--NON- geographic-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nongeographiccost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nongeographicduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Directory Enquiries-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="directoryenquiriescost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="directoryenquiriesduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Premium Call-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumcallcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumcallduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Personal Number-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="personalnumbercost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="personalnumberduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--MMS Out-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mmsoutcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mmsoutvolume" header="Volume" sortable="true"></p-column>
+
+            <!--Premium SMS-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumsmscost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumsmsvolume" header="Volume" sortable="true"></p-column>
+
+            <!--Intl UK-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="intlukcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="intlukduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--SMS Out Foreign Leg-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutforeignlegcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutforeignlegvolumne" header="Volume" sortable="true"></p-column>
+
+            <!--Roamed Call-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Roamed Received-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamingreceivedcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamingreceivedduraiton" header="Duration(Mins.)" sortable="true"></p-column>
+
+
+            <!--Roamed SMS-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedincomingsmscost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedincomingsmsvolume" header="Volume" sortable="true"></p-column>
+
+
+
+            <!--Data-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="gprscost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="gprsdata" header="Data(MB)" sortable="true"></p-column>
+
+            <!--Romed Data-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedgprscost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedgprsdata" header="Data(MB)" sortable="true"></p-column>
+            <!--Uncategorised-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="uncategorisedcost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="uncategorisedduration" header="Duration(Mins.)" sortable="true"></p-column>
+
+            <!--Mapy-->
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mpaycost" *ngIf="ismpayexist" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mpayvolume" *ngIf="ismpayexist" header="Volume" sortable="true"></p-column>
+
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="bundleeligibilitycost" header="Cost" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="bundleeligibilitydata" header="Data(MB)" sortable="true"></p-column>
+
+
+
+        </p-row>
+    </p-headerColumnGroup>
+    <p-column [style]="{'width':'150px'}" frozen="true" header="Description" field="description"></p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" header="No. of Mobile Numbers" field="count" displaysum="true"></p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="monthlinerental" header="Recurring Charges" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="linerentalcredit" header="Recurring Credits" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="othercharges" header="Other Charges" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat}}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="othercredits" header="Other Credits" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat}}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="totallinerental" header="Total Recurring Charge" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat}}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="totalcallcost" header="Total Call Cost" displaysum="true"  *ngIf="istotalbillingcallcostvisible">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="totalusagecost" header="Total Usage Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="total" header="Total Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <!--National-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nationalcost" header="National - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nationalduration" header="National - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Within Company-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="withincompanycost" header="Within Company - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="withincompanyduration" header="Within Company - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Same Network-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="samenetworkcost" header="Same Network - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="samenetworkduration" header="Same Network - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Coress Net-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="othernetworkcost" header="Cross Net - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="othernetworkduration" header="Cross Net - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--voicemail-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="voicemailcost" header="Voicemail - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="voicemailduration" header="Voicemail - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--SMS-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutcost" header="SMS - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutvolume" header="SMS - Volume" displaysum="true"></p-column>
+
+    <!--Non Geographic-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nongeographiccost" header="Non Geographic - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="nongeographicduration" header="Non Geographic - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Directory Enquiries-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="directoryenquiriescost" header="Directory Enquiries - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="directoryenquiriesduration" header="Directory Enquiries - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+
+    </p-column>
+
+    <!--Premium Call-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumcallcost" header="Premium Service - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumcallduration" header="Premium Service - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Personal Number-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="personalnumbercost" header="Personal Number - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="personalnumberduration" header="Personal Number - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--MMS Out-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mmsoutcost" header="MMS - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mmsoutvolume" header="MMS - Volume" displaysum="true"></p-column>
+
+    <!--Premium SMS-->
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumsmscost" header="Premium SMS - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="premiumsmsvolume" header="Premium SMS - Volume" displaysum="true"></p-column>
+
+
+    <!--Intl UK-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="intlukcost" header="International - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="intlukduration" header="International - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--SMS Out Foreign Leg-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutforeignlegcost" header="International SMS - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="smsoutforeignlegvolumne" header="International SMS - Volume" displaysum="true"></p-column>
+
+    <!--Roamed Call-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedcost" header="Roamed Outgoing - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedduration" header="Roamed Outgoing - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+
+    <!--Roamed Received-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamingreceivedcost" header="Roamed Received - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamingreceivedduraiton" header="Roamed Received - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Roamed SMS-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedincomingsmscost" header="Roamed SMS - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedincomingsmsvolume" header="Roamed SMS - Volume" displaysum="true"></p-column>
+
+
+    <!--data-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="gprscost" header="Data - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="gprsdata" header="Data - Data(MB) " displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Roamed Data-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedgprscost" header="Roamed Data - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedgprsdata" header="Roamed Data - Data(MB)" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Uncategorised-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="uncategorisedcost" header="Uncategorised - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="uncategorisedduration" header="Uncategorised - Duration" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+    <!--Mpay-->
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" *ngIf="ismpayexist" field="mpaycost" header="MPAY - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" *ngIf="ismpayexist" field="mpayvolume" header="MPAY - Volume" displaysum="true"></p-column>
+
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="bundleeligibilitycost" header="Bundle Eligibility - Cost" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="bundleeligibilitydata" header="Bundle Eligibility - Data(MB)" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+
+</p-dataTable>
+<div #linkfleetcontainer></div>

@@ -1,0 +1,314 @@
+<div class="col-sm-12">
+    <form name="form" class="modal-form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+        <!--<form name="form" class="modal-form" (ngSubmit)="save(f)" #f="ngForm" novalidate>-->
+        <div class="form-group row " *ngIf="isclient">
+            <!--<label [class]="labelClass">Asset:</label>-->
+            <div class="col-sm-10">
+                Assets Supplied by Onecom cannot be added via this screen. Please contact your Account Manager at Onecom
+                for Assistance
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && productid.errors && productid.errors.required }">
+            <label for="productid" [class]="labelClass">Asset:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="productLibraryArray" name="productid" #productid="ngModel"
+                    [(ngModel)]="model.productid" required [filter]="true">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && productid.errors && productid.errors.required">This field is required</span>
+            </div>
+        </div>
+        <!--<div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !imei.valid }">
+        <label [class]="labelClass">IMEI:</label>
+        <div class="col-sm-8" style="display:flex;">
+            <input type="text" class="form-control" name="imei" [(ngModel)]="model.imei" #imei="ngModel" required maxlength="20" (keypress)="onlyNumberKey($event)" />
+
+            <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !imei.valid">Please enter either the Serial Number or the valid IMEI.</span>
+        </div>
+    </div>-->
+        <!--<div class="form-group row " [ngClass]="{ 'has-danger':(ctndetailguid && f.submitted && !imei.valid)||  (imei.errors?.remoteurlvalidation) ||((imei.dirty || imei.touched) && imei.errors?.validatePattern)}">
+        <label [class]="labelClass">IMEI:</label>
+        <div class="col-sm-8" style="display:flex;">
+
+            <input type="text" class="form-control" name="imei" [(ngModel)]="model.imei" #imei="ngModel" maxlength="20" pInputText pKeyFilter="int" (blur)="imeiOnBlur($event)"
+                   required ng2-remote-validator url="/asset/checkimeiisvalid?iMEI=" [ngControlOptions]="{ updateOn: 'blur', debounce: '300' }" [pValidateOnly]="true" />
+
+            <span class="col-sm-5 form-control-feedback" *ngIf="imei.errors?.remoteurlvalidation">{{imei.errors?.remoteurlvalidation}}</span>
+            <span class="col-sm-5 form-control-feedback" *ngIf="(imei.dirty || imei.touched) && imei.errors?.validatePattern">IMEI should be integer Only</span>
+            <span class="col-sm-5 form-control-feedback" *ngIf="ctndetailguid && f.submitted && !imei.valid">Please enter IMEI.</span>
+        </div>
+    </div>-->
+
+        <div class="form-group row "
+            [ngClass]="{ 'has-danger':(ctndetailguid && f.submitted && imei.errors?.required) ||  (imei.errors?.remoteurlvalidation)}">
+            <label for="imei" [class]="labelClass">IMEI:</label>
+            <div class="col-sm-8" style="display:flex;">
+
+                <input type="text" class="form-control" name="imei" [(ngModel)]="model.imei" #imei="ngModel"
+                    maxlength="20" pInputText pKeyFilter="int" (ngModelChange)="imeiOnBlur($event)"
+                    [required]="ctndetailguid" ng2-remote-validator url="/asset/checkimeiisvalid?iMEI="
+                    [ngControlOptions]="{ updateOn: 'blur', debounce: '300' }" [pValidateOnly]="false" />
+
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="imei.errors?.remoteurlvalidation">{{imei.errors?.remoteurlvalidation}}</span>
+                <!--<span class="col-sm-5 form-control-feedback" *ngIf="(imei.dirty || imei.touched) && imei.errors?.validatePattern">IMEI should be integer Only</span>-->
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="ctndetailguid && f.submitted && imei.errors?.required">Please enter IMEI.</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': (!ctndetailguid && !model.imei && f.submitted && !serialnumber.valid)|| (serialnumber.errors?.remoteurlvalidation) }">
+            <label for="serialnumber" [class]="labelClass">Serial No:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="serialnumber" [(ngModel)]="model.serialnumber"
+                    #serialnumber="ngModel" [required]="!model.imei && !ctndetailguid" maxlength="30"
+                    ng2-remote-validator url="/asset/CheckSerialNumberIsValid?serialNumber="
+                    [ngControlOptions]="{ updateOn: 'blur', debounce: '300' }" />
+
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="!ctndetailguid && !model.imei && f.submitted && !serialnumber.valid">Please enter either the
+                    Serial Number or the valid IMEI. </span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="serialnumber.errors?.remoteurlvalidation">{{serialnumber.errors?.remoteurlvalidation}}</span>
+
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && assetsupplierguid.errors && assetsupplierguid.errors.required }">
+            <label for="assetsupplierguid" [class]="labelClass">Supplier:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="assetsupplierArray" name="assetsupplierguid" #assetsupplierguid="ngModel"
+                    [(ngModel)]="model.assetsupplierguid" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && assetsupplierguid.errors && assetsupplierguid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && assetownershipid.errors && assetownershipid.errors.required }">
+            <label for="assetownershipid" [class]="labelClass">Ownership:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="assetownershiparray" name="assetownershipid" #assetownershipid="ngModel"
+                    [(ngModel)]="model.assetownershipid" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && assetownershipid.errors && assetownershipid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div *ngIf="!model.isaddandassignasset && model.imei" class="form-group row">
+            <label for="mobilefilter" [class]="labelClass">Assigned Mobile Number:</label>
+
+
+            <div class="col-sm-8 form-inline">
+                <!--<p-dropdown [options]="ctndetailsarray" name="ctndetailguid" #ctndetailguid="ngModel" [(ngModel)]="model.ctndetailguid"  required>
+            </p-dropdown>-->
+                <p-autoComplete-extended [headermeta]="mobilenumberheadermeta" searchContainerWidth="50%" maxwidth="500"
+                    [suggestions]="mobileFilterList" (completeMethod)="completeMethodMobile($event)"
+                    (onSelect)="onSelectMobile($event)" forceSelection="true" [minLength]="4" [dropdown]="false"
+                    [(ngModel)]="mobileFilter" placeholder="Search by Mobile, Status, Name" field="mobilenumber"
+                    name="mobilefilter" (onClear)="clearModelMobile($event)"></p-autoComplete-extended>
+
+                <input type="button" value="Add New Mobile" class="btn btn-primary left-10"
+                    (click)="onAddNewMobile()" />
+            </div>
+
+        </div>
+        <div *ngIf="!model.isaddandassignasset && model.imei" class="form-group row">
+            <label for="simnumber" [class]="labelClass">SIM Number:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="simnumber" [(ngModel)]="model.simnumber"
+                    #simnumber="ngModel" maxlength="100" [readonly]="true" />
+
+            </div>
+        </div>
+
+        <div id="reportinggroup1-container" class="form-group row"
+            *ngIf="!model.isaddandassignasset && reportinggroup1Active">
+            <label for="reportinggroup1" [class]="labelClass">{{reportinggroup1DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup1Array" [(ngModel)]="model.reportinggroup1guid"
+                    name="reportinggroup1" filter="filter" #reportinggroup1guid="ngModel"
+                    [readonly]="model.ctndetailguid" (onChange)="onChangeReportingGroup1()">
+                </p-dropdown>
+            </div>
+
+        </div>
+        <div id="reportinggroup2-container" class="form-group row"
+            *ngIf="!model.isaddandassignasset && reportinggroup2Active">
+            <label for="reportinggroup2" [class]="labelClass">{{reportinggroup2DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup2Array" [(ngModel)]="model.reportinggroup2guid"
+                    name="reportinggroup2" filter="filter" #reportinggroup2guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup2,reportinggroup3Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup1guid)">
+                </p-dropdown>
+            </div>
+
+        </div>
+        <div id="reportinggroup3-container" class="form-group row"
+            *ngIf="!model.isaddandassignasset && reportinggroup3Active">
+            <label for="reportinggroup3" [class]="labelClass">{{reportinggroup3DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup3Array" [(ngModel)]="model.reportinggroup3guid"
+                    name="reportinggroup3" filter="filter" #reportinggroup3guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup3,reportinggroup4Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup2guid)">
+                </p-dropdown>
+            </div>
+
+        </div>
+        <div id="reportinggroup4-container" class="form-group row"
+            *ngIf="!model.isaddandassignasset && reportinggroup4Active">
+            <label for="reportinggroup4" [class]="labelClass">{{reportinggroup4DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup4Array" [(ngModel)]="model.reportinggroup4guid"
+                    name="reportinggroup4" filter="filter" #reportinggroup4guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup4,reportinggroup5Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup3guid)">
+                </p-dropdown>
+            </div>
+
+        </div>
+        <div id="reportinggroup5-container" class="form-group row"
+            *ngIf="!model.isaddandassignasset && reportinggroup5Active">
+            <label for="reportinggroup5" [class]="labelClass">{{reportinggroup5DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup5Array" [(ngModel)]="model.reportinggroup5guid"
+                    name="reportinggroup5" filter="filter" #reportinggroup5guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup5,reportinggroup6Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup4guid)">
+                </p-dropdown>
+            </div>
+
+        </div>
+        <div id="reportinggroup6-container" class="form-group row"
+            *ngIf="!model.isaddandassignasset && reportinggroup6Active">
+            <label for="reportinggroup6" [class]="labelClass">{{reportinggroup6DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup6Array" [(ngModel)]="model.reportinggroup6guid"
+                    name="reportinggroup6" filter="filter" #reportinggroup6guid="ngModel"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup5guid)">
+                </p-dropdown>
+            </div>
+
+        </div>
+        <div class="form-group row" *ngIf="!model.isaddandassignasset">
+            <label for=" {{ !model.ctndetailguid ?  'userguid' : 'username' }}" [class]="labelClass">Employee
+                Name:</label>
+            <div class="col-sm-8" style="display:flex;" *ngIf="model.ctndetailguid">
+                <input type="text" class="form-control" name="username" [(ngModel)]="userFilter.name" maxlength="100"
+                    [readonly]="true" />
+            </div>
+            <div class="col-sm-8 form-inline" *ngIf="!model.ctndetailguid">
+                <p-autoComplete-extended [headermeta]="userfilterheadermeta" searchContainerWidth="50%" maxwidth="400"
+                    [(ngModel)]="userFilter" [suggestions]="userFilterList"
+                    (completeMethod)="completeMethodUserAccount($event)" [minLength]="3"
+                    (onSelect)="onSelectUserAccount($event)" (onClear)="onClearUserAccount($event)"
+                    forceSelection="true" placeholder="{{searchuserautocompletePlaceHolderText}}" [dropdown]="false"
+                    name="userguid" field="name" (onDropdownClick)="completeMethodUserAccount($event)">
+                </p-autoComplete-extended>
+
+
+                <input type="button" value="Add New User" class="btn btn-primary left-10" (click)="onAddNewUser()" />
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="!model.isaddandassignasset">
+            <label for="email" [class]="labelClass">Email Address:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="email" [(ngModel)]="model.email" #email="ngModel"
+                    maxlength="100" [readonly]="true" />
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="!model.isaddandassignasset">
+            <label for="staffid" [class]="labelClass">Staff ID:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="staffid" [(ngModel)]="model.staffid" #staffid="ngModel"
+                    maxlength="100" [readonly]="true" />
+            </div>
+        </div>
+
+        <div class="form-group row" *ngIf="!isComponentINPopUp">
+            <label for="dateassigned" [class]="labelClass">Date Assigned:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-calendar name="dateassigned" [(ngModel)]="model.dateassigned" #dateassigned="ngModel" maxlength="100"
+                    dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" readonlyInput="true"
+                    [disabled]="!model.userguid" yearRange="2000:2030" [showIcon]="true" class="form-control">
+                </p-calendar>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !purchasedate.valid }"
+            *ngIf="ShowPOAgainstAssetActive">
+            <label for="purchasedate" [class]="labelClass">Purchase Date:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-calendar name="purchasedate" [(ngModel)]="model.purchasedate" #purchasedate="ngModel" required
+                    maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" readonlyInput="true"
+                    [yearNavigator]="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+                &nbsp; &nbsp;&nbsp;&nbsp; <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && !purchasedate.valid">This field is required</span>
+            </div>
+        </div>
+        <!--<div class="form-group row required" [ngClass]="{ 'has-danger': model.purchaseprice && f.submitted && !purchaseprice.valid }">-->
+        <!--<div class="form-group row required" *ngIf="ShowPOAgainstAssetActive" [ngClass]="{ 'has-danger': model.purchaseprice && f.submitted && !purchaseprice.valid }">
+        <label [class]="labelClass">Purchase Price(£):</label>
+        <div class="col-sm-8" style="display:flex;">
+            <input type="text" class="form-control" name="purchaseprice" [(ngModel)]="model.purchaseprice" #purchaseprice="ngModel" required maxlength="10"
+                   pattern="[0-9]*\.?[0-9]*" />{{purchaseprice.valid}}
+            <span class="col-sm-5 form-control-feedback" *ngIf="model.purchaseprice && f.submitted && !purchaseprice.valid">This field should be number Only.</span>
+        </div>
+    </div>-->
+
+        <div class="form-group row" *ngIf="ShowPOAgainstAssetActive"
+            [ngClass]="{ 'has-danger':  ((purchaseprice.dirty || purchaseprice.touched) && purchaseprice.errors?.validatePattern)}">
+            <label for="purchaseprice" [class]="labelClass">Purchase Price(£):</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="purchaseprice" [(ngModel)]="model.purchaseprice"
+                    #purchaseprice="ngModel" maxlength="10" pInputText [pKeyFilter]="decimalregx"
+                    [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(purchaseprice.dirty || purchaseprice.touched) && purchaseprice.errors?.validatePattern">Purchase
+                    price should be decimal(0.00)</span>
+            </div>
+        </div>
+
+        <div class="form-group row" *ngIf="ShowPOAgainstAssetActive">
+            <label for="ponumber" [class]="labelClass">PO Number:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="ponumber" [(ngModel)]="model.ponumber" #ponumber="ngModel"
+                    maxlength="50" />
+
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="ShowPOAgainstAssetActive && isclient">
+            <label for="ordernumber" [class]="labelClass">Order Number:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="ordernumber" [(ngModel)]="model.ordernumber"
+                    #ordernumber="ngModel" maxlength="50" />
+
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="isAssetRegisterIDActive">
+            <label for="registerid" [class]="labelClass">Register ID:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="registerid" [(ngModel)]="model.registerid"
+                    #registerid="ngModel" maxlength="50" />
+
+            </div>
+        </div>
+        <div class="form-group row">
+            <div [class]="labelClass"></div>
+            <div class="col-sm-8">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+    </form>
+</div>

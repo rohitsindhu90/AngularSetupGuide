@@ -1,0 +1,194 @@
+﻿@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i);
+
+// @function v($var, $fallback: null) {
+//   @if($fallback) {
+//     @return var(--#{$var}, #{$fallback});
+//   }
+
+//   @return var(--#{$var});
+// }
+
+
+// we can also define variables with JavaScript
+
+$text-color-base: var(--text-color-base) !default;
+
+$bg-color-base: var(--bg-color-base) !default;
+
+$transparent-gb:transparent !default;
+$error-color: var(--error-color) !default;
+//== Typography
+//
+//## Font, line-height, and color for body text, headings, and more.
+$font-family-default: 'Open Sans',
+sans-serif;
+$font-family-sans-serif: $font-family-default;
+$font-family-serif: 'Open Sans',
+serif;
+$font-family-monospace: Menlo,
+Monaco,
+Consolas,
+'Open Sans',
+monospace;
+$font-family-base: $font-family-sans-serif;
+$font-family-semi-bold: 'Open Sans Semibold',
+sans-serif;
+
+//color
+$neon-bright-scss: #00e9d3 !default;
+
+$neon-bright: var(--neon-bright) !default;
+
+$nebula-bg: url(../images/nebula-bg.jpg) top right no-repeat;
+//sidebar
+$sidebar-public-width: 300px !default;
+$sidebar-secure-width: ($sidebar-public-width - 40) !default;
+
+$sideBarBgColor-scss: #192227 !default;
+$sideBarBgColor: var(--sideBarBgColor) !default; //#0e2630;
+$public-sideBarBgColor: var(--public-sideBarBgColor) !default;
+
+//default button
+$btnBgColor: $bg-color-base !default;
+$btnTextColor: #192943 !default;
+
+$page-header-max-width:80%;
+
+$theme-bgcolor:var(--theme-bgcolor);
+
+
+//label
+$labelColor: $text-color-base;
+
+//sidebar color
+//Overide Link Color manually
+$link-color: #5885a7 !default;
+$link-color-focus: $text-color-base !default;
+
+$link-color-scss:var(--link-color) !default;
+$link-color-scss-hover:var(--link-color-hover) !default;
+//** Background color for `<body>`.
+$body-bg: #212d34 !default;
+
+$body-bg-color:var(--body-bg) !default;
+//** Global text color on `<body>`.
+$text-color: #ffff;
+$text-color-scss:var(--text-color);
+
+//** By default, this inherits from the `<body>`.
+$headings-font-weight: 500;
+$headings-color: $text-color;
+
+//== Forms
+//
+//##
+$font-size-base: 0.800rem;
+$font-size-small: ceil(($font-size-base * 0.85)) !default; // ~12px
+$font-size-large: ceil(($font-size-base * 1.25)) !default; // ~18px
+
+
+
+//** `<input>` background color
+$input-bg: #10222a !default;
+/*$input-border-color: darken($neon-bright-scss,25%) !default;
+$input-disabled-bg: lighten($neon-bright-scss,25%) !default;*/
+$input-border-color: var(--neon-bright-darken-25) !default;
+$input-disabled-bg: var(--neon-bright-lighten-15) !default;
+//** Border color for inputs on focus
+$input-border-focus: $neon-bright;
+
+//** Text color for `<input>`s
+// $input-color: $neon-bright;
+
+$input-color:var(--table-text-color);
+
+$input-border-radius: 0rem;
+
+
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius-base: 0rem;
+$btn-border-radius-large: 0rem;
+$btn-border-radius-small: 0rem;
+
+
+//** Placeholder text color
+$input-color-placeholder: $neon-bright;
+
+
+
+//== Buttons
+//
+//## For each of Bootstrap's buttons, define text, background and border color.
+
+$btn-secondary-color: $neon-bright-scss !default;
+$btn-secondary-bg: $input-bg !default;
+$btn-secondary-border:$neon-bright-scss !default;
+
+$btn-primary-color: $btnTextColor !default;
+$btn-primary-bg: $neon-bright-scss !default;
+
+$btn-border-radius: 0rem;
+
+
+$element-dom-height: 100vh;
+
+
+
+//table
+$component-bg: #212d34 !default;
+$table-header-bg: #1f2c36 !default;
+
+$table-row-border: #195c5c !default;
+$bg-scroll-bar: #39454d !default; // $table-row-border;
+$top-bar-color: var(--top-bar-color) !default;
+$user-info-bg-color: rgb(0, 233, 211) !default;
+$user-info-text-color: #1b252b !default;
+
+$dropdown-bg: $sideBarBgColor;
+/*$dropdown-border-color: rgba($black,.15) !default;*/
+
+$dropdown-divider-bg: $neon-bright !default;
+/*$dropdown-box-shadow: 0 .5rem 1rem rgba($black,.175) !default;*/
+
+$dropdown-link-color: $neon-bright;
+
+$dropdown-link-hover-color: $text-color;
+$dropdown-link-hover-bg: $neon-bright;
+
+$dropdown-link-active-color: $text-color-base;
+$dropdown-link-active-bg: $neon-bright;
+
+
+//modal Popup    background-color: $component-bg;
+/*border: 1px solid $neon-bright*/
+
+$modal-content-bg: $component-bg;
+
+$close-color:$text-color-base;
+
+//primeng Datatable padding 
+$ui-datatable-padding:0.5em 0.32em 0.5em 0.55em;
+
+
+$dropdown-hover-color: $table-row-border !default;
+$ui-widget-color: $text-color-base !default;
+$ui-chkbox-box-border: var(---ui-chkbox-box-border) !default;
+
+$publish-comms-logo: url(../images/logo/comms-logo.png) no-repeat center left/ 187px 70px;
+
+$comms-logo: $publish-comms-logo !default;
+
+/*$comms-logo-attr: 187px 70px !default;*/
+/*$comms-logo-margin: 15px 0px 17px 15px !default;*/
+
+$dropdown-item-hover: $neon-bright !default;
+
+$sidebar-font-color:var(--sidebar-font-color) !default;
+
+$night-neon-bright: var(--neon-bright) !default;
+
+$sidebar-menu-scroll-bg: #1f2c36 !default;
+$sidebar-menu-scroll-bar-thumb: #39454d !default;
+
+/*$jumbotron-bg: lighten($sideBarBgColor,35%) !default;*/
+$jumbotron-bg: $sideBarBgColor-scss !default;

@@ -1,0 +1,56 @@
+﻿<form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+    <div class="form-group" >
+        <div class="row">
+            <label for="internationalbarstatus" class="col-lg-5 col-sm-5">International Bar</label>
+            <label for="internationalbarauthorizedby" class="col-lg-offset-5 col-sm-offset-5">Authorized By</label>
+        </div>
+        <div class="row">
+            <p-dropdown class="col-lg-5 col-sm-5" [options]="statuslist" [(ngModel)]="model.internationalbarred" name="internationalbarstatus"
+                         filter="filter" [style]="{'width':'250px','height':'30px'}">
+            </p-dropdown>
+            <div class="col-lg-offset-5 col-sm-offset-5" [ngClass]="{ 'has-danger': f.submitted && (model.internationalbarred != original_model.internationalbarred) && (!model.internationalbarauthorizedby) }">
+                <input type="text" class="form-control" name="internationalbarauthorizedby" [(ngModel)]="model.internationalbarauthorizedby" #internationalbarauthorizedby="ngModel" maxlength="50" [required]="(model.internationalbarred != original_model.internationalbarred)" />
+                <span class="form-control-feedback" *ngIf="f.submitted && internationalbarauthorizedby.errors?.required">Authorized by is required</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group" >
+        <div class="row">
+            <label for="roamingbarstatus" class="col-lg-5 col-sm-5">Roaming Bar</label>
+            <label for="roamingbarauthorizedby" class="col-lg-offset-5 col-sm-offset-5">Authorized By</label>
+        </div>
+        <div class="row">
+            <p-dropdown class="col-lg-5 col-sm-5" [options]="statuslist" [(ngModel)]="model.roamingbarred" name="roamingbarstatus" 
+                         filter="filter" [style]="{'width':'250px','height':'30px'}">
+            </p-dropdown>
+            <div class="col-lg-offset-5 col-sm-offset-5" [ngClass]="{ 'has-danger': f.submitted && (model.roamingbarred != original_model.roamingbarred) && (!model.roamingbarauthorizedby) }">
+                <input type="text" class="form-control" name="roamingbarauthorizedby" [(ngModel)]="model.roamingbarauthorizedby" #roaming="ngModel" maxlength="50" [required]="(model.roamingbarred != original_model.roamingbarred)" />
+                <span class="form-control-feedback" *ngIf="f.submitted && roaming.errors?.required">Authorized by is required</span>
+
+            </div>
+        </div>
+    </div>
+    <div class="form-group" >
+        <div class="row">
+            <label for="databarstatus" class="col-lg-5 col-sm-5">Data Bar</label>
+            <label for="databarauthorizedby" class="col-lg-offset-5 col-sm-offset-5">Authorized By</label>
+        </div>
+        <div class="row">
+            <p-dropdown class="col-lg-5 col-sm-5" [options]="statuslist" [(ngModel)]="model.databarred" name="databarstatus" 
+                         filter="filter" [style]="{'width':'250px','height':'30px'}">
+            </p-dropdown>
+            <div class="col-lg-offset-5 col-sm-offset-5" [ngClass]="{ 'has-danger': f.submitted && (model.databarred != original_model.databarred) && (!model.databarauthorizedby)}">
+                <input type="text" class="form-control " name="databarauthorizedby" [(ngModel)]="model.databarauthorizedby" #data="ngModel" maxlength="50" [required]="(model.databarred != original_model.databarred)"  />
+                <span class="form-control-feedback" *ngIf="f.submitted && data.errors?.required">Authorized by is required</span>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <input type="submit" [disabled]="loading" value="Submit" class="btn btn-primary" />
+
+    </div>
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+</form>

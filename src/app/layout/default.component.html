@@ -1,0 +1,30 @@
+﻿
+<div id="default-layout">
+    <div class="active">
+        <div class="layout-logo">
+            <div class="sidebar-logo">
+            </div>
+            <div class="page-default-header">
+                <div class="header-text">
+                    {{pageTitle}}
+                </div>
+            </div>
+        </div>
+       
+
+        <router-outlet></router-outlet>
+    </div>
+</div>
+<div id="layout-content">
+    <p-confirmDialog key="dialog" icon="fa fa-info-circle" height="250" width="600" #dialog [closable]="false">
+        <p-footer>
+            
+            <div class="form-inline">
+                <div class="form-group margin-auto">
+                    <button class="btn btn-secondary" (click)="dialog.accept()">OK</button>
+                </div>
+              
+            </div>
+        </p-footer>
+    </p-confirmDialog>
+</div>

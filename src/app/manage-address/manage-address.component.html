@@ -1,0 +1,150 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+
+
+        <div *ngIf="!model.isnewaddress" class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && !addressid.valid }">
+            <label for="addressid" class="col-sm-2">Address Short Name:</label>
+            <div class="col-sm-8">
+                <p-dropdown name="addressid" [hidden]="model.isnewaddress" [options]="addressArray"
+                    [(ngModel)]="model.addressid" filter="filter" required #addressid="ngModel"
+                    (onChange)="onChangeAddress()"></p-dropdown>
+                &nbsp;<label class="lbl-bold">
+                    <p-checkbox [(ngModel)]="model.isnewaddress" name="isnewaddress" (onChange)="checkboxChange(f)"
+                        binary="true"></p-checkbox>Add New Address
+                </label>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && addressid.errors && addressid.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div *ngIf="model.isnewaddress" class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && !addresscombined.valid }">
+            <label for="addresscombined" class="col-sm-2">Address Short Name:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="addresscombined" [(ngModel)]="model.addresscombined"
+                    #addresscombined="ngModel" required maxlength="100" />
+                &nbsp;
+                <label>
+                    <p-checkbox [(ngModel)]="model.isnewaddress" name="isnewaddress" (onChange)="checkboxChange(f)"
+                        binary="true"></p-checkbox>Add New Address
+                </label>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !addresscombined.valid">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2">Delivery FAQ:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="itservicedeskcontact"
+                    [(ngModel)]="model.itservicedeskcontact" #itservicedeskcontact="ngModel" maxlength="50" />
+
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger':(itservicedeskcontactnumber.dirty || itservicedeskcontactnumber.touched) && itservicedeskcontactnumber.errors?.validatePattern === false}">
+            <label class="col-sm-2">Recipient Number:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="itservicedeskcontactnumber"
+                    [(ngModel)]="model.itservicedeskcontactnumber" #itservicedeskcontactnumber="ngModel" maxlength="15"
+                    pInputText [pKeyFilter]="mobilenumberregx" [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(itservicedeskcontactnumber.dirty || itservicedeskcontactnumber.touched) && itservicedeskcontactnumber.errors?.validatePattern === false">Recipient
+                    number should be max to 15 digits</span>
+            </div>
+        </div>
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !itservicedeskemail.valid }">
+            <label for="itservicedeskemail" class="col-sm-2">Recipient Email:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="itservicedeskemail" [(ngModel)]="model.itservicedeskemail"
+                    #itservicedeskemail="ngModel" maxlength="50" [pattern]="mailRegex" />
+
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && itservicedeskemail.errors && itservicedeskemail.errors.pattern">Recipient
+                    Email is invalid</span>
+            </div>
+        </div>
+
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted &&  address1.errors && address1.errors.required}">
+            <label for="address1" class="col-sm-2">Address Line 1:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="address1" [(ngModel)]="model.address1" #address1="ngModel"
+                    maxlength="100" required />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && address1.errors && address1.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2">Address Line 2:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="address2" [(ngModel)]="model.address2" #address2="ngModel"
+                    maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2">Address Line 3:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="address3" [(ngModel)]="model.address3" #address3="ngModel"
+                    maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2">Address Line 4:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="address4" [(ngModel)]="model.address4" #address4="ngModel"
+                    maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2">Town:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="city" [(ngModel)]="model.city" #city="ngModel"
+                    maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2">County:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="county" [(ngModel)]="model.county" #county="ngModel"
+                    maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2">Country:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="country" [(ngModel)]="model.country" #country="ngModel"
+                    maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && postcode.errors && postcode.errors.required }">
+            <label for="postcode" class="col-sm-2">Postcode:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="postcode" [(ngModel)]="model.postcode" #postcode="ngModel"
+                    maxlength="10" required />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && postcode.errors && postcode.errors.required">This field is required</span>
+            </div>
+        </div>
+
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && active.errors && active.errors.required }">
+            <label for="active" class="col-sm-2">Status:</label>
+            <div class="col-sm-8">
+                <p-dropdown [disabled]="model.isnewaddress" [options]="statusarray" name="active" #active="ngModel"
+                    [(ngModel)]="model.active" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && active.errors && active.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div class="form-group row text-center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 text-left">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+</div>

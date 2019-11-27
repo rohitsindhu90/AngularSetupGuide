@@ -1,0 +1,260 @@
+<div class="col-sm-12" *ngIf="models && orderGuidExist">
+
+  <div *ngIf="errormsg" class="error">
+    {{errormsg}}
+  </div>
+  <div class="form-group row " *ngIf="(model.orderstatus && model.orderstatus!=orderStatusEnum.Partial) && !freshHardwareOrder; else newHardwareOrder">
+    <label class="col-sm-9">
+      <b>
+        Thank you for your order. It is now being processed and we will update you shortly.<br />
+        Your Reference number is {{model.orderreferencenumber}}.
+      </b> <br />
+      <br />
+      <button class="btn btn-primary" (click)="redirectToHome()">Home</button>
+    </label>
+  </div>
+
+  <ng-template #newHardwareOrder>
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+      <div class="form-group" *ngIf="f.submitted && anyRefurbishedInvalid">
+        <div class="row">
+          <span class="col-sm-3 error">Highlighted devices have more quantity than available</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="fieldsetBorder" *ngFor="let model of models; let index = index; trackBy:customTrackBy">
+          <fieldset form="form1">
+            <legend>
+              <label>
+                Order line {{index+1}}
+              </label>
+              <input *ngIf="models.length-1==index" type="button" value="Add Row" class="btn btn-primary"
+                     (click)="onAddNewRow()" />
+              <input *ngIf="models.length!==1" type="button" value="Remove Row" class="btn btn-primary"
+                     (click)="onRemoveRow(index)" />
+            </legend>
+
+            <div class="form-inline label-inline">
+              <div class="form-group  checkboxMargin" *ngIf="isRefurbishedProductActive">
+                <label>Refurbished</label>
+                <p-checkbox binary="true" [(ngModel)]="model.isrefurbished" name="isrefurbished_{{index}}"
+                            (click)="onClickRefurbishedProduct(index)" class="checkbox">
+                </p-checkbox>
+              </div>
+
+              <div class="form-group"
+                   [ngClass]="{ 'has-danger': f.submitted && ((( !model.isrefurbished && !model.selecteddevice) || (model.isrefurbished && !model.selectedrefurbisheddevice)) || model.refurbishedInvalid) }">
+                <label [for]="model.isrefurbished ? 'selectedrefurbisheddevice_'+index:'selecteddevice_'+index">{{model.isrefurbished ? "Refurbished Device"  :"Device"}}</label>
+
+                <p-autoComplete-extended *ngIf="!model.isrefurbished" [(ngModel)]="model.selecteddevice"
+                                         [suggestions]="model.deviceFilterList" [headermeta]="deviceFilterheadermeta"
+                                         searchContainerWidth="60%" maxwidth='600' [inputStyle]="{'width':'80%'}"
+                                         (completeMethod)="completeMethodDevice($event,index)"
+                                         (onSelect)="onSelectDevice($event,index)" forceSelection="true" [dropdown]="true"
+                                         placeholder="Search device" field="device" id="selecteddevice_{{index}}"
+                                         name="selecteddevice_{{index}}" (onClear)="clearModelDevice($event,index)"
+                                         [required]="!model.isrefurbished">
+                </p-autoComplete-extended>
+
+                <p-autoComplete-extended *ngIf="model.isrefurbished"
+                                         [(ngModel)]="model.selectedrefurbisheddevice"
+                                         [suggestions]="model.refubrishedDeviceFilter"
+                                         [headermeta]="refubrishedDeviceFilterheadermeta" searchContainerWidth="60%"
+                                         maxwidth='600' (completeMethod)="reCompleteMethodDevice($event,index)"
+                                         (onSelect)="onReSelectDevice($event,index)" forceSelection="true" [dropdown]="true"
+                                         [inputStyle]="{'width':'80%'}" id="selectedrefurbisheddevice_{{index}}"
+                                         placeholder="Search device" field="device" name="selectedrefurbisheddevice_{{index}}"
+                                         (onClear)="clearModelDevice($event,index)" [required]="model.isrefurbished">
+                </p-autoComplete-extended>
+              </div>
+
+              <div class="form-group">
+                <label>Cost</label>
+
+                <input type="text" style="width:100px;" class="form-control" name="cost_{{index}}"
+                       [(ngModel)]="model.cost" disabled />
+              </div>
+              <div class="form-group">
+                <label>Quantity</label>
+
+                <p-spinner size="3" [min]="1"
+                           [max]="model.isrefurbished ? model.validationMaxQuantity : 100"
+                           name="quantity_{{index}}" (onChange)="onChangeQuantity($event, index)"
+                           [(ngModel)]="model.quantity" [disabled]="!isQuantityActive || model.mobilenumber!=null">
+                </p-spinner>
+              </div>
+              <div class="form-group">
+                <label>Total Cost</label>
+
+                <input type="text" style="width:100px;" class="form-control" name="totalcost_{{index}}"
+                       [ngModel]="model.totalcost" disabled />
+              </div>
+
+
+              <div class="form-group checkboxMargin" *ngIf="model.producttypeid || model.refurbisheddeviceid">
+                <label>Stock only</label>
+
+                <p-checkbox binary="true" [(ngModel)]="model.isstockonly" name="isstockonly_{{index}}"
+                            (click)="onClickStockOnly(index)" [tooltipDisabled]="!model.isstockonlyReadOnly"
+                            [disabled]="model.isstockonlyReadOnly"
+                            pTooltip="you can't choose same product as stock only" tooltipPosition="top">
+
+                </p-checkbox>
+
+
+
+              </div>
+              <div class="form-group"
+                   *ngIf="(model.producttypeid || model.refurbisheddeviceid) && !model.isstockonly"
+                   [ngClass]="{ 'has-danger': f.submitted && model.producttypeid!=4  && !model.isstockonly && !model.mobilefilter }">
+                <label [for]="(model.producttypeid==4 || model.producttypeid==6) ? 'userguid_'+index:'ctndetailsguid_'+index">
+                  Allocate
+                  {{ (model.producttypeid==4 ||  model.producttypeid==6) ? "User"  :"Mobile Number"}}
+                </label>
+
+                <p-autoComplete-extended *ngIf="(model.producttypeid==4 || model.producttypeid==6);else showmobileFilter"
+                                         [(ngModel)]="model.userfilter" [headermeta]="userFilterHeaderMeta"
+                                         searchContainerWidth="50%" maxwidth='400' [suggestions]="model.userFilterList"
+                                         (completeMethod)="completeMethodUserAccount($event,index)" [minLength]="3"
+                                         (onSelect)="onSelectUserAccount($event,index)"
+                                         (onClear)="onClearUserAccount($event,index)" forceSelection="true"
+                                         placeholder="Search by Name, Staff, Email" [dropdown]="false" name="userguid_{{index}}"
+                                         id="userguid_{{index}}" field="name"
+                                         (onDropdownClick)="completeMethodUserAccount($event,index)"
+                                         [required]="(model.producttypeid==4 || model.producttypeid==6) && !model.isstockonly">
+                </p-autoComplete-extended>
+                <ng-template #showmobileFilter>
+                  <p-autoComplete-extended *ngIf="(model.producttypeid!=4 || model.producttypeid!=6)"
+                                           [(ngModel)]="model.mobilefilter" [suggestions]="model.mobileFilterList"
+                                           [headermeta]="mobileFilterHeaderMeta" searchContainerWidth="50%" maxwidth='400'
+                                           (completeMethod)="completeMethodMobile($event,index)"
+                                           (onSelect)="onSelectMobile($event,index)" forceSelection="true" [minLength]="4"
+                                           [dropdown]="false" placeholder="Search by Mobile, Status, Name" field="mobilenumber"
+                                           name="ctndetailsguid_{{index}}" (onClear)="clearModelMobile($event,index)"
+                                           [disabled]="model.isstockonly"
+                                           [required]="model.producttypeid!=4 && !model.isstockonly"
+                                           id="ctndetailsguid_{{index}}">
+                  </p-autoComplete-extended>
+                </ng-template>
+
+              </div>
+
+              <div class="form-group checkboxMargin"
+                   *ngIf="(model.producttypeid || model.refurbisheddeviceid) && (!model.isstockonly) && (model.mobilenumber!=null || model.name!=null)">
+                <label>Employee Name</label>
+                <label class="text-message">{{model.name}}</label>
+              </div>
+
+              <div class="form-group"
+                   *ngIf="(model.producttypeid || model.refurbisheddeviceid) && (isReplacementDeviceActive &&  model.mobilenumber!=null)"
+                   [ngClass]="{ 'has-danger': f.submitted   &&  model.mobilenumber!=null && (model.isreplaceexistingdevice==null || model.isreplaceexistingdevice==undefined)}">
+                <label for="isreplaceexistingdevice_{{index}}">Replacement Device</label>
+
+                <p-dropdown [options]="replacementdevicelist" name="isreplaceexistingdevice_{{index}}"
+                            [(ngModel)]="model.isreplaceexistingdevice"
+                            id="isreplaceexistingdevice_{{index}}"
+                            [required]=" model.mobilenumber!=null && isReplacementDeviceActive">
+                </p-dropdown>
+              </div>
+            </div>
+
+            <div class="form-inline label-inline"
+                 *ngIf="model.isstockonly ||  model.mobilenumber!=null || model.userid">
+              <div id="reportinggroup1-container" class="form-group" *ngIf="reportinggroup1Active "
+                   [ngClass]="{ 'has-danger': f.submitted && reportinggroup1Required && !model.reportinggroup1id}">
+                <label [for]="reportinggroup1Required ? 'reportinggroup1_'+index : ''">{{reportinggroup1DisplayName}}</label>
+
+                <p-dropdown [options]="model.reportinggroup1Array" [(ngModel)]="model.reportinggroup1id"
+                            name="reportinggroup1_{{index}}" id="reportinggroup1_{{index}}"
+                            filter="filter" [required]="reportinggroup1Required"
+                            [disabled]="model.mobilenumber!=null" (onChange)="onChangeReportingGroup1(index)">
+
+                </p-dropdown>
+              </div>
+
+              <div id="reportinggroup2-container" class="form-group" *ngIf="reportinggroup2Active "
+                   [ngClass]="{ 'has-danger': f.submitted && reportinggroup2Required && !model.reportinggroup2id}">
+                <label [for]="reportinggroup2Required ? 'reportinggroup2_'+index : ''">{{reportinggroup2DisplayName}}</label>
+
+                <p-dropdown [options]="model.reportinggroup2Array" [(ngModel)]="model.reportinggroup2id"
+                            name="reportinggroup2_{{index}}" id="reportinggroup2_{{index}}"
+                            filter="filter" [required]="reportinggroup2Required"
+                            [disabled]="model.mobilenumber!=null"
+                            (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup2,reportinggroup3Active,index)">
+
+                </p-dropdown>
+              </div>
+
+              <div id="reportinggroup3-container" class="form-group" *ngIf="reportinggroup3Active "
+                   [ngClass]="{ 'has-danger': f.submitted && reportinggroup3Required && !model.reportinggroup3id}">
+                <label [for]="reportinggroup3Required ? 'reportinggroup3_'+index : ''">{{reportinggroup3DisplayName}}</label>
+
+                <p-dropdown [options]="model.reportinggroup3Array" [(ngModel)]="model.reportinggroup3id"
+                            name="reportinggroup3_{{index}}" id="reportinggroup3_{{index}}"
+                            filter="filter" [required]="reportinggroup3Required"
+                            [disabled]="model.mobilenumber!=null"
+                            (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup3,reportinggroup4Active,index)">
+
+                </p-dropdown>
+              </div>
+              <div id="reportinggroup4-container" class="form-group" *ngIf="reportinggroup4Active "
+                   [ngClass]="{ 'has-danger': f.submitted && reportinggroup4Required && !model.reportinggroup4id}">
+                <label [for]="reportinggroup4Required ? 'reportinggroup4_'+index : ''">{{reportinggroup4DisplayName}}</label>
+
+                <p-dropdown [options]="model.reportinggroup4Array" [(ngModel)]="model.reportinggroup4id"
+                            name="reportinggroup4_{{index}}" id="reportinggroup4_{{index}}"
+                            filter="filter" [required]="reportinggroup4Required"
+                            [disabled]="model.mobilenumber!=null"
+                            (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup4,reportinggroup5Active,index)">
+
+                </p-dropdown>
+              </div>
+              <div id="reportinggroup5-container" class="form-group" *ngIf="reportinggroup5Active "
+                   [ngClass]="{ 'has-danger': f.submitted && reportinggroup5Required && !model.reportinggroup5id}">
+                <label [for]="reportinggroup5Required ? 'reportinggroup5_'+index : ''">{{reportinggroup5DisplayName}}</label>
+
+                <p-dropdown [options]="model.reportinggroup5Array" [(ngModel)]="model.reportinggroup5id"
+                            name="reportinggroup5_{{index}}" id="reportinggroup5_{{index}}"
+                            filter="filter" [required]="reportinggroup5Required"
+                            [disabled]="model.mobilenumber!=null"
+                            (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup5,reportinggroup6Active,index)">
+
+                </p-dropdown>
+              </div>
+              <div id="reportinggroup6-container" class="form-group" *ngIf="reportinggroup6Active "
+                   [ngClass]="{ 'has-danger': f.submitted && reportinggroup6Required && !model.reportinggroup6id}">
+                <label [for]="reportinggroup6Required ? 'reportinggroup6_'+index : ''">{{reportinggroup6DisplayName}}</label>
+
+                <p-dropdown [options]="model.reportinggroup6Array" [(ngModel)]="model.reportinggroup6id"
+                            name="reportinggroup6_{{index}}" id="reportinggroup6_{{index}}"
+                            filter="filter" [required]="reportinggroup6Required"
+                            [disabled]="model.mobilenumber!=null">
+
+                </p-dropdown>
+              </div>
+
+            </div>
+
+          </fieldset>
+        </div>
+      </div>
+
+
+
+      <div class="form-group row text-center">
+        <label for="productid" class="col-sm-3"></label>
+        <label for="productid" class="col-sm-2">Total Order Cost:</label>
+        <div class="col-sm-6">
+          <input type="text" style="width:100px;" class="form-control" name="ordertotalcost1"
+                 [ngModel]="models[0].ordertotalcost" disabled />
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-10 text-center">
+          <input type="submit" value="Next" class="btn btn-primary" />
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</div>

@@ -1,0 +1,55 @@
+<!-- <i class="fa fa-search" (click)="op2.toggle($event)" style="font-size:24px"></i>
+<p-overlayPanel #op2 [showCloseIcon]="true" [dismissable]="true">
+    <div class="form-group" *ngFor="let c of controlsKeys">
+        <label>{{c}}</label>
+        <p-colorPicker [(ngModel)]="dynamicCss[c]" (onChange)="onChangeHandler($event.value,c)"></p-colorPicker>
+        <input type="text" class="form-control" [(ngModel)]="dynamicCss[c]"
+            (ngModelChange)="onChangeHandler($event,c)" />
+    </div>
+
+    <input type="button" class="btn btn-primary" value="Save" (click)="saveUpdatedTheme() && op2.hide() " />
+</p-overlayPanel> -->
+<div class="layout-wrapper">
+  <div class="layout-editor"><a class="layout-editor-button ui-corner-all" [@displayState]="state"
+      (click)="themesetup=true"><i class="pi pi-cog"></i></a>
+    <div class="layout-editor-panel" [ngClass]="{'layout-editor-panel-active':themesetup === true}">
+      <div class="row">
+        <div class="col-lg-10">
+          <h1>Theme Editor</h1>
+        </div>
+        <div class="col-lg-2 close-button-container"><a class="layout-editor-close-button" (click)="themesetup=false"><i
+              class="pi pi-times"></i></a></div>
+      </div>
+      <div>
+        <div class="col-lg-6">
+          <input type="button" class="btn btn-primary ui-corner-all" value="Update" (click)="saveUpdatedTheme()" />
+          <!-- <button
+                        class="ui-button-info ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"
+                        label="Update" pbutton="" type="button"><span aria-hidden="true"
+                            class="ui-button-icon-left ui-clickable pi pi-refresh"></span><span
+                            class="ui-button-text ui-clickable">Update</span></button> -->
+        </div>
+
+        <div class="highlights-container">
+          <!-- <pre contenteditable="true"> -->
+
+          <div class="form-group form-inline" *ngFor="let c of controlsKeys">
+
+            <!-- <label class="col-sm-4 col-form-label">{{c}}:</label> -->
+            <label class="col-sm-6 col-form-label">{{getReadAbleNameOfVarCss(c)}}({{c}}):</label>
+
+            <div class="col-sm-6">
+              <p-colorPicker [(ngModel)]="dynamicCss[c]" (onChange)="onChangeHandler($event.value,c,true)">
+              </p-colorPicker>
+              <input type="text" class="form-control ui-corner-all" [(ngModel)]="dynamicCss[c]" style="width: 200px;"
+                (ngModelChange)="onChangeHandler($event,c,true)" />
+            </div>
+
+          </div>
+
+          <!-- </pre> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

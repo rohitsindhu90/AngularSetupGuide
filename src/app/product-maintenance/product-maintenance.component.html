@@ -1,0 +1,228 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+
+        <div *ngIf="!addNewProduct" class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !id.valid }">
+            <label for="id" class="col-sm-2">Product Name:</label>
+            <div class="col-sm-8">
+                <p-dropdown name="id" [hidden]="addNewProduct" [options]="orderProductDetailArray"
+                    [(ngModel)]="model.id" filter="filter" required #id="ngModel"
+                    (onChange)="onChangeOrderProduct(null)">
+
+                </p-dropdown>
+                &nbsp;
+                <label class="lbl-bold">
+                    <p-checkbox [(ngModel)]="addNewProduct" name="addNewProduct" (onChange)="checkboxChange(f)"
+                        binary="true"></p-checkbox>Add New
+                </label>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && id.errors && id.errors.required">This
+                    field is required</span>
+            </div>
+        </div>
+        <div *ngIf="addNewProduct" class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && productid.errors && productid.errors.required }">
+            <label for="productid" class="col-sm-2">Product:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="productLibraryArray" name="productid" #productid="ngModel"
+                    [(ngModel)]="model.productdescription" required [filter]="true" (onChange)="onChangeProduct()">
+                </p-dropdown>
+                &nbsp;
+                <label class="lbl-bold">
+                    <p-checkbox [(ngModel)]="addNewProduct" name="addNewProduct" (onChange)="checkboxChange(f)"
+                        binary="true"></p-checkbox>Add New
+                </label>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && productid.errors && productid.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div *ngIf="addNewProduct" class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && !orderproductdescription.valid }">
+            <label for="orderproductdescription" class="col-sm-2">Order Product Description:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="orderproductdescription"
+                    [(ngModel)]="model.orderproductdescription" #orderproductdescription="ngModel" required
+                    maxlength="100" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !orderproductdescription.valid">This
+                    field is required</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && producttypeid.errors && producttypeid.errors.required }">
+            <label for="producttypeid" class="col-sm-2">Product Type:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="producttypeArray" name="producttypeid" #producttypeid="ngModel"
+                    [(ngModel)]="model.producttypeid" [disabled]="model.id" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && producttypeid.errors && producttypeid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && connectiontypeid.errors && connectiontypeid.errors.required }">
+            <label for="connectiontypeid" class="col-sm-2">Connection Type:</label>
+            <div class="col-sm-8">
+                <p-dropdown [disabled]="disabledConnectionType() || model.id" [options]="connectiontypeArray"
+                    name="connectiontypeid" #connectiontypeid="ngModel" [(ngModel)]="model.connectiontypeid" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && connectiontypeid.errors && connectiontypeid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': (hadwareonlyprice.dirty || hadwareonlyprice.touched || f.submitted)  &&  !hadwareonlyprice.valid }">
+            <label for="hadwareonlyprice" class="col-sm-2">Hardware Price:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="hadwareonlyprice" [(ngModel)]="model.hadwareonlyprice"
+                    #hadwareonlyprice="ngModel" required maxlength="10" pInputText [pKeyFilter]="decimalregx"
+                    [pValidateOnly]="true" />
+                &nbsp;
+
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && hadwareonlyprice.errors?.required">This field is required</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(hadwareonlyprice.dirty || hadwareonlyprice.touched) && hadwareonlyprice.errors?.validatePattern === false">Purchase
+                    price should be decimal(0.00)</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && active.errors && active.errors.required }">
+            <label for="active" class="col-sm-2">Status:</label>
+            <div class="col-sm-8">
+                <p-dropdown [disabled]="addNewProduct" [options]="statusarray" name="active" #active="ngModel"
+                    [(ngModel)]="model.active" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && active.errors && active.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="!addNewProduct && model.id && model.active==false"
+            [ngClass]="{ 'has-danger': f.submitted && removalreason.errors && removalreason.errors.required }">
+            <label for="active" class="col-sm-2">Removal Reason:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="removalreason" [(ngModel)]="model.removalreason"
+                    #removalreason="ngModel" required maxlength="200" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && removalreason.errors && removalreason.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <ng-template [ngIf]="addNewProduct && exisingOrderProducts && exisingOrderProducts.length>0">
+            <div class="row">
+                <label for="active" class="col-sm-2">Exising Product:</label>
+            </div>
+            <div class="row" *ngFor="let orderProduct of exisingOrderProducts">
+                <div class="col-sm-4">
+                    <span class="col-sm-5 form-control-feedback">{{orderProduct.orderproductdescription}}</span>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+        </ng-template>
+        <div class="form-group row ">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+</div>
+<!--<div>{{gridModel | json }}</div>-->
+
+<p-dataTable *ngIf="gridModel!=null" #dt [value]="gridModel" [rows]="10" [paginator]="true" [responsive]="true"
+    scrollable="true" scrollWidth="100%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}"
+    exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]" selectionMode="single"
+    (onRowSelect)="onChangeOrderProduct($event)">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                (click)="dt.exportExcel(true)" style="float:left"></button>
+            <button type="button" pButton iconPos="right" label="Remove Product" (click)="removeProducts()"
+                style="float:right" [disabled]="disableRemoveProduct()"></button>
+        </div>
+
+    </p-header>
+    <p-column [style]="{'width':'180px'}" field="orderproductdescription" header="Product Name" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'80px'}" field="producttypedescription" header="Product Type" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qproducttypeFilter!=null"
+                (click)="qproducttypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="producttypefilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qproducttypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'80px'}" field="connectiontypedescription" header="Connection Type" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qConnectionTypeFilter!=null"
+                (click)="qConnectionTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="connectiontypefilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qConnectionTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'60px'}" header="Hardware Price" field="hadwareonlyprice"
+        [sortable]="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{ cc[col.field]  | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'60px'}" field="activedescrption" header="Status" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qStatusFilter!=null"
+                (click)="qStatusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="statusfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qStatusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'30px'}" header="Action" field="activedescrption1">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <p-checkbox [(ngModel)]="cc.isremove" binary="true" (onChange)="onChangeRemoveCheckBox($event)">
+            </p-checkbox>
+        </ng-template>
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <p-checkbox [(ngModel)]="allRemoveCheckBox" appendTo="body" binary="true"
+                (onChange)="enableDisableCheckBox($event)"></p-checkbox>
+        </ng-template>
+    </p-column>
+</p-dataTable>
+
+
+<!--<p-dataTable *ngIf="gridModel!=null" #dt [value]="gridModel" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" scrollWidth="100%" class="ui-datatable-scroll-margin-fix"
+             [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]" selectionMode="single" (onRowSelect)="onChangeOrderProduct($event)">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            <button type="button" pButton iconPos="right" label="Remove Product" (click)="removeProducts()" style="float:right" [disabled]="disableRemoveProduct()"></button>
+        </div>
+
+    </p-header>
+    <p-column [style]="{'width':'180px'}" field="orderproductdescription" header="Product Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'80px'}" field="producttypedescription" header="Product Type" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+       
+    </p-column>
+
+    <p-column [style]="{'width':'80px'}" field="connectiontypedescription" header="Connection Type" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+       
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'60px'}" header="Hardware Price" field="hadwareonlyprice" [sortable]="true" >
+      
+    </p-column>
+
+    <p-column [style]="{'width':'60px'}" field="activedescrption" header="Status" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+       
+    </p-column>
+   
+</p-dataTable>-->

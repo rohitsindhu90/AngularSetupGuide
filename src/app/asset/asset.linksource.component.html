@@ -1,0 +1,20 @@
+﻿
+<p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" class="ui-datatable-scroll-margin-fix"
+             [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]"
+              selectionMode="single"
+             (onRowSelect)="handleRowSelect($event)"
+             >
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+
+    <!--<p-column field="Guid" header="Guid" [sortable]="true"></p-column>-->
+
+    <p-column field="description" header="Description" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column field="count" header="Count" [sortable]="true"></p-column>
+
+</p-dataTable>
+<div #linkassetfleetcontainer></div>

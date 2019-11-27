@@ -1,0 +1,42 @@
+﻿<p-confirmDialog class="hybrid-popup" key="modal-confirmation" [style]="{'z-index': '9999'}" calcwidthonparent=true
+    icon="fa fa-question-circle" #cd>
+    <p-footer>
+        <div class="form-inline">
+            <div class="form-group margin-auto">
+                <button type="button" class="btn btn-secondary" (click)="cd.accept()">Yes</button>
+            </div>
+            &nbsp;
+            <div class="form-group margin-auto">
+                <button type="button" class="btn btn-secondary" (click)="cd.reject()">No</button>
+            </div>
+        </div>
+    </p-footer>
+</p-confirmDialog>
+<p-confirmDialog class="hybrid-popup" key="modal-confirmation-dialog" icon="" [style]="{'z-index': '9999'}" #dialog
+    calcwidthonparent=true>
+    <p-footer>
+        <div class="form-inline">
+            <div class="form-group margin-auto">
+                <button type="button" class="btn btn-secondary" (click)="dialog.accept()" value="OK">OK</button>
+            </div>
+        </div>
+    </p-footer>
+</p-confirmDialog>
+
+<div class="modal-header">
+    <h4 class="modal-title">{{modaltitle}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+</div>
+<div class="modal-body">
+
+    <p *ngIf="modalbody">{{modalbody}}</p>
+
+    <br #container />
+</div>
+
+<div class="modal-footer" *ngIf="modalbody">
+    <button type="button" class="btn btn-secondary" (click)="activeModal.close()">Close</button>
+</div>

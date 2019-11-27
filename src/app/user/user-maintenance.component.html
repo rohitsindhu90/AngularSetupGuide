@@ -1,0 +1,207 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="(f.form.valid && save(f)) " #f="ngForm" novalidate class="modal-form">
+        <!--rule:  {{userruletype}}
+        isclient : {{isclient}}
+        Email:{{isEmailRequired}}-->
+        <div class="form-group row ">
+            <label for="filteredname" class="col-sm-2">Search:</label>
+            <div class="col-sm-8 form-inline">
+
+                <p-autoComplete-extended *ngIf="!isComponentINPopUp" [headermeta]="userfilterheadermeta" searchContainerWidth="150%" maxwidth="400" [disabled]="addnewuser" [(ngModel)]="filteredname" [suggestions]="userFilterList"
+                                         (completeMethod)="userSearch($event)" (onSelect)="handleSelectClick($event)" [minLength]="2"
+                                         forceSelection="true" placeholder="{{searchuserautocompletePlaceHolderText}}" [dropdown]="false" name="filteredname" field="name">
+                </p-autoComplete-extended>
+
+
+                <p-autoComplete-extended *ngIf="isComponentINPopUp" [headermeta]="userfilterheadermeta" searchContainerWidth="150%" maxwidth="400" [disabled]="addnewuser" [(ngModel)]="filteredname" [suggestions]="userFilterList"
+                                         appendToTagName="ngb-modal-window" containerWidthClass="modal-body" (completeMethod)="userSearch($event)" (onSelect)="handleSelectClick($event)" [minLength]="2"
+                                         forceSelection="true" placeholder="{{searchuserautocompletePlaceHolderText}}" [dropdown]="false" name="filteredname" field="name">
+                </p-autoComplete-extended>
+                &nbsp;<label>
+                    <p-checkbox [(ngModel)]="addnewuser" name="addnewuser" class="left-10" (onChange)="checkboxChange(f)" binary="true" [disabled]="isAddnewuserDisabled">
+                    </p-checkbox>Add New
+                </label>
+
+            </div>
+        </div>
+
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !name.valid }">
+            <label for="name" class="col-sm-2">Name:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="name" [(ngModel)]="model.name" #name="ngModel" required maxlength="100" [readonly]="isComponentINPopUp && !addnewuser" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !name.valid">This field is required</span>
+            </div>
+        </div>
+
+        <div *ngIf="!isEmailRequired" class="form-group row " [ngClass]="{ 'has-danger': f.submitted && !emailaddress.valid }">
+            <label for="emailaddress" class="col-sm-2">Email:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="emailaddress" [(ngModel)]="model.emailaddress" #emailaddress="ngModel" #email maxlength="100" [pattern]="mailRegex"
+                       (keyup)="isclient?onuserRuleApply($event):null" [readonly]="isComponentINPopUp && !addnewuser" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && emailaddress.errors && emailaddress.errors.pattern">Email is invalid</span>
+            </div>
+        </div>
+        <div *ngIf="isEmailRequired" class="form-group row required" [ngClass]="{ 'has-danger': (f.submitted && !emailaddress.valid) || !emailvalidated }">
+            <label for="emailaddress" class="col-sm-2">Email:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="emailaddress" [(ngModel)]="model.emailaddress" #emailaddress="ngModel" #email required maxlength="100" [pattern]="mailRegex"
+                       (keyup)="isclient?onuserRuleApply($event):null" (change)="onemailChange()" [readonly]="isComponentINPopUp && !addnewuser" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && emailaddress.errors && emailaddress.errors.required">This field is required</span>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && emailaddress.errors && emailaddress.errors.pattern">Email is invalid</span>
+                <span class="col-sm-5 form-control-feedback" *ngIf="emailaddress.valid && !emailvalidated">{{emailvalidationmsg}}</span>
+            </div>
+        </div>
+        <div *ngIf="isclient" class="form-group row" [ngClass]="{ 'has-danger': (f.submitted && !staffid.valid) || !staffidvalidated }">
+            <label for="staffid" class="col-sm-2">Staff ID:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="staffid" [(ngModel)]="model.staffid" #staffid="ngModel" required maxlength="100" (keyup)="onuserRuleApply(f)"
+                       (change)="onstaffChange()" [readonly]="isComponentINPopUp && !addnewuser" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && staffid.errors && staffid.errors.required">This field is required</span>
+                <span class="col-sm-5 form-control-feedback" *ngIf="!staffidvalidated ">{{staffvalidationmsg}}</span>
+            </div>
+        </div>
+
+        <div *ngIf="isclient" class="form-group row" [ngClass]="{ 'has-danger': (f.submitted  && !username.valid ) || !usernamevalidated}">
+            <label for="username" class="col-sm-2">Username:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="username" [(ngModel)]="model.username" #username="ngModel" required maxlength="100" (change)="onusernameChange()"
+                       [readonly]="isComponentINPopUp && !addnewuser" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && username.errors && username.errors.required">This field is required</span>
+                <span class="col-sm-5 form-control-feedback" *ngIf="!usernamevalidated ">{{usernamevalidationmsg}}</span>
+            </div>
+        </div>
+
+        <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !active.valid }">
+            <label for="active" class="col-sm-2">Status:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="statusArray" [(ngModel)]="model.active" name="active"  #active="ngModel" required [readonly]="isComponentINPopUp">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && active.errors && active.errors.required">This field is required</span>
+            </div>
+        </div>
+
+        <div *ngIf="!isComponentINPopUp" class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !roleid.valid }">
+            <label for="roleid" class="col-sm-2">Role:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown name="roleid" [options]="roleArray" [(ngModel)]="model.roleid"  required #roleid="ngModel" (onChange)="onChangeRole()" [readonly]="isComponentINPopUp"></p-dropdown>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && roleid.errors && roleid.errors.required">This field is required</span>
+            </div>
+        </div>
+
+        <!--<div class="form-group row " *ngIf="!isComponentINPopUp && isclient && model?.roleid!=rolesType.EndUser">
+            <label for="permissionsetarray" class="col-sm-2">Data Access:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-multiSelect [disabled]="dataacessdropdowndisable || isComponentINPopUp" defaultLabel="Select" [options]="permissionSetArrayList" name="permissionsetarray" #presmissionsetid="ngModel" [(ngModel)]="model.permissionsetarray"></p-multiSelect>
+                &nbsp;<label><p-checkbox [(ngModel)]="model.isallpermissionaccess" name="isallpermissionaccess" [disabled]="isAccessAllDataDisabled" (onChange)="showallcheckboxChange()" binary="true" #isallpermissionaccess="ngModel"></p-checkbox>Access All Data</label>
+            </div>
+        </div>-->
+
+        <div class="form-group row " *ngIf="!isComponentINPopUp && isclient && model?.roleid!=rolesType.EndUser">
+            <label for="accesstype" class="col-sm-2">Access Type:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-multiSelect [disabled]="dataacessdropdowndisable || isComponentINPopUp" defaultLabel="Select" [options]="accesstypeArrayList" name="accesstype" [(ngModel)]="model.accesstypearray" (onChange)="onAccessTypeChange($event)"></p-multiSelect>
+            </div>
+        </div>
+
+
+
+        <div class="form-group row " *ngIf="!isComponentINPopUp && isclient && model?.roleid!=rolesType.EndUser">
+            <label for="permissionsetarrayNew" class="col-sm-2">Data Access:</label>
+
+            <div class="col-sm-8" style="display:flex;">
+                <p-multiSelect [disabled]="dataacessdropdowndisable || isComponentINPopUp" defaultLabel="Select" [options]="permissionSetArrayListNew" name="permissionsetarrayNew" [(ngModel)]="model.permissionsetarrayNew">
+
+
+
+                    <!--<ng-template let-car pTemplate="item">
+                        <span style="font-weight:bolder;">{{car.value.typename}}</span>
+                        <span style="float:right;">{{car.label}}</span>
+
+                    </ng-template>-->
+
+                    <ng-template let-car pTemplate="item">
+                        <span style="font-weight:bolder;">
+                            {{car.value.typename}}
+                        </span>
+                     
+                            {{car.label}}
+                     
+                    </ng-template>
+
+                </p-multiSelect>
+                &nbsp;
+                <label><p-checkbox [(ngModel)]="model.isallpermissionaccess" name="isallpermissionaccess" [disabled]="isAccessAllDataDisabled" (onChange)="showallcheckboxChange()" binary="true" #isallpermissionaccess="ngModel"></p-checkbox>Access All Data</label>
+            </div>
+
+
+
+        </div>
+
+        <div class="form-group row " *ngIf="!isclient">
+
+            <label for="clientlist" class="col-sm-2"> Client List:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-pickList name="clientlist"
+                            [sourceStyle]="{'height':'250px'}"
+                            [targetStyle]="{'height':'250px'}"
+                            sourceFilterPlaceholder="Serach by company"
+                            targetFilterPlaceholder="Serach by company"
+                            [showSourceControls]="false"
+                            [showTargetControls]="false"
+                            sourceHeader="Available"
+                            targetHeader="Selected"
+                            [source]="companyArraySourceList"
+                            [target]="companyArrayTragetList"
+                            dragdrop="true"
+                            [responsive]="true"
+                            filterBy="companydescription"
+                            (onMoveToTarget)="addSelectedCompany($event)"
+                            (onMoveToSource)="removeSelectedCompany($event)">
+                    <ng-template let-company pTemplate="item">
+                        <div class="ui-helper-clearfix">
+                            <div>{{company.companydescription}}</div>
+                        </div>
+                    </ng-template>
+                </p-pickList>
+            </div>
+        </div>
+
+        <!--<div class="form-group row" *ngIf="showuserpermissionset && (model?.roleid!=rolesType.EndUser) && !isComponentINPopUp">
+            <label class="col-sm-2">User Permissions:</label>
+            <div class="form-group row">
+
+                <p-treeTable [value]="treeNodedata" [style]="{'margin-top':'50px'}">
+                    <p-header>Select Feature for above Role</p-header>
+                    <p-column field="featuredescription" header="Feature">
+                    </p-column>
+                    <p-column field="isreadonly" header="Read">
+                        <ng-template let-node="rowData" pTemplate="body">
+                            <input type="checkbox" [(ngModel)]="node.data.isreadonly" name="{{node.data.featuredescription+'1'}}" value="isreadonly" style="width:100%;border-width:0px 0px 1px 0px" (change)="checkboxChangeisreadonly(checked,node)">
+                        </ng-template>
+                    </p-column>
+                    <p-column field="iswriteonly" header="Write">
+                        <ng-template let-node="rowData" pTemplate="body">
+                            <input type="checkbox" [(ngModel)]="node.data.iswriteonly" name="{{node.data.featuredescription+'2'}}" value="iswriteonly" style="width:100%;border-width:0px 0px 1px 0px" (change)="checkboxChangeiswriteonly(node)">
+                        </ng-template>
+                    </p-column>
+                    <p-column field="isvisibleonly" header="Hidden">
+                        <ng-template let-node="rowData" pTemplate="body">
+                            <input type="checkbox" [disabled]="node.data.isvisibleonly" [(ngModel)]="node.data.isvisibleonly" name="{{node.data.featuredescription+'3'}}" value="isvisibleonly" style="width:100%;border-width:0px 0px 1px 0px" (change)="checkboxChangeisvisibleonly(node)">
+                        </ng-template>
+                    </p-column>
+                </p-treeTable>
+
+            </div>
+        </div>-->
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+                <input type="submit" [disabled]="loading" [value]="isUpdateAssignPopUp? 'Assign User' : 'Save'" class="btn btn-primary" />
+                <input type="button" *ngIf="!isComponentINPopUp && !addnewuser && userDetail.isclient && userDetail.adminuser && model.username " value="Login" class="btn btn-primary" (click)="SwitchUser()" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+

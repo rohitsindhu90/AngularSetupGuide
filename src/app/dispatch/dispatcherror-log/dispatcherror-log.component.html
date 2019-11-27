@@ -1,0 +1,28 @@
+﻿
+<div class="col-lg-12 col-md-12 no-padding">
+    <p-dataTable  #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" [style]="{'margin-top':'30px'}" 
+                 (onRowSelect)="onRowSelect($event.data)" selectionMode="single"
+                 exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]" scrollable="true" scrollWidth="100%">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'100px'}" field="companyname" header="Company" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="ordertype" header="OrderType" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'130px'}" field="orderreferencenumber" header="Order Reference" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'250px'}" field="orderguid" header="Order Guid" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'110px'}" field="ordercreateddate" header="Created Date" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'200px'}" field="salesforceaccountid" header="Salesforce AccountID" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'300px'}" field="errorreason" header="Error Reason" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'120px'}" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="phoneimeinumber" header="Phone IMEI" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="simimeinumber" header="Sim IMEI Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="device" header="Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="salesforceproductname" header="SalesForce Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="deliverynotedate" header="Delivery Note Date" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'160px'}" field="deliverynotenumber" header="Delivery Note Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    </p-dataTable>
+</div>

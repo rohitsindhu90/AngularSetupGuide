@@ -1,0 +1,41 @@
+﻿<div class="row col-lg-12 vert-offset-top-1  no-padding">
+    <div class="col-lg-12">
+        <label class="col-lg-4 col-sm-5">Company</label>
+        <label class="col-lg-7 col-sm-7 text-message">{{ companyname}} </label>
+
+        <label class="col-lg-4 col-sm-5">Employee Name </label>
+        <label class="col-lg-7 col-sm-7 text-message">{{ username }}</label>
+
+        <label class="col-lg-4 col-sm-5">From Date </label>
+        <label class="col-lg-7 col-sm-7 text-message">{{ fromdate  | date :'dd/MM/yyyy'}}</label>
+
+        <label class="col-lg-4 col-sm-5">To Date </label>
+        <label class="col-lg-7 col-sm-7 text-message">{{ todate  | date :'dd/MM/yyyy'}}</label>
+
+    </div>
+</div>
+<div class="vert-offset-top-2 col-lg-12 ">
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" [rowsPerPageOptions]="[5,10,20]" exportFilename="{{csvfilename}}">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+
+        <p-column [style]="{'width':'100px'}" field="accessdate" header="Login Date" [sortable]="true">
+            <!--<ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | date :'dd/MM/yyyy' }}</span>
+            </ng-template>-->
+        </p-column>
+        <p-column [style]="{'width':'100px'}" field="accesstime" header="Login Time" [sortable]="true">
+            <!--<ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | date :'HH:mm:ss' }}</span>
+            </ng-template>-->
+        </p-column>
+    </p-dataTable>
+
+</div>
+
+
+
+

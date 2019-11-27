@@ -1,0 +1,49 @@
+﻿<div class="form-inline label-inline">
+    <div id="reportinggroup1-container" class="form-group" *ngIf="reportinggroup1Active && reportinggroup1Array?.length > 0">
+        <label>{{reportinggroup1DisplayName}}</label>
+
+        <p-dropdown [options]="reportinggroup1Array" [(ngModel)]="reportinggroup1guid" name="reportinggroup1"  filter="filter" (onChange)="onChangeReportingGroup()" [disabled]="disabledAll" [required]="reportinggroup1Required">
+
+        </p-dropdown>
+    </div>
+
+    <div id="reportinggroup2-container" class="form-group" *ngIf="reportinggroup2Active && reportinggroup2Array?.length > 0">
+        <label>{{reportinggroup2DisplayName}}</label>
+
+        <p-dropdown [options]="reportinggroup2Array" [(ngModel)]="reportinggroup2guid" name="reportinggroup2"  filter="filter" (onChange)="onChangeReportingGroup()" [disabled]="disabledAll" [required]="reportinggroup2Required">
+
+        </p-dropdown>
+    </div>
+
+    <div id="reportinggroup3-container" class="form-group" *ngIf="reportinggroup3Active && reportinggroup3Array?.length > 0">
+        <label>{{reportinggroup3DisplayName}}</label>
+
+        <p-dropdown [options]="reportinggroup3Array" [(ngModel)]="reportinggroup3guid" name="reportinggroup3"  filter="filter" (onChange)="onChangeReportingGroup()" [disabled]="disabledAll" [required]="reportinggroup3Required">
+
+        </p-dropdown>
+    </div>
+    <div id="reportinggroup4-container" class="form-group" *ngIf="reportinggroup4Active && reportinggroup4Array?.length > 0">
+        <label>{{reportinggroup4DisplayName}}</label>
+
+        <p-dropdown [options]="reportinggroup4Array" [(ngModel)]="reportinggroup4guid" name="reportinggroup4"  filter="filter" (onChange)="onChangeReportingGroup()" [disabled]="disabledAll" [required]="reportinggroup4Required">
+
+        </p-dropdown>
+    </div>
+    <div id="reportinggroup5-container" class="form-group" *ngIf="reportinggroup5Active && reportinggroup5Array?.length > 0">
+        <label>{{reportinggroup5DisplayName}}</label>
+
+        <p-dropdown [options]="reportinggroup5Array" [(ngModel)]="reportinggroup5guid" name="reportinggroup5"  filter="filter" (onChange)="onChangeReportingGroup()" [disabled]="disabledAll" [required]="reportinggroup5Required">
+
+        </p-dropdown>
+    </div>
+    <div id="reportinggroup6-container" class="form-group" *ngIf="reportinggroup6Active && reportinggroup6Array?.length > 0">
+        <label>{{reportinggroup6DisplayName}}</label>
+
+        <p-dropdown [options]="reportinggroup6Array" [(ngModel)]="reportinggroup6guid" name="reportinggroup6"  filter="filter" (onChange)="onChangeReportingGroup()" [disabled]="disabledAll" [required]="reportinggroup6Required">
+
+        </p-dropdown>
+    </div>
+
+</div>
+
+

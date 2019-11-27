@@ -1,0 +1,410 @@
+﻿<!--<div>
+    Value oF ShowFileds is : {{showFields}}
+</div>-->
+<div class="col-sm-12">
+    <form name="form" (ngSubmit)="(f.form.valid && save(f))" #f="ngForm" novalidate>
+        <div class="form-group">
+            <!--<p-autoComplete [(ngModel)]="selectedMobile" [suggestions]="filteredMobile" (completeMethod)="filterMobile($event)"
+                            (onSelect)="handleSelectClick($event)" forceSelection="true" [minLength]="4" placeholder="Search by Mobile, Status, Name" [dropdown]="false" field="mobilenumber" name="mobilefilter" (onClear)="onClearMobile($event)">
+                <ng-template let-data pTemplate="item">
+                    <div class="ui-helper-clearfix">
+                        <div style="display:flex;float:left;margin:0 10px 0 0">{{data.mobilenumber}}</div>
+                        <div style="display:flex;float:left;margin:0 10px 0 10px">{{data.status}}</div>
+                        <div style="display:flex;float:left;margin:0 10px 0 10px">{{data.staffname}}</div>
+                    </div>
+                </ng-template>
+            </p-autoComplete>-->
+            <p-autoComplete-extended class="exclude_readonly" [(ngModel)]="selectedMobile" [suggestions]="filteredMobile" [headermeta]="mobilenumberheadermeta" searchContainerWidth="50%" maxwidth="500" (completeMethod)="filterMobile($event)"
+                                     (onSelect)="handleSelectClick($event)" forceSelection="true" [minLength]="4" placeholder="Search by Mobile, Status, Name" [dropdown]="false" field="mobilenumber" name="mobilefilter" (onClear)="onClearMobile($event)"></p-autoComplete-extended>
+        </div>
+        <br />
+        <div *ngIf="showFields">
+            <div *ngIf="!displayLabel" class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !userid.valid }">
+                <label for="userid" class="col-sm-2">Search Employee Name:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-autoComplete-extended [(ngModel)]="filteredname" [suggestions]="userFilterList" [headermeta]="userfilterheadermeta" searchContainerWidth="50%" maxwidth="500" (completeMethod)="completeMethodUserAccount($event)" [minLength]="3" (onSelect)="onSelectUserAccount($event)" (onClear)="onClearUserAccount($event)"
+                                             forceSelection="true" placeholder="{{searchuserautocompletePlaceHolderText}}" [dropdown]="false" name="userid" #userid="ngModel" required field="name" (onDropdownClick)="completeMethodUserAccount($event)">
+                    </p-autoComplete-extended>
+
+                    <span><input type="button" [disabled]="loading" value="Add New User" class="btn btn-primary left-10" (click)="onAddNewUser()" /></span>
+
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && userid.errors && userid.errors.required">This field is required</span>
+
+
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="displayLabel">
+                <label class="col-sm-2">Employee Name:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.name}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Email Address:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.email}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Staff ID:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.staffid}}
+                </div>
+            </div>
+
+            <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !reportinggroup1id.valid}" *ngIf="reportinggroup1Active && !displayLabel">
+                <label for="reportinggroup1id" class="col-sm-2">{{reportinggroup1DisplayName}}:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="reportinggroup1Array" [(ngModel)]="model.reportinggroup1id" name="reportinggroup1id"  filter="filter" #reportinggroup1id="ngModel"
+                                [required]="reportinggroup1Required" (onChange)="onChangeReportingGroup1()">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && reportinggroup1id.errors && reportinggroup1id.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div *ngIf="reportinggroup1Active && displayLabel" class="form-group row">
+                <label class="col-sm-2">{{reportinggroup1DisplayName}}:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.reportinggroup1}}
+                </div>
+            </div>
+
+            <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !reportinggroup2id.valid}" *ngIf="reportinggroup2Active && !displayLabel">
+                <label for="reportinggroup2id" class="col-sm-2">{{reportinggroup2DisplayName}}:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="reportinggroup2Array" [(ngModel)]="model.reportinggroup2id" name="reportinggroup2id"  filter="filter" #reportinggroup2id="ngModel"
+                                [required]="reportinggroup2Required" (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup2,reportinggroup3Active)"
+                                [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup1id)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && reportinggroup2id.errors && reportinggroup2id.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div *ngIf="reportinggroup2Active && displayLabel" class="form-group row">
+                <label class="col-sm-2">{{reportinggroup2DisplayName}}:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.reportinggroup2}}
+                </div>
+            </div>
+
+            <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !reportinggroup3id.valid}" *ngIf="reportinggroup3Active && !displayLabel">
+                <label for="reportinggroup3id" class="col-sm-2">{{reportinggroup3DisplayName}}:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="reportinggroup3Array" [(ngModel)]="model.reportinggroup3id" name="reportinggroup3id"  filter="filter" #reportinggroup3id="ngModel"
+                                [required]="reportinggroup3Required" (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup3,reportinggroup4Active)"
+                                [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup2id)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && reportinggroup3id.errors && reportinggroup3id.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div *ngIf="reportinggroup3Active && displayLabel" class="form-group row">
+                <label class="col-sm-2">{{reportinggroup3DisplayName}}:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.reportinggroup3}}
+                </div>
+            </div>
+
+            <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !reportinggroup4id.valid}" *ngIf="reportinggroup4Active && !displayLabel">
+                <label for="reportinggroup4id" class="col-sm-2">{{reportinggroup4DisplayName}}:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="reportinggroup4Array" [(ngModel)]="model.reportinggroup4id" name="reportinggroup4id"  filter="filter" #reportinggroup4id="ngModel"
+                                [required]="reportinggroup4Required" (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup4,reportinggroup5Active)"
+                                [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup3id)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && reportinggroup4id.errors && reportinggroup4id.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div *ngIf="reportinggroup4Active && displayLabel" class="form-group row">
+                <label class="col-sm-2">{{reportinggroup4DisplayName}}:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.reportinggroup4}}
+                </div>
+            </div>
+
+            <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !reportinggroup5id.valid}" *ngIf="reportinggroup5Active && !displayLabel">
+                <label for="reportinggroup5id" class="col-sm-2">{{reportinggroup5DisplayName}}:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="reportinggroup5Array" [(ngModel)]="model.reportinggroup5id" name="reportinggroup5id"  filter="filter" #reportinggroup5id="ngModel"
+                                [required]="reportinggroup5Required" (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup5,reportinggroup6Active)"
+                                [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup4id)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && reportinggroup5id.errors && reportinggroup5id.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div *ngIf="reportinggroup5Active && displayLabel" class="form-group row">
+                <label class="col-sm-2">{{reportinggroup5DisplayName}}:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.reportinggroup5}}
+                </div>
+            </div>
+
+
+            <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !reportinggroup6id.valid}" *ngIf="reportinggroup6Active && !displayLabel">
+                <label for="reportinggroup6id" class="col-sm-2">{{reportinggroup6DisplayName}}:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="reportinggroup6Array" [(ngModel)]="model.reportinggroup6id" name="reportinggroup6id"  filter="filter" #reportinggroup6id="ngModel"
+                                [required]="reportinggroup6Required" [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild
+                                &&  !model?.reportinggroup1id) || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup5id)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && reportinggroup6id.errors && reportinggroup6id.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div *ngIf="reportinggroup6Active && displayLabel" class="form-group row">
+                <label class="col-sm-2">{{reportinggroup6DisplayName}}:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.reportinggroup6}}
+                </div>
+            </div>
+
+            <!--<div *ngIf="!displayLabel" class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !dateAllocated.valid}">
+                <label class="col-sm-2">Date Allocated:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-calendar name="dateAllocated" [(ngModel)]="model.dateallocated" showButtonBar="true" #dateallocated="ngModel"></p-calendar>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && dateallocated.errors && dateallocated.errors.required">This field is required</span>
+                </div>
+            </div>
+
+
+            <div class="form-group row" *ngIf="displayLabel">
+                <label class="col-sm-2">Date Allocated:</label>
+                <div class="col-sm-8">
+                    {{model.dateallocate}}
+                </div>
+            </div>-->
+
+            <div *ngIf="!displayLabel" class="form-group row required" [ngClass]="{ 'has-danger':!displayLabel && (f.submitted &&  simnumber.errors?.validatePattern)}">
+                <label for="simnumber" class="col-sm-2">SIM Number:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <input type="text" class="form-control" name="simnumber"
+                           #simnumber="ngModel" pInputText [pKeyFilter]="simnumberregex" [pValidateOnly]="true"
+                           [(ngModel)]="model.simnumber" [ngControlOptions]="{ updateOn:'blur', debounce: '300'}"  maxlength="20" />
+
+                    <!--<span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && simnumber.errors?.required">This field is required</span>-->
+                    <span class="col-sm-5 form-control-feedback" *ngIf="!displayLabel && simnumber.errors?.validatePattern">Please enter numeric value</span>
+                    <!--<span class="col-sm-5 form-control-feedback" *ngIf="simnumber.errors?.remoteurlvalidation">{{simnumber.errors?.remoteurlvalidation}}</span>-->
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="displayLabel">
+                <label class="col-sm-2">SIM Number:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.simnumber}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Network:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.network}}
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="model.billingplatform">
+                <label class="col-sm-2">Billing Platform:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.billingplatform}}
+                </div>
+            </div>
+
+
+
+            <div *ngIf="displayLabel && benArray?.length > 1" class="form-group row">
+                <label class="col-sm-2">BEN:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.bendescription}}
+                </div>
+            </div>
+
+            <div *ngIf="!displayLabel && benArray?.length > 1" class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !ben.valid}">
+                <label class="col-sm-2">BEN:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="benArray" [(ngModel)]="model.bendetailid" #ben="ngModel" name="ben" class="ben-dropdown"  filter="filter">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && ben.errors && ben.errors.required">This field is required</span>
+                </div>
+            </div>
+
+
+            <div *ngIf="!displayLabel && userdetails.adminuser" class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && userdetails.adminuser && !tariffid.valid}">
+                <label class="col-sm-2">Tariff:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="tariffArray" [(ngModel)]="model.tariffid" name="tariffid"  filter="filter" #tariffid="ngModel" required (onChange)="onChangeTariff($event)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && tariffid.errors && tariffid.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="displayLabel || !userdetails.adminuser">
+                <label class="col-sm-2">Tariff:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.tariff}}
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="sharedtariffcontorlenabled">
+                <label class="col-sm-2">Shared Tariff Lead:</label>
+                <div class="col-sm-8" style="display:flex;" *ngIf="!sharedTariffDisplay  && userdetails.adminuser">
+                    <p-dropdown [options]="sharedTariffLeadArray" name="sharedtariffleadid" filter="filter" [(ngModel)]="model.sharedtariffleadid"  (onChange)="onChangeSharedTariff($event)"></p-dropdown>
+                </div>
+                <div class="col-sm-8 text-message" *ngIf="(sharedTariffDisplay|| (!sharedTariffDisplay && !userdetails.adminuser))">
+                    {{model.sharedtariffleadnumber}}
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Connection Type:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.connectiontype}}
+                </div>
+            </div>
+
+            <div *ngIf="!displayLabel && userdetails.adminuser" class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !ctnstatusid.valid}">
+                <label for="ctnstatusid" class="col-sm-2">Status:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="statusArray" [(ngModel)]="model.ctnstatusid" name="ctnstatusid"  #ctnstatusid="ngModel" required (onChange)="onChangeStatus($event)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !displayLabel && ctnstatusid.errors && ctnstatusid.errors.required">This field is required</span>
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="displayLabel || !userdetails.adminuser">
+                <label class="col-sm-2">Status:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.status}}
+                </div>
+            </div>
+
+            <div *ngIf="!displayLabel" class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !selectedeffectivedate.valid}">
+                <label class="col-sm-2">Change Effective Date:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <p-dropdown [options]="effectivedatearray" [(ngModel)]="model.selectedeffectivedate" name="selectedeffectivedate"  #selectedeffectivedate="ngModel">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && selectedeffectivedate.errors && selectedeffectivedate.errors.required">This field is required</span>
+                </div>
+            </div>
+            <!--<div class="form-group row" *ngIf="displayLabel">
+                <label class="col-sm-2">Change Effective Date:</label>
+                <div class="col-sm-8">
+                    {{model.changeeffectivedate}}
+                </div>
+            </div>-->
+
+
+
+            <div *ngIf="!displayLabel && IsCtnNotesActive" class="form-group row">
+                <label class="col-sm-2">Note:</label>
+                <div class="col-sm-8" style="display:flex;">
+                    <textarea class="form-control" name="note" [(ngModel)]="model.note" #note="ngModel" rows="05" cols="40" maxlength="200"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="displayLabel && IsCtnNotesActive">
+                <label class="col-sm-2">Note:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.note}}
+                </div>
+            </div>
+
+            <div class="form-group row " *ngIf="isclient && !enable_edit_button">
+                <!--<label [class]="labelClass">Asset:</label>-->
+                <div class="col-sm-10">
+                    This is a {{model.status}} mobile number, therefore no transactions are possible.
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <input *ngIf="displayLabel" type="button" [disabled]="loading || !enable_edit_button" value="Edit Information" class="btn btn-primary" (click)="changeControlState(false)" />
+                    <input *ngIf="!displayLabel" type="submit" [disabled]="loading" value="Save Changes" class="btn btn-primary" />
+                    &nbsp;&nbsp;
+                    <input *ngIf="!displayLabel" type="button" [disabled]="loading" value="Cancel" class="btn btn-primary" (click)="changeControlState(true,false,true)" />
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+
+
+<div class="col-sm-12" style="margin-top:50px;">
+    <div *ngIf="showFields">
+        <div class="form-group">
+            <div class="form-group row">
+                <label class="col-sm-2">Device:</label>
+                <div class="col-sm-8 text-message">
+                    <span style="max-width: 280px ;display: inline-block;min-width:280px;">  {{model.productname}}</span>
+                    <span>
+                        <input type="button" *ngIf="(isAdminUser || assignAssetShowID!=1) && (isAssignAssetActive)" [disabled]="!isAdminUser && assignAssetShowID==2" value="Assign Asset" class="btn btn-primary left-10" (click)="assignAssetClickEvent()" />
+                        <input type="button" *ngIf="(isAdminUser || assignAssetShowID!=1) && (isAssignAssetActive)" [disabled]="!isAdminUser && assignAssetShowID==2" value="Add & Assign Asset" class="btn btn-primary left-10" (click)="addAndAssignPopUpClick()" />
+                        <!--<input type="button" [disabled]="loading" value="Add New User" class="btn btn-primary left-10" (click)="onAddNewUser()" />-->
+                    </span>
+                </div>
+
+                <!--<div class="col-sm-2">
+                    <input type="button" *ngIf="assignAssetShowID!=1" [disabled]="assignAssetShowID==2" value="Assign Asset" class="btn btn-primary" (click)="assignAssetClickEvent()" />
+                </div>
+
+                <div class="col-sm-2">
+                    <input type="button" *ngIf="assignAssetShowID!=1" [disabled]="assignAssetShowID==2" value="Add & Assign Asset" class="btn btn-primary" (click)="addAndAssignPopUpClick()" />
+                </div>-->
+
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">IMEI:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.imei}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Serial No:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.serialnumber}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showFields" class="col-sm-12 feature-link-container">
+    <a [class.not-active]="(flink.data.isreadonly)" *ngFor="let flink of featurelinks" (click)="!flink.data.isreadonly && handleLinkClick(flink.data.featuredescription,flink.data.routeurl)">
+        <i class="fa custom-icon" [ngClass]="flink.data.menuicon"></i>
+        <label> {{flink.data.featuredescription}}</label>
+    </a>
+</div>
+
+<div *ngIf="showFields" class="col-sm-12">
+    <p-dataTable *ngIf="gridmodel!=null" #dt [value]="gridmodel" [rows]="10" [paginator]="true" [responsive]="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" [rowsPerPageOptions]="[5,10,20]"
+                 exportFilename="{{historygridcsvfilename}}">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'90px'}" field="changedate" header="Date" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'60px'}" field="changetype" header="Change Type" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'70px'}" field="oldvalue" header="Old Value" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'70px'}" field="newvalue" header="New Value" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'70px'}" field="requestedby" header="Requested By" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'70px'}" field="effectivedate" header="Effective Date" [sortable]="true"></p-column>
+
+    </p-dataTable>
+</div>
+

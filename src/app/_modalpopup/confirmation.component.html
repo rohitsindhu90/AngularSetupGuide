@@ -1,0 +1,12 @@
+﻿<div class="modal-header">
+    <h4 class="modal-title">{{modaltitle}}</h4>
+</div>
+<div class="modal-body">
+    <p *ngIf="modalbody">{{modalbody}}</p>
+    <br #container />
+</div>
+
+<div class="modal-footer" *ngIf="modalbody">
+    <button id="btnNo" class="btn btn-primary button pull-left" (click)="onSubmit('btnNo')">No</button>
+    <button id="btnYes" class="btn btn-primary button pull-right" (click)="onSubmit('btnYes')">Yes</button>
+</div>

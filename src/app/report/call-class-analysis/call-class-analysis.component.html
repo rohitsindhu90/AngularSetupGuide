@@ -1,0 +1,119 @@
+﻿<input type="button" class="btn btn-primary vert-offset-bottom-1" (click)="goback()" value="Back" />
+<div class="row col-lg-12 vert-offset-top-1 lbl-bold">
+    <div class=" col-lg-12 text-left">
+        <h4>Filters:</h4>
+    </div>
+    <div class="col-lg-4" *ngIf="month">
+        <label class="col-lg-4 col-sm-4">Month</label>
+        <label class="col-lg-6 col-sm-4">{{month}}</label>
+    </div>
+
+    <div class="col-lg-4" *ngIf="frommonth">
+        <label class="col-lg-4 col-sm-4">From Month</label>
+        <label class="col-lg-6 col-sm-4">{{frommonth}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="tomonth">
+        <label class="col-lg-4 col-sm-4">To Month</label>
+        <label class="col-lg-6 col-sm-4">{{tomonth}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="ndesc">
+        <label class="col-lg-4 col-sm-4">Network</label>
+        <label class="col-lg-6 col-sm-4">{{ndesc}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="isbenexist && bendesc">
+        <label class="col-lg-4 col-sm-4">BEN</label>
+        <label class="col-lg-6 col-sm-4">{{bendesc}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="isbandisplay && bandesc">
+        <label class="col-lg-4 col-sm-4">BAN</label>
+        <label class="col-lg-6 col-sm-4">{{bandesc}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="isbillingplatformexist && billdesc">
+        <label class="col-lg-4 col-sm-4">Billing Plantform</label>
+        <label class="col-lg-6 col-sm-4">{{billdesc}}</label>
+    </div>
+
+    <div class="col-lg-4" *ngIf="reportinggroup1guid">
+        <label class="col-lg-4 col-sm-4">{{reportinggroup1description}}</label>
+        <label class="col-lg-6 col-sm-4">{{rg1description}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="reportinggroup2guid">
+        <label class="col-lg-4 col-sm-4">{{reportinggroup2description}}</label>
+        <label class="col-lg-6 col-sm-4">{{rg2description}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="reportinggroup3guid">
+        <label class="col-lg-4 col-sm-4">{{reportinggroup3description}}</label>
+        <label class="col-lg-6 col-sm-4">{{rg3description}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="reportinggroup4guid">
+        <label class="col-lg-4 col-sm-4">{{reportinggroup4description}}</label>
+        <label class="col-lg-6 col-sm-4">{{rg4description}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="reportinggroup5guid">
+        <label class="col-lg-4 col-sm-4">{{reportinggroup5description}}</label>
+        <label class="col-lg-6 col-sm-4">{{rg5description}}</label>
+    </div>
+    <div class="col-lg-4" *ngIf="reportinggroup6guid">
+        <label class="col-lg-4 col-sm-4">{{reportinggroup6description}}</label>
+        <label class="col-lg-6 col-sm-4">{{rg6description}}</label>
+    </div>
+
+</div>
+
+<div >
+    <p-dataTable #dt [value]="model" class="ui-datatable-scroll-margin-fix" [rows]="10" [paginator]="true" selectionMode="single" [responsive]="true" (onRowSelect)="handleRowSelect($event)" exportFilename="total-billing-info-by-callcategory" [rowsPerPageOptions]="[5,10,20]"
+                 scrollable="true" frozenWidth="150px" 
+             unfrozenWidth="100%">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+                <button type="button" *ngIf="isallpermissionaccess" pButton iconPos="left" label="Full Itemisation" (click)="navigateToItemisation($event)" style="float:right"></button>
+            </div>
+
+        </p-header>
+        <p-column [style]="{'width':'150px'}" frozen="true" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'250px'}" field="username" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="reportingList != null && reportingList[0].active" field="reportinggroup1description" header="{{ reportingList[0].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="reportingList != null && reportingList[1].active" field="reportinggroup2description" header="{{ reportingList[1].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="reportingList != null && reportingList[2].active" field="reportinggroup3description" header="{{ reportingList[2].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="reportingList != null && reportingList[3].active" field="reportinggroup4description" header="{{ reportingList[3].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="reportingList != null && reportingList[4].active" field="reportinggroup5description" header="{{ reportingList[4].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="reportingList != null && reportingList[5].active" field="reportinggroup6description" header="{{ reportingList[5].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+        <p-column styleClass="text-right" [style]="{'width':'180px'}" field="bendescription" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true" *ngIf="isbenexist">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'180px'}" field="bandescription" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true" *ngIf="isbandisplay">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBanFilter!=null" (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="totalcount" header="Volume" [sortable]="true" *ngIf="columndisplaytype==columntype.Volume" displaysum="true">
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="datavolume" header="Data(MB)" [sortable]="true" *ngIf="columndisplaytype==columntype.Data" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{( cc[col.field]  || 0) | number:'1.2-2' }}</span>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="minutes" header="Duration(Mins)" [sortable]="true" *ngIf="columndisplaytype==columntype.Duration" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{ cc[col.field] | number:'1.2-2' }}</span>
+            </ng-template>
+        </p-column>
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="usagecharge" header="Cost" [sortable]="true" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+
+
+
+    </p-dataTable>
+
+</div>

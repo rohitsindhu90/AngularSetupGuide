@@ -1,0 +1,132 @@
+﻿<div class="form-group row">
+    <label>From Date:</label>
+    <div class="col-lg-2 col-sm-4" style="display:flex;">
+       
+        <p-calendar name="startDate" [(ngModel)]="startDate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" readonlyInput="true" (onSelect)="onSelect()"
+                    [yearNavigator]="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+
+    <label>To Date:</label>
+    <div class="col-lg-2 col-sm-4" style="display:flex;">
+        <p-calendar name="endDate"  [(ngModel)]="endDate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" (onSelect)="onSelect()"
+                    readonlyInput="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+    <input type="button" value="Refresh" class="btn btn-primary" (click)="loadReportData()" />
+
+</div>
+
+<div *ngIf="error" class="error">{{error}}</div>
+
+<p-inputSwitch onLabel="Group" offLabel="Normal" [(ngModel)]="gridgrouping" class="float-right"></p-inputSwitch>
+<p-dataTable [value]="gridModel" #dt
+             groupField="!gridgrouping?undefined:orderreferencenumber"
+             class="ui-datatable-scroll-margin-fix"
+             [class.ui-datatable-rowgroup-fix]="(gridgrouping)"
+             [style]="{'margin-top':'50px'}"
+             [globalFilter]="gb"
+             [rows]="10"
+             [paginator]="true"
+             [responsive]="true"
+             [sortField]="(!gridgrouping?undefined:'orderreferencenumber')"
+             [rowGroupMode]="(!gridgrouping?undefined:'subheader')"
+             scrollable="true"
+             scrollWidth="100%"
+             [groupField]="(!gridgrouping?undefined:'orderreferencenumber')"
+             [expandableRowGroups]="gridgrouping"
+             [rowsPerPageOptions]="[5,10,20]"
+             [sortableRowGroup]="false"
+             selectionMode="single"
+             (onRowSelect)="onRowSelect($event.data)"
+             exportFilename="order-report">
+    <p-header>
+        <div class="ui-helper-clearfix">
+
+            <div class="ui-datatble-header-container float-right">
+                <a *ngIf="gridgrouping" (click)="dt.toggleAllRowGroup($event,false)" pTooltip="Collapse All"><i class="fa fa-minus-square"></i></a>
+                <a *ngIf="gridgrouping" (click)="dt.toggleAllRowGroup($event,true)" pTooltip="Expand All"><i class="fa fa-plus-square"></i></a>
+                <i class="fa fa-search"></i><input #gb type="text" class="form-control" pInputText size="50" placeholder="Filter">
+            </div>
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" expandableRowGroups="true" style="float:left"></button>
+        </div>
+    </p-header>
+    <ng-template pTemplate="rowgroupheader" let-rowData>
+
+        <table class="cursor-pointer" (click)="onRowSelect(rowData)" [style.visibility]="gridgrouping ? 'visible' : 'hidden'">
+            <tr>
+                <td class="tr-minwidth">Date:{{rowData['dateformatstring']}}</td>
+                <td class="tr-minwidth">Order Type:{{rowData['ordertypedesc']}}</td>
+                <td class="tr-minwidth">Reference Number: {{rowData['orderreferencenumber']}} </td>
+                <td class="tr-minwidth">Purchase Order: {{rowData['ponumber']}}</td>
+                <td class="tr-minwidth">Status:{{rowData['orderstatusstring']}}</td>
+                <td class="tr-minwidth">Total Cost:{{rowData['totalcost'] | currencyFormat}}</td>
+                <td class="tr-minwidth">Total Quantity:{{rowData['totalqunatity']}}</td>
+                <td class="tr-minwidth">OrderLines:{{rowData['orderlines']}}</td>
+                <td class="tr-minwidth">Created By:{{rowData['createdby']}}</td>
+            </tr>
+        </table>
+    </ng-template>
+    <p-column [style]="{'width':'150px'}" field="dateformatstring" [hidden]="gridgrouping" header="Date" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="ordertype" header="Order Type" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="ponumber" [hidden]="gridgrouping" header="Purchase Order" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="orderreferencenumber" [hidden]="gridgrouping" header="Reference Number" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="staffid" header="Staff ID" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="networkdescription" header="Network" sortable="true" filter="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qNetworkFilter!=null" (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'250px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden" filter="column.filter" [filterMatchMode]="column.filtermode" [sortable]="column.sortable">
+
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="bendescription" header="BEN" sortable="true" filter="true">
+        <ng-template pTemplate="filter" let-col>
+            <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'250px'}" field="mobilenumbers" header="MobileNumber" sortable="true" filter="true" filterMatchMode="contains">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span style="word-wrap: break-word;">{{cc[col.field] }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'250px'}" field="simnumbers" header="SimNumber" sortable="true" filter="true" filterMatchMode="contains">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span style="word-wrap: break-word;">{{cc[col.field] }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'250px'}" field="device" header="Device" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'250px'}" field="imeinumbers" header="IMEI" sortable="true" filter="true" filterMatchMode="contains">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span style="word-wrap: break-word;">{{cc[col.field] }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="quantity" header="Quantity" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="totalprice" header="Cost" sortable="true" filter="true" filterMatchMode="contains" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="totalpriceincvat" header="Cost(IncVat)" sortable="true" filter="true" filterMatchMode="contains" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="deliveryfao" [hidden]="gridgrouping" header="Delivery FAO" sortable="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="orderstatusstring" [hidden]="gridgrouping" header="Status" sortable="true" filter="true">
+        <ng-template pTemplate="filter" let-col>
+            <i class="fa fa-close" *ngIf="qOrderStatusFilter!=null" (click)="qOrderStatusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="orderstatusfilterset" [style]="{'width':'100%'}" [(ngModel)]="qOrderStatusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="createdby" [hidden]="gridgrouping" header="Created By" sortable="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="tariffname" [hidden]="gridgrouping" header="Tariff Name" sortable="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="tariffcost" [hidden]="gridgrouping" header="Tariff Cost" sortable="true">
+        <!--<ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field]  | currencyFormat }}</span>
+        </ng-template>-->
+    </p-column>
+
+</p-dataTable>

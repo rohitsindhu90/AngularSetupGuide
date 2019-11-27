@@ -1,0 +1,486 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+
+    <p-blockUI [blocked]="blockedDocument">
+        <div *ngIf="blockedDocument" class="ng-busy-default-wrapper">
+            <div class="ng-busy-default-sign">
+                <div class="ng-busy-default-spinner">
+                    <div class="bar1"></div>
+                    <div class="bar2"></div>
+                    <div class="bar3"></div>
+                    <div class="bar4"></div>
+                    <div class="bar5"></div>
+                    <div class="bar6"></div>
+                    <div class="bar7"></div>
+                    <div class="bar8"></div>
+                    <div class="bar9"></div>
+                    <div class="bar10"></div>
+                    <div class="bar11"></div>
+                    <div class="bar12"></div>
+                </div>
+                <div class="ng-busy-default-text">Please wait</div>
+            </div>
+        </div>
+
+    </p-blockUI>
+
+
+    <div class="col-lg-12 col-md-12 no-padding form-inline label-inline filters">
+
+        <network-dropdown (onChangeNetworkEvent)="onChangeNetworkEvent($event)"></network-dropdown>
+
+        <bilingPlatform-dropdown [networkguid]="networkguid"
+            (onChangeBillingPlatformEvent)="onChangeBillingPlatformEvent($event)"></bilingPlatform-dropdown>
+
+        <ban-dropdown [networkguid]="networkguid" [billingplatformguid]="billingplatformguid"
+            (onChangeBanformEvent)="onChangeBanformEvent($event)"></ban-dropdown>
+
+        <ben-dropdown [networkguid]="networkguid" (onChangeBenEvent)="onChangeBenEvent($event)"></ben-dropdown>
+
+        <div *ngIf="!isInvoiceActive">
+
+            <div id="mobilenumber-container" class="form-group" *ngIf="mobilenumberArray?.length > 1">
+                <label>Mobile Number </label>
+
+                <p-dropdown [options]="mobilenumberArray" [(ngModel)]="mobilenumber" name="mobilenumber"
+                     filter="filter" (onChange)="onMobileNumberChange()">
+                </p-dropdown>
+            </div>
+
+        </div>
+    </div>
+
+    <div *ngIf="isInvoiceActive">
+        <reportinggroup-dropdown (onChangeReportingGroupEvent)="onChangeReportingGroupEvent($event)">
+        </reportinggroup-dropdown>
+    </div>
+
+
+    <!-- <div *ngIf="error" class="error">{{error}}</div> -->
+
+    <div class="float-right form-group">
+        <input type="button" [disabled]="disableexportbutton" *ngIf="isShowPDF" class="btn btn-primary"
+            (click)="exportToPDF()" value="{{exporttopdf}}" />
+    </div>
+
+    <div class="col-lg-6 col-md-6 no-padding form-inline label-inline filters ">
+        <p-dataTable *ngIf="billingReport!=null" #dt [value]="billingReport" [rows]="10" [paginator]="false"
+            [responsive]="true" scrollable="true" unfrozenWidth="100%" class="ui-datatable-scroll-margin-fix"
+            [style]="{'margin-top':'30px'}">
+
+
+            <p-column [style]="{'width':'200px'}" field="invoicemonthname" header="Month"></p-column>
+
+            <p-column [style]="{'width':'100px'}" field="rowcount" header="Number of Mobiles"></p-column>
+
+            <p-column [style]="{'width':'100px'}" field="quantitychange" header="Quantity Change">
+            </p-column>
+
+
+        </p-dataTable>
+
+    </div>
+
+
+    <div class="form-inline label-inline" style="margin-top:20px;">
+        <div class="form-inline label-inline">
+            <div class="form-group pdf-exclude">
+                <label> View</label>
+                <p-dropdown [options]="viewinvoicemonthlist" [(ngModel)]="viewselectedinvoicemonth"
+                    name="viewselectedinvoicemonth" (onChange)="onViewInvoiceMonthChange()" 
+                    filter="filter">
+                </p-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12 col-md-12 no-padding vert-offset-top-2" id="tab-container">
+        <p-tabView [activeIndex]="activetabindex">
+            <p-tabPanel header="Spend">
+                <div *ngIf="sixMonthSpendAnalysisData!=null" class="col-md-12 row vert-offset-top-2 chart-container">
+                    <h5 class="col-md-12 chart-title" style="text-align:center;">
+                        {{viewselectedinvoicemonth}} MONTH SPEND ANALYSIS
+                    </h5>
+                    <div class="col-lg-12 col-md-12">
+                        <p-chart type="line" [data]="sixMonthSpendAnalysisData" [options]="chartLineOptions()"
+                            (onDataSelect)="selectData($event)"> ></p-chart>
+                    </div>
+                </div>
+
+                <div *ngIf="sixMonthAverageSpendByTariffData!=null"
+                    class="col-md-12 row vert-offset-top-4 chart-container">
+                    <h5 class="col-md-12 chart-title" style="text-align:center;">
+                        {{viewselectedinvoicemonth}} MONTH SPEND BY CONNECTION TYPE
+                    </h5>
+                    <div class="col-lg-12 col-md-12">
+                        <p-chart type="line" [data]="sixMonthAverageSpendByTariffData" [options]="chartLineOptions()">
+                        </p-chart>
+                    </div>
+                </div>
+
+
+
+                <div class="form-inline label-inline" style="margin-left:50px;">
+                    <div class="form-inline label-inline">
+                        <div class="form-group pdf-exclude">
+                            <label> Invoice Months</label>
+                            <p-dropdown [options]="invoicemonthlist" [(ngModel)]="selectedinvoicemonth"
+                                name="selectedinvoicemonth" (onChange)="onInvoiceMonthChange()" 
+                                filter="filter">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div *ngIf="lastMonthSpendAnalysisData!=null || lastMonthUsageData!=null"
+                    class="col-lg-12 col-md-12 row vert-offset-top-4 chart-container">
+
+                    <h5 class="col-md-12 chart-title" style="text-align:center;">
+                        {{currentMonthYear}} SPEND ANALYSIS
+                    </h5>
+                    <div class="col-lg-6 col-md-6">
+                        <p-chart type="pie" [data]="lastMonthSpendAnalysisData" [options]="chartPieOptions()"></p-chart>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <p-chart type="pie" [data]="lastMonthUsageData" [options]="chartPieOptions()"></p-chart>
+                    </div>
+                </div>
+
+                <div id="highestspending-report" *ngIf="highestSpendingCTNData!=null"
+                    class="col-lg-12 col-md-12 row vert-offset-top-4">
+                    <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                        TOP 10 HIGHEST SPENDING MOBILE NUMBERS
+                    </h5>
+                    <div class="col-lg-3 col-md-3"></div>
+                    <div class="col-lg-6 col-md-6">
+                        <p-dataTable #dt [value]="highestSpendingCTNData" [rows]="10" [responsive]="true">
+                            <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name">
+                            </p-column>
+                            <p-column [style]="{'width':'100px'}" field="mobilenumber" header="Mobile Number">
+                            </p-column>
+                            <p-column styleClass="text-right" [style]="{'width':'100px'}" field="totalcost"
+                                header="Total Cost">
+                                <ng-template let-col let-cc="rowData" pTemplate="body">
+                                    <span>{{cc[col.field] | currencyFormat }}</span>
+                                </ng-template>
+                            </p-column>
+                        </p-dataTable>
+                    </div>
+                </div>
+
+                <div id="observation_container" class="col-lg-12 vert-offset-top-3" *ngIf="showobservation">
+                    <h4 class="title">Observations</h4>
+                    <p *ngIf="mostExpensiveTransactionData!=null" class="pBottom">
+                        <span>
+                            The Most Expensive Transaction is £{{mostExpensiveTransactionData.charges}} by
+                            {{mostExpensiveTransactionData.mobilenumber}},
+                            {{mostExpensiveTransactionData.username}} on {{mostExpensiveTransactionData.date }} with a
+                            category of {{mostExpensiveTransactionData.reportheader}}
+                        </span><a [routerLink]="" (click)="observationViewDetailsClick('mostexpensive')">
+                            Click For Detail
+                        </a>
+                    </p>
+
+                    <p *ngIf="dataLimitExceedingMobilesViewModel!=null" class="pBottom">
+                        <span>
+                            Mobiles exceeding {{dataLimitExceedingMobilesViewModel.dataexceedinglimit}} MB Data -
+                            {{dataLimitExceedingMobilesViewModel.count}} number of mobiles at a cost of
+                            £{{dataLimitExceedingMobilesViewModel.charges}}
+                        </span>
+                        <a [routerLink]="" (click)="observationViewDetailsClick('datathresholdexceeded')">
+                            Click For Detail
+                        </a>
+                    </p>
+
+                    <p *ngIf="totaldatacost!=0" class="pBottom">
+                        <span> Total Data Cost - £{{totaldatacost}}</span>
+                        <a [routerLink]="" (click)="observationViewDetailsClick('totaldatacost')">
+                            Click For Detail
+                        </a>
+                    </p>
+
+                    <p *ngIf="totalroamedcost!=0" class="pBottom">
+                        <span> Total Roaming Cost - £{{totalroamedcost}}</span>
+                        <a [routerLink]="" (click)="observationViewDetailsClick('totalroameddatacost')">
+                            Click For Detail
+                        </a>
+                    </p>
+                </div>
+
+
+            </p-tabPanel>
+
+
+            <p-tabPanel header="Usage">
+
+                <div *ngIf="sixMonthUsageAnalysisData!=null"
+                    class="col-lg-12 col-md-12 row vert-offset-top-2 chart-container">
+                    <h5 class="col-lg-12 col-md-12 chart-title" style="text-align:center;">
+                        {{viewselectedinvoicemonth}} MONTH USAGE ANALYSIS
+                    </h5>
+                    <div class="col-lg-12 col-md-12">
+                        <p-chart type="bar" [data]="sixMonthUsageAnalysisData" [options]="chartBarOptions()"></p-chart>
+                    </div>
+                </div>
+
+                <div class="form-inline label-inline" style="margin-left:50px;">
+                    <div class="form-inline label-inline">
+                        <div class="form-group pdf-exclude">
+                            <label> Invoice Months</label>
+                            <p-dropdown [options]="invoicemonthlist" [(ngModel)]="selectedinvoicemonth"
+                                name="selectedinvoicemonth" (onChange)="onInvoiceMonthChange()" 
+                                filter="filter">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div *ngIf="lastMonthUsageUKData!=null || lastMonthUsageInternationalData!=null || lastMonthUsageRoamedData!=null"
+                    class="col-md-12 row vert-offset-top-4 chart-container" data-sm-chart=true>
+
+                    <h5 class="col-lg-12 col-md-12 chart-title" style="text-align:center;">
+                        {{currentMonthYear}} USAGE ANALYSIS
+                    </h5>
+                    <div class="col-lg-4 col-md-4">
+                        <p-chart type="bar" [data]="lastMonthUsageUKData" [options]="chartBarOptions()"></p-chart>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <p-chart type="bar" [data]="lastMonthUsageInternationalData" [options]="chartBarOptions()">
+                        </p-chart>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <p-chart type="bar" [data]="lastMonthUsageRoamedData" [options]="chartBarOptions()"></p-chart>
+                    </div>
+                </div>
+                <div class="row col-lg-12 col-md-12 no-padding">
+                    <div id="highestspending-minute-report" *ngIf="highestMinuteUsers!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-md-12 title" style="text-align:center;">
+                            TOP 10 HIGHEST SPENDING MINUTES USERS
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="highestMinuteUsers" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="mobilenumber" header="Mobile Number">
+                                </p-column>
+                                <p-column styleClass="text-right" [style]="{'width':'100px'}" field="minutes"
+                                    header="Minutes">
+                                    <ng-template let-col let-cc="rowData" pTemplate="body">
+                                        <span>{{cc[col.field] | number }}</span>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                    <div id="highestspending-text-report" *ngIf="highestTextUsers!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                            TOP 10 HIGHEST SPENDING TEXT USERS
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="highestTextUsers" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="mobilenumber" header="Mobile Number">
+                                </p-column>
+                                <p-column styleClass="text-right" [style]="{'width':'100px'}" field="sms" header="Text">
+                                    <ng-template let-col let-cc="rowData" pTemplate="body">
+                                        <span>{{cc[col.field] | number }}</span>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-lg-12 col-md-12 no-padding">
+                    <div id="highestspending-data-report" *ngIf="highestDataUsers!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                            TOP 10 HIGHEST SPENDING DATA USERS
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="highestDataUsers" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="mobilenumber" header="Mobile Number">
+                                </p-column>
+                                <p-column styleClass="text-right" [style]="{'width':'100px'}" field="data"
+                                    header="Data(MB)">
+                                    <ng-template let-col let-cc="rowData" pTemplate="body">
+                                        <span>{{cc[col.field] | number }}</span>
+                                    </ng-template>
+                                </p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <div id="averageUsageByVoiceConnection-data-report" *ngIf="averageUsesModel!=null"
+                            class="col-md-12 col-lg-12 no-padding">
+                            <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                                AVERAGE USAGE BY VOICE CONNECTIONS
+                            </h5>
+                            <div class="col-lg-12 col-md-12">
+                                <p-dataTable #dt [value]="averageUsesModel" [rows]="10" [responsive]="true">
+                                    <p-column [style]="{'width':'150px'}" field="descripton" header="Average">
+                                    </p-column>
+                                    <p-column styleClass="text-right" [style]="{'width':'100px'}" field="quantity"
+                                        header="Quantity">
+                                        <ng-template let-col let-cc="rowData" pTemplate="body">
+                                            <span>{{cc[col.field] | number }}</span>
+                                        </ng-template>
+                                    </p-column>
+                                </p-dataTable>
+                            </div>
+                        </div>
+
+                        <div id="averageUsageByDataConnection-data-report" *ngIf="averageusesdatamodel!=null"
+                            class="col-md-12 col-lg-12 no-padding vert-offset-top-4">
+                            <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                                AVERAGE USAGE BY DATA CONNECTIONS
+                            </h5>
+                            <div class="col-lg-12 col-md-12">
+                                <p-dataTable #dt [value]="averageusesdatamodel" [rows]="10" [responsive]="true">
+                                    <p-column [style]="{'width':'150px'}" field="descripton" header="Average">
+                                    </p-column>
+                                    <p-column styleClass="text-right" [style]="{'width':'100px'}" field="quantity"
+                                        header="Quantity">
+                                        <ng-template let-col let-cc="rowData" pTemplate="body">
+                                            <span>{{cc[col.field] | number }}</span>
+                                        </ng-template>
+                                    </p-column>
+                                </p-dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </p-tabPanel>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <p-tabPanel header="Activity">
+
+                <div *ngIf="sixMonthActivityData!=null"
+                    class="col-lg-12 col-md-12 row vert-offset-top-2 chart-container">
+                    <h5 class="col-lg-12 col-md-12 chart-title" style="text-align:center;">
+                        {{viewselectedinvoicemonth}} MONTH ACTIVITY
+                    </h5>
+                    <div class="col-lg-12 col-md-12">
+                        <p-chart type="line" [data]="sixMonthActivityData" [options]="chartBarOptions()"></p-chart>
+                    </div>
+                </div>
+
+                <div class="form-inline label-inline" style="margin-left:50px;">
+                    <div class="form-inline label-inline">
+                        <div class="form-group pdf-exclude">
+                            <label> Invoice Months</label>
+                            <p-dropdown [options]="invoicemonthlist" [(ngModel)]="selectedinvoicemonth"
+                                name="selectedinvoicemonth" (onChange)="onInvoiceMonthChange()" 
+                                filter="filter">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row col-lg-12 col-md-12 no-padding">
+                    <div id="activity-connection-report" *ngIf="activityConnection!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-md-12 title" style="text-align:center;">
+                            Connections - {{ currentMonthYear }}
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="activityConnection" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="description" header="Connections">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="quantity" header="Quantity"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                    <div id="activity-change-request-report" *ngIf="activitychangerequest!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                            Change Request - {{ currentMonthYear }}
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="activitychangerequest" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="description" header="Change Request">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="quantity" header="Quantity"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-lg-12 col-md-12 no-padding">
+                    <div id="activity-disconnection-report" *ngIf="activitydisconnection!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                            Disconnections - {{ currentMonthYear }}
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="activitydisconnection" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="description" header="Disconnections">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="quantity" header="Quantity"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <div id="activity-unallocation-report" *ngIf="activityunallocation!=null"
+                            class="col-md-12 col-lg-12 no-padding">
+                            <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                                Unallocations - {{ currentMonthYear }}
+                            </h5>
+                            <div class="col-lg-12 col-md-12">
+                                <p-dataTable #dt [value]="activityunallocation" [rows]="10" [responsive]="true">
+                                    <p-column [style]="{'width':'150px'}" field="description" header="Unallocations">
+                                    </p-column>
+                                    <p-column [style]="{'width':'150px'}" field="quantity" header="Quantity"></p-column>
+                                </p-dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row col-lg-12 col-md-12 no-padding">
+                    <div id="activity-care-report" *ngIf="activitycare!=null"
+                        class="col-md-6 col-lg-6 no-padding vert-offset-top-4">
+                        <h5 class="col-lg-12 col-md-12 title" style="text-align:center;">
+                            Care Request- {{ currentMonthYear }}
+                        </h5>
+                        <div class="col-lg-12 col-md-12">
+                            <p-dataTable #dt [value]="activitycare" [rows]="10" [responsive]="true">
+                                <p-column [style]="{'width':'150px'}" field="description" header="Care Request">
+                                </p-column>
+                                <p-column [style]="{'width':'100px'}" field="quantity" header="Quantity"></p-column>
+                            </p-dataTable>
+                        </div>
+                    </div>
+
+                </div>
+
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

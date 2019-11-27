@@ -1,0 +1,82 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+    <h6><span>{{titleName}}</span></h6>
+    <div class="row col-lg-12 form-inline label-inline">
+
+        <div class="form-group">
+
+            <label>   Invoice Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="invoicedateguid" name="invoicemonth"  filter="filter" (onChange)="onInvoiceMonthChange($event)">
+
+            </p-dropdown>
+        </div>
+
+        <div class="form-group">
+
+            <label> Network</label>
+
+            <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="loadBillingPlatformDropDown()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+            <label> Billing Platform</label>
+
+            <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="benArray?.length > 1">
+            <label> BEN</label>
+
+            <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown" (onChange)="onChangeBenDetails()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="banArray?.length > 1">
+            <label> BAN</label>
+
+            <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown" (onChange)="refreshData()"  filter="filter">
+            </p-dropdown>
+
+        </div>
+    </div>
+
+    <div class="vert-offset-top-1">
+        <div class="row">
+            <div class="col-lg-6">
+                <h6 *ngIf="invoicesummarybarchartData!=null" class="text-center">Invoice Summary</h6>
+                <p-chart type="bar" *ngIf="invoicesummarybarchartData!=null" [data]="invoicesummarybarchartData" [options]="chartOptions()"></p-chart>
+
+            </div>
+
+            <div class="col-lg-6">
+                <h6 *ngIf="piechartData!=null && isshowpiechart" class="text-center title-padding-left">Usage Chart</h6>
+                <p-chart type="pie" *ngIf="piechartData!=null && isshowpiechart" [data]="piechartData" [options]="pieChartOptions()"></p-chart>
+                <h6 *ngIf="linksourcebarchartData!=null && !isshowpiechart" class="text-center">Top {{activetableid}} Usage</h6>
+                <p-chart type="bar" *ngIf="linksourcebarchartData!=null && !isshowpiechart" [data]="linksourcebarchartData" [options]="LinkSourceChartOptions()"></p-chart>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="vert-offset-top-2">
+        <p-tabView (onChange)="onTabChange($event)" [activeIndex]="activeIndex" [ngClass]="{'ui-state-trigger':islinksourcetabclickEnable}">
+            <p-tabPanel header="Fleet">
+                <div #fleetcontainer></div>
+            </p-tabPanel>
+            <p-tabPanel *ngFor="let tt of GetVisibleTabs()" [header]="tt.data['featuredescription']">
+                <div #dynamicContainer [attr.data-key]="tt.data['featuredescription']"></div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

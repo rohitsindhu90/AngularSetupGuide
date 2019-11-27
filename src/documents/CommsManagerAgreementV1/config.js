@@ -1,0 +1,1 @@
+IDRViewer.config = {"pagecount":11,"title":" ","author":"Lawrence Furlong","fileName":"CommsManagerAgreementV1.pdf","bounds":[[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286],[909,1286]],"bookmarks":[],"thumbnailType":"jpg","pageType":"html","pageLabels":[]};

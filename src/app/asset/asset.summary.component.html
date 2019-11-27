@@ -1,0 +1,36 @@
+﻿<div>
+    <h6><span>{{titleName}}</span></h6>
+</div>
+
+<!-- <div class="col-lg-12 col-md-12">
+    <div class="col-md-3"> -->
+<p-checkbox [(ngModel)]="IsCompanyOwned" label="Company Owned" binary="true" (onChange)="onCompanyOwnedChanged()">
+</p-checkbox>
+<br>
+<!-- </div>
+</div>
+<div class="col-lg-12 col-md-12">
+    <div class="col-md-3"> -->
+<p-checkbox [(ngModel)]="IsEmployeeOwned" label="Employee Owned" binary="true" (onChange)="onEmployeeOwnedChanged()">
+</p-checkbox>
+<br>
+<!-- </div>
+</div>
+<div class="col-lg-12 col-md-12">
+    <div class="col-md-3"> -->
+<p-checkbox [(ngModel)]="IsArchivedAsset" label="Include Archived Assets" binary="true" [disabled]="IsArchivedDisabled"
+    (onChange)="onArchivedAssetChanged()"></p-checkbox>
+<!-- </div>
+</div> -->
+
+
+<div class="vert-offset-top-2">
+    <p-tabView (onChange)="onTabChange($event)" [ngClass]="{'ui-state-trigger':islinksourcetabclickEnable}">
+        <p-tabPanel header="Fleet">
+            <div #assetfleetcontainer></div>
+        </p-tabPanel>
+        <p-tabPanel *ngFor="let tt of GetVisibleTabs()" [header]="tt.data['featuredescription']">
+            <div #dynamicContainer [attr.data-key]="tt.data['featuredescription']"></div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

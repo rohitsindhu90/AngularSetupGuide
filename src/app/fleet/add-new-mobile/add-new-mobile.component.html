@@ -1,0 +1,282 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="(f.form.valid && save(f)) " #f="ngForm" novalidate class="modal-form">
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': (f.submitted && !mobilenumber.valid) || (mobilenumber.errors?.remoteurlvalidation) || ((mobilenumber.dirty || mobilenumber.touched) && mobilenumber.errors?.validatePattern)}">
+            <label for="mobilenumber" [class]="labelClass">Mobile Number:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="mobilenumber" pInputText [pKeyFilter]="mobilenumberregx"
+                    [pValidateOnly]="true" ng2-remote-validator url="/ctndetail/CheckIfMobileNumberExist?mobilenumber="
+                    [(ngModel)]="model.mobilenumber" [ngControlOptions]="{ updateOn: 'blur', debounce: '300' }"
+                    #mobilenumber="ngModel" required maxlength="11" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && mobilenumber.errors?.required">This
+                    field is required</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="mobilenumber.errors?.remoteurlvalidation">{{mobilenumber.errors?.remoteurlvalidation}}</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(mobilenumber.dirty || mobilenumber.touched) && mobilenumber.errors?.validatePattern===false">Mobile
+                    number start with 07 and contains 11 digits</span>
+            </div>
+        </div>
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && networkid.errors && networkid.errors.required}">
+            <label for="networkid" [class]="labelClass">Network:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [disabled]="networkArray && networkArray.length==1" [options]="networkArray"
+                    [(ngModel)]="model.networkid" name="networkid"  filter="filter"
+                    #networkid="ngModel" required (onChange)="onChangeNetwork($event)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && networkid.errors && networkid.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div class="form-group row required" *ngIf="billingPlatformArray?.length > 1"
+            [ngClass]="{ 'has-danger': f.submitted && !billingPlatform.valid}">
+            <label for="billingPlatform" [class]="labelClass">Billing Platform:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="billingPlatformArray" #billingPlatform="ngModel"
+                    [(ngModel)]="model.billingplatformid" name="billingPlatform" 
+                    (onChange)="onChangeBillingPaltform()" filter="filter">
+
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && billingPlatform.errors && billingPlatform.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row required" *ngIf="benArray?.length > 1"
+            [ngClass]="{ 'has-danger': f.submitted && !ben.valid}">
+            <label for="ben" [class]="labelClass">BEN:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="benArray" [(ngModel)]="model.bendetailid" #ben="ngModel" name="ben"
+                    class="ben-dropdown"  filter="filter">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && ben.errors && ben.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div class="form-group row required" [ngClass]="{ 'has-danger': ( f.submitted && !username.valid)}">
+            <label for="userid" [class]="labelClass">Employee Name:</label>
+            <div class="col-sm-8">
+
+                <p-autoComplete-extended [(ngModel)]="filteredname" [suggestions]="userFilterList"
+                    [headermeta]="userfilterheadermeta" [appendToTagName]="autocompleteAppendToTagName"
+                    [containerWidthClass]="autoCompleteContainerWidthClass" searchContainerWidth="50%" maxwidth="400"
+                    (completeMethod)="completeMethodUserAccount($event)" [minLength]="3"
+                    (onSelect)="onSelectUserAccount($event)" (onClear)="onClearUserAccount($event)"
+                    [inputId]="filteredname" forceSelection="true"
+                    placeholder="{{searchuserautocompletePlaceHolderText}}" [dropdown]="false" name="userid"
+                    field="name" #username="ngModel" (onDropdownClick)="completeMethodUserAccount($event)"
+                    [required]="true">
+                </p-autoComplete-extended>
+
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && username.errors?.required">This field
+                    is required</span>
+            </div>
+        </div>
+
+        <div class="form-group row" *ngIf="model.email">
+            <label [class]="labelClass">Email Address:</label>
+            <div class="col-sm-8 text-message">
+                {{model.email}}
+            </div>
+        </div>
+
+        <div class="form-group row" *ngIf="model.staffid">
+            <label [class]="labelClass">Staff ID:</label>
+            <div class="col-sm-8 text-message">
+                {{model.staffid}}
+            </div>
+        </div>
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup1id.valid}"
+            *ngIf="reportinggroup1Active">
+            <label for="reportinggroup1id" [class]="labelClass">{{reportinggroup1DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup1Array" [(ngModel)]="model.reportinggroup1id"
+                    name="reportinggroup1id"  filter="filter" #reportinggroup1id="ngModel"
+                    [required]="reportinhgroup1Required" (onChange)="onChangeReportingGroup1()">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && reportinggroup1id.errors && reportinggroup1id.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup2id.valid}"
+            *ngIf="reportinggroup2Active">
+            <label for="reportinggroup2id" [class]="labelClass">{{reportinggroup2DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup2Array" [(ngModel)]="model.reportinggroup2id"
+                    name="reportinggroup2id"  filter="filter" #reportinggroup2id="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup2,reportinggroup3Active)"
+                    [required]="reportinhgroup2Required"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                           ||  (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup1id)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && reportinggroup2id.errors && reportinggroup2id.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup3id.valid}"
+            *ngIf="reportinggroup3Active">
+            <label for="reportinggroup3id" [class]="labelClass">{{reportinggroup3DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup3Array" [(ngModel)]="model.reportinggroup3id"
+                    name="reportinggroup3id"  filter="filter" #reportinggroup3id="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup3,reportinggroup4Active)"
+                    [required]="reportinhgroup3Required"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup2id)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && reportinggroup3id.errors && reportinggroup3id.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup4id.valid}"
+            *ngIf="reportinggroup4Active">
+            <label for="reportinggroup4id" [class]="labelClass">{{reportinggroup4DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup4Array" [(ngModel)]="model.reportinggroup4id"
+                    name="reportinggroup4id"  filter="filter" #reportinggroup4id="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup4,reportinggroup5Active)"
+                    [required]="reportinhgroup4Required"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup3id)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && reportinggroup4id.errors && reportinggroup4id.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup5id.valid}"
+            *ngIf="reportinggroup5Active">
+            <label for="reportinggroup5id" [class]="labelClass">{{reportinggroup5DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup5Array" [(ngModel)]="model.reportinggroup5id"
+                    name="reportinggroup5id"  filter="filter" #reportinggroup5id="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup5,reportinggroup6Active)"
+                    [required]="reportinhgroup5Required"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup4id)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && reportinggroup5id.errors && reportinggroup5id.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup6id.valid}"
+            *ngIf="reportinggroup6Active">
+            <label for="reportinggroup6id" [class]="labelClass">{{reportinggroup6DisplayName}}:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="reportinggroup6Array" [(ngModel)]="model.reportinggroup6id"
+                    name="reportinggroup6id"  filter="filter" #reportinggroup6id="ngModel"
+                    [required]="reportinhgroup6Required"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup5id)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && reportinggroup6id.errors && reportinggroup6id.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <!--<div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !dateAllocated.valid}">
+            <label [class]="labelClass">Date Allocated:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-calendar name="dateAllocated" [(ngModel)]="model.dateallocated" showButtonBar="true" #dateallocated="ngModel"></p-calendar>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && dateallocated.errors && dateallocated.errors.required">This field is required</span>
+            </div>
+        </div>-->
+
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': ((simnumber.dirty || simnumber.touched) &&  simnumber.errors?.validatePattern===false)}">
+            <label for="simnumber" [class]="labelClass">SIM Number:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <!--<input type="text" class="form-control" name="simnumber"
+           ng2-remote-validator
+           url="/ctndetail/CheckIfSIMNumberExist?mobilenumber=&SIMNumber="
+           [(ngModel)]="model.simnumber" pInputText [pKeyFilter]="simnumberregex"
+           [pValidateOnly]="true" #simnumber="ngModel" maxlength="20"  [ngControlOptions]="{ updateOn: 'blur', debounce: '300' }" />-->
+                <input type="text" class="form-control" name="simnumber" [(ngModel)]="model.simnumber" pInputText
+                    [pKeyFilter]="simnumberregex" [pValidateOnly]="true" #simnumber="ngModel" maxlength="20"
+                    [ngControlOptions]="{ updateOn: 'blur', debounce: '300' }" />
+                <!--<span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && simnumber.errors?.required">This field is required</span>-->
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(simnumber.dirty || simnumber.touched) && simnumber.errors?.validatePattern===false">Please enter
+                    numeric value</span>
+                <!--<span class="col-sm-5 form-control-feedback" *ngIf="simnumber.errors?.remoteurlvalidation">{{simnumber.errors?.remoteurlvalidation}}</span>-->
+            </div>
+        </div>
+
+
+        <div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !tariffid.valid}">
+            <label for="tariffid" [class]="labelClass">Tariff:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="tariffArray" [(ngModel)]="model.tariffid" name="tariffid" 
+                    filter="filter" #tariffid="ngModel" required (onChange)="onChangeTariff($event)">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && tariffid.errors && tariffid.errors.required">This field is required</span>
+            </div>
+        </div>
+
+        <div class="form-group row" *ngIf="model.connectiontype">
+            <label [class]="labelClass">Connection Type:</label>
+            <div class="col-sm-8 text-message">
+                {{model.connectiontype}}
+            </div>
+        </div>
+
+        <div class="form-group row" *ngIf="sharedtariffcontorlenabled">
+            <label for="sharedtariffleadid" [class]="labelClass">Shared Tariff Lead:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="sharedTariffLeadArray" name="sharedtariffleadid"
+                    [(ngModel)]="model.sharedtariffleadid" ></p-dropdown>
+            </div>
+        </div>
+
+        <!--<div class="form-group row required" [ngClass]="{ 'has-danger': f.submitted && !statusid.valid}">
+            <label [class]="labelClass">Status:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-dropdown [options]="statusArray" [(ngModel)]="model.statusid" name="statusid"  #statusid="ngModel" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && statusid.errors && statusid.errors.required">This field is required</span>
+            </div>
+        </div>-->
+        <!--<div class="form-group row">
+            <label [class]="labelClass">Device:</label>
+            <div class="col-sm-8">
+                {{model.productname}}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label [class]="labelClass">IMEI:</label>
+            <div class="col-sm-8">
+                {{model.imei}}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label [class]="labelClass">Serial No:</label>
+            <div class="col-sm-8">
+                {{model.serialnumber}}
+            </div>
+        </div>-->
+
+        <div class="form-group row">
+
+            <div [class]="labelClass"></div>
+            <div class="col-sm-8">
+                <input type="submit" [disabled]="loading" value="Add" class="btn btn-primary" />
+                <!--&nbsp;&nbsp;
+                <input type="button" [disabled]="loading" value="Add New Mobile" class="btn btn-primary" (click)="clearModel(f)" />-->
+            </div>
+        </div>
+    </form>
+</div>

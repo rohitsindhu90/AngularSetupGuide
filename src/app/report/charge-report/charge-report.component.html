@@ -1,0 +1,99 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+    <div class="row col-lg-10 form-inline label-inline">
+
+        <div class="form-group" *ngIf="chargeGroupArray?.length > 1">
+
+            <label> Charge Type</label>
+
+            <p-dropdown [options]="chargeGroupArray" [(ngModel)]="chargegroupguid" name="chargegroup"  filter="filter" (onChange)="refreshData()">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-danger':error}">
+            <label>   From Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="fromdate" name="fromdate" (onChange)="onInvoiceMonthChange()"  filter="filter">
+
+            </p-dropdown>
+        </div>
+
+
+        <div class="form-group" [ngClass]="{ 'has-danger':error}">
+            <label>   To Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="todate" name="todate" (onChange)="onInvoiceMonthChange()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+
+        <div class="form-group" *ngIf="networkArray?.length > 1">
+
+            <label> Network</label>
+
+            <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network"  filter="filter" (onChange)="OnNetworkChange()">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+            <label> Billing Platform</label>
+
+            <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform"  filter="filter" (onChange)="onChangeBillingPlatForm()">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="benArray?.length > 2">
+            <label> BEN</label>
+
+            <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown"  filter="filter" (onChange)="onChangeBen()">
+
+            </p-dropdown>
+
+        </div>
+
+        <div class="form-group" *ngIf="banArray?.length > 2">
+            <label> BAN</label>
+
+            <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown"  filter="filter" (onChange)="onChangeBan()">
+
+            </p-dropdown>
+
+        </div>
+
+    </div>
+    <div *ngIf="error" class="error">{{error}}</div>
+
+    <div class="vert-offset-top-2 col-lg-7 no-padding">
+        <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" selectionMode="single" [responsive]="true" scrollWidth="100%" [style]="{'margin-top':'30px'}" [rowsPerPageOptions]="[5,10,20]" (onRowSelect)="handleRowSelect($event)" exportFilename="{{csvfilename}}">
+            <p-header>
+                <div class="ui-helper-clearfix">
+                    <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+                </div>
+            </p-header>
+            <p-column [style]="{'width':'100px'}" field="chargegroupdescription" header="Charge Type" filter="true" filterMatchMode="contains" [sortable]="true">
+
+                <ng-template pTemplate="filter" typeof="body" let-col>
+                    <i class="fa fa-close" *ngIf="chargegroupFilter!=null" (click)="chargegroupFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                    <p-dropdown appendTo="body" [options]="chargegroupfilterset" [style]="{'width':'100%'}" [(ngModel)]="chargegroupFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+                </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'210px'}" field="chargedescription" header="Charge Description" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column styleClass="text-right" [style]="{'width':'100px'}" field="totalcount" header="Count" [sortable]="true" displaysum="true"></p-column>
+            <p-column styleClass="text-right" [style]="{'width':'100px'}" field="totalcost" header="Cost" [sortable]="true" displaysum="true">
+                <ng-template let-col let-cc="rowData" pTemplate="body">
+                    <span>{{cc[col.field] | currencyFormat }}</span>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+
+    </div>
+
+
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

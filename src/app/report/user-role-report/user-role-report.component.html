@@ -1,0 +1,21 @@
+﻿<p-dataTable *ngIf="model" #dt
+             [value]="model"
+             [rows]="10"
+             [paginator]="true"
+             [responsive]="true"
+             scrollable="true"
+             [style]="{'margin-top':'30px'}"
+             [rowsPerPageOptions]="[5,10,20]"
+             selectionMode="single"
+             (onRowSelect)="onRowSelect($event)"
+             exportFilename="user-role-report">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column field="roledescription" header="Role" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column field="activeuserscount" header="Active Users"  [sortable]="true"></p-column>
+    <p-column field="inactiveusercount" header="In-Active Users" [sortable]="true"></p-column>
+    <p-column field="totaluserscount" header="Total Users" [sortable]="true"></p-column>
+</p-dataTable>

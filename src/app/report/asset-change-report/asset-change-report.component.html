@@ -1,0 +1,63 @@
+﻿<div class="form-group row">
+    <label style="width:80px;" for="dateassigned">From Date:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-calendar name="fromdate" [(ngModel)]="fromdate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true"
+            [yearNavigator]="true" (onSelect)="onSelect()" [maxDate]="maxDate" readonlyInput="true"
+            yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+
+    <label style="width:80px;" for="dateassigned">To Date:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-calendar name="todate" [(ngModel)]="todate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true"
+            [yearNavigator]="true" (onSelect)="onSelect()" [maxDate]="maxDate" readonlyInput="true"
+            yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+</div>
+
+<div *ngIf="error" class="error">{{error}}</div>
+
+<div class="vert-offset-top-2 col-lg-12  no-padding">
+    <p-dataTable *ngIf="model!=null" #dt [value]="excelmodel" [rows]="10" [paginator]="true" [responsive]="true"
+        scrollWidth="100%" [style]="{'margin-top':'30px'}" [rowsPerPageOptions]="[5,10,20]"
+        exportFilename="{{csvfilename}}">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                    (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'90px'}" field="requesteddate" header="Date" filter="true"
+            filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column field="changetype" header="Change Type" filter="true" filterMatchMode="contains">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+        <!--<p-column field="changeeffectivedate" header="Change Effective Date"></p-column>-->
+        <p-column field="assetname" header="Asset" filter="true" filterMatchMode="contains" [sortable]="true">
+        </p-column>
+        <p-column field="imei" header="IMEI" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column field="status" header="Status" filter="true" filterMatchMode="contains" [sortable]="true">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="statusFilter!=null"
+                    (click)="statusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="statusFilterset" [style]="{'width':'100%'}"
+                    [(ngModel)]="statusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+                </p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column field="oldvalue" header="Old Value" filter="true" filterMatchMode="contains">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+        <p-column field="newvalue" header="New Value" filter="true" filterMatchMode="contains">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'90px'}" field="requestedby" header="Requested By" [sortable]="true"></p-column>
+
+    </p-dataTable>
+
+</div>

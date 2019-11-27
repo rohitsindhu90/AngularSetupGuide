@@ -1,0 +1,147 @@
+﻿<a class="btn btn-primary" routerLink="/international-report-by-destination">Back</a>
+
+
+<div class="row col-lg-7 vert-offset-top-1">
+    <div class="col-lg-12">
+
+        <label class="col-lg-5 col-sm-5">From Month</label>
+        <label class="col-lg-6 col-sm-6">{{ fromDateDescription }}</label>
+
+        <label class="col-lg-5 col-sm-5">To Month</label>
+        <label class="col-lg-6 col-sm-6">{{ toDateDescription }}</label>
+
+        <div *ngIf="networkdescription">
+            <label class="col-lg-5 col-sm-5">Network</label>
+            <label class="col-lg-6 col-sm-6">{{ networkdescription }}</label>
+        </div>
+
+        <div *ngIf="billingplatformdescription">
+            <label class="col-lg-5 col-sm-5">Billing Platform</label>
+            <label class="col-lg-6 col-sm-6">{{billingplatformdescription}}</label>
+        </div>
+
+        <div *ngIf="bendescription">
+            <label class="col-lg-5 col-sm-5">BEN</label>
+            <label class="col-lg-6 col-sm-6">{{bendescription}}</label>
+        </div>
+
+        <div *ngIf="bandescription">
+            <label class="col-lg-5 col-sm-5">BAN</label>
+            <label class="col-lg-6 col-sm-6">{{bandescription}}</label>
+        </div>
+
+        <label class="col-lg-5 col-sm-5">   International</label>
+        <p-dropdown class="col-lg-5 col-sm-5" [options]="calltypelist" [(ngModel)]="calltype" name="calltype" (onChange)="OnCallTypeChange()"  filter="filter" [style]="{'width':'250px','height':'30px'}">
+        </p-dropdown>
+
+
+        <div class="row col-lg-7 vert-offset-top-1">
+            <div class="form-inline label-inline">
+            </div>
+        </div>
+
+        <label class="col-lg-5 col-sm-5">   Destinations</label>
+        <p-multiSelect class="col-lg-5 col-sm-5" [options]="destinationsarray" defaultLabel="Select" name="Destinations" [(ngModel)]="checkBoxDestinations" [style]="{'width':'250px'}" (onChange)="OnDestinationChange()" required></p-multiSelect>
+
+
+    </div>
+</div>
+
+
+<div class="row col-lg-7 vert-offset-top-1">
+    <div class="form-inline label-inline">
+
+    </div>
+</div>
+
+
+
+<div *ngIf="error" class="error">{{error}}</div>
+
+<div class="col-lg-12 col-md-12">
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+
+        <p-column [style]="{'width':'150px'}" field="destination" header="Destination" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'100px'}" field="calldate" header="Date" [sortable]="true" >
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{ cc[col.field]  }}</span>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'100px'}" field="calltime" header="Time" [sortable]="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{ cc[col.field]  }}</span>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'120px'}" field="networkdescription" header="Network" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qNetworkFilter!=null" (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'150px'}" field="billingplatformdescription" header="Billing Platform" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true" *ngIf="isbillingplatformxist">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qBillingPlatformFilter!=null" (click)="qBillingPlatformFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBillingPlatformFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'180px'}" field="employeename" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[0].active" field="{{ reportingList[0].description.toLowerCase() }}" header="{{ reportingList[0].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[1].active" field="{{ reportingList[1].description.toLowerCase() }}" header="{{ reportingList[1].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[2].active" field="{{ reportingList[2].description.toLowerCase() }}" header="{{ reportingList[2].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[3].active" field="{{ reportingList[3].description.toLowerCase() }}" header="{{ reportingList[3].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[4].active" field="{{ reportingList[4].description.toLowerCase() }}" header="{{ reportingList[4].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[5].active" field="{{ reportingList[5].description.toLowerCase() }}" header="{{ reportingList[5].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'80px'}" field="ben" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true" *ngIf="isbenexist">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'120px'}" field="ban" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true" *ngIf="isbandisplay">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBanFilter!=null" (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'250px'}" field="calldescription" header="Call Description" [sortable]="true" filter="true" filterMatchMode="contains" ></p-column>
+
+        <p-column [style]="{'width':'150px'}" field="numberdialledapn" header="Number Dialled" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'100px'}" field="datavolume" header="Data(MB)" [sortable]="true" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | number:'1.2-2' }}</span>
+            </ng-template>
+        </p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'100px'}" field="duration" header="Duration" [sortable]="true" displaysum="true"></p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'100px'}" field="usagecharge" header="Cost" [sortable]="true" displaysum="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+
+    </p-dataTable>
+</div>
+

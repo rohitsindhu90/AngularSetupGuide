@@ -1,0 +1,109 @@
+﻿<div class="form-group">
+
+    <label class="col-sm-2">Allocated</label>
+    <p-dropdown class="col-sm-4" [options]="allocatedOptions" [(ngModel)]="allocatedvalue" name="allocated" #allocated="ngModel" (onChange)="onAllocatedChange()"  filter="filter"></p-dropdown>
+
+    <label class="col-sm-2">Network</label>
+
+    <p-dropdown class="col-sm-4" [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="onNetworkChange()"  filter="filter">
+    </p-dropdown>
+
+</div>
+
+
+<div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+
+    <label class="col-sm-2">Billing Platform</label>
+
+    <p-dropdown class="col-sm-4" [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()"  filter="filter">
+    </p-dropdown>
+
+</div>
+
+
+<div class="vert-offset-top-1">
+    <p-dataTable #dt [value]="model" [rows]="10" [paginator]="true" scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}"
+                 class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="sparenumberreport" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+
+        <p-column *ngIf="!allocatedvalue" [style]="{'width':'55px'}" header="Remove" [exportColumn]="false">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <div *ngIf="cc['allocated']=='No'">
+                    <div class="ui-helper-clearfix">
+                        <i class="fa fa-times fa-lg" (click)="onDelete(cc['mobilenumber'])" style="cursor:pointer"></i>
+                    </div>
+                </div>
+            </ng-template>
+        </p-column>
+
+        <p-column *ngIf="!allocatedvalue" [style]="{'width':'80px'}" header="Assign Order Ref" [exportColumn]="false">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <div *ngIf="cc['allocated']=='No'">
+                    <div class="ui-helper-clearfix">
+                        <i class="fa fa-pencil-square-o fa-lg" (click)="onEdit(cc)" style="cursor:pointer"></i>
+                    </div>
+                </div>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'180px','word-break':'break-word'}" field="orderreferencenumber" header="Order Reference" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="false">
+        </p-column>
+
+
+
+        <p-column [style]="{'width':'180px'}" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'80px'}" field="allocated" header="allocated" [sortable]="true">
+        </p-column>
+        <p-column [style]="{'width':'120px'}" field="network" header="Network" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="false">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qNetworkFilter!=null" (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="billingplatform" header="Billing Platform" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="false" *ngIf="isbillingplatformxist">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qBillingPlatformFilter!=null" (click)="qBillingPlatformFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBillingPlatformFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'180px'}" field="becamespare" header="Made Spare Date" sortable="custom" filter="true" (sortFunction)="onSpareDateSort($event)"></p-column>
+        <p-column [style]="{'width':'180px'}" field="tariff" header="Tariff" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'180px'}" *ngIf="(allocatedvalue || allocatedvalue==null)" field="allocateddate" header="Allocated Date" filter="true" filterMatchMode="contains" sortable="custom" (sortFunction)="onAllocationSort($event)"></p-column>
+        <p-column [style]="{'width':'180px'}" *ngIf="(allocatedvalue || allocatedvalue==null)" field="username" header="User Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'80px'}" field="bendescription" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="false" *ngIf="isbenexist">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+
+
+        <!--<p-column [style]="{'width':'180px'}" field="ban" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>-->
+
+        <p-column styleClass="text-right" [style]="{'width':'150px'}" field="ban" rowspan="3" header="BAN" filter="true" filterMatchMode="contains" [sortable]="true"
+                  *ngIf="isbandisplay">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBanFilter!=null" (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+
+        <p-column [style]="{'width':'150px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" [filterMatchMode]="column.filtermode" [sortable]="column.sortable">
+        </p-column>
+
+
+
+        <p-column [style]="{'width':'180px'}" field="reservedby" header="Reserved By" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+
+    </p-dataTable>
+</div>

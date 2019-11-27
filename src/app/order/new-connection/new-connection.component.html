@@ -1,0 +1,363 @@
+<div class="col-sm-12" *ngIf="model">
+
+  <div class="form-group row " *ngIf="(models.orderstatus && models.orderstatus!=orderStatusEnum.Partial) && !freshConnection; else newConnection">
+    <label class="col-sm-9">
+      <b>
+        Thank you for your order. It is now being processed and we will update you shortly.<br />
+        Your Reference number is {{models.orderreferencenumber}}.
+      </b> <br />
+      <br />
+      <button class="btn btn-primary" (click)="redirectToHome()">Home</button>
+    </label>
+  </div>
+
+  <ng-template #newConnection>
+    <form name="form" (ngSubmit)="(f.form.valid && save(f)) " #f="ngForm" novalidate class="modal-form">
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !network.valid }">
+          <label class="col-sm-3" for="network">Network</label>
+          <p-dropdown [options]="networkArray" [(ngModel)]="model.networkguid" name="network" #network="ngModel"
+                      (onChange)="onNetworkChange()" [autoWidth]="false" filter="filter" required></p-dropdown>
+
+        </div>
+        <div class="row" *ngIf="f.submitted && !network.valid && !(networkArray.length==2)">
+          <div class="error offset-sm-3">Please select Network</div>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+        <div class="row"
+             [ngClass]="{ 'has-danger': f.submitted && billingPlatformArray?.length > 1 && !billingplatform.valid }">
+          <label class="col-sm-3" for="billingplatform">Billing Platform</label>
+          <p-dropdown [options]="billingPlatformArray"
+                      [disabled]="billingPlatformArray == null || billingPlatformArray == undefined || billingPlatformArray?.length <= 1"
+                      [(ngModel)]="model.billingplatformguid" name="billingplatform" #billingplatform="ngModel"
+                      (onChange)="onBillingPlatformChange()" [autoWidth]="false" filter="filter"
+                      [required]="billingPlatformArray?.length > 1"></p-dropdown>
+
+        </div>
+        <div class="row" *ngIf="f.submitted && billingPlatformArray?.length > 1 && !billingplatform.valid">
+          <div class="error offset-sm-3">Please select Billing Platform</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row"
+             [ngClass]="{ 'has-danger': f.submitted && connectionTypeArray?.length > 0 && !connectiontypeid.valid }">
+          <label class="col-sm-3" for="connectiontypeid">Connection Type</label>
+          <p-dropdown [options]="connectionTypeArray"
+                      [disabled]="connectionTypeArray == null || connectionTypeArray == undefined || connectionTypeArray?.length == 0"
+                      [(ngModel)]="model.connectiontypeid" name="connectiontypeid" #connectiontypeid="ngModel"
+                      (onChange)="onConnectionTypeChange()" [autoWidth]="false" filter="filter" required></p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && connectionTypeArray?.length > 0 && !connectiontypeid.valid">
+          <div class="error offset-sm-3">Please select Connection Type</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && tariffArray?.length > 0 && !tariffguid.valid }">
+          <label class="col-sm-3" for="tariffguid">Tariff</label>
+          <p-dropdown [options]="tariffArray"
+                      [disabled]="tariffArray == null || tariffArray == undefined || tariffArray?.length == 0"
+                      [(ngModel)]="model.tariffguid" name="tariffguid" #tariffguid="ngModel" [autoWidth]="false"
+                      filter="filter" (onChange)="onTariffChange()" required></p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && tariffArray?.length > 0 && !tariffguid.valid">
+          <div class="error offset-sm-3">Please select Tariff</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row"
+             [ngClass]="{ 'has-danger': f.submitted && orderTypeArray?.length > 0 && !ordertypeid.valid }">
+          <label class="col-sm-3" for="ordertypeid">Order Type</label>
+          <p-dropdown [options]="orderTypeArray"
+                      [disabled]="orderTypeArray == null || orderTypeArray == undefined || orderTypeArray?.length == 0"
+                      [(ngModel)]="model.ordertypeid" name="ordertypeid" #ordertypeid="ngModel" [autoWidth]="false"
+                      (onChange)="onOrderTypeChange()" filter="filter" required></p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && orderTypeArray?.length > 0 && !ordertypeid.valid">
+          <div class="error offset-sm-3">Please select Order Type</div>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="portTypeOrder">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && portTypeOrder && !mobilenumber?.valid }">
+          <label class="col-sm-3" for="mobilenumber">Mobile Number</label>
+          <input type="text" class="form-control" name="mobilenumber" pInputText [pKeyFilter]="mobilenumberregx"
+                 [pValidateOnly]="true" [(ngModel)]="model.mobilenumber" #mobilenumber="ngModel"
+                 [required]="portTypeOrder" maxlength="11" />
+        </div>
+        <div class="row" *ngIf="f.submitted && portTypeOrder && !mobilenumber?.valid">
+          <div class="error offset-sm-3">
+            Please enter a valid mobile number, it should start with 07 and should be
+            of 11 digits
+          </div>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="portTypeOrder">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && portTypeOrder && !pacnumber?.valid }">
+          <label class="col-sm-3" for="pacnumber">PAC Number</label>
+          <input class="form-control" type="text" name="pacnumber" #pacnumber="ngModel"
+                 [(ngModel)]="model.pacnumber" pInputText [pKeyFilter]="pacnumberregex" [required]="portTypeOrder"
+                 maxlength="9" [pValidateOnly]="true" />
+        </div>
+        <div class="row" *ngIf="f.submitted && portTypeOrder && !pacnumber?.valid">
+          <div class="error offset-sm-3">Please enter a valid pac number, 3 letter followed by 6 numbers</div>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="portTypeOrder">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && portTypeOrder && !requestedportdate?.valid }">
+          <label class="col-sm-3" for="requestedportdate">Requested Port Date</label>
+          <p-calendar name="requestedportdate" [(ngModel)]="model.requestedportdate" #requestedportdate="ngModel"
+                      dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" readonlyInput="true"
+                      class="form-control" [inputStyle]="{'max-width' : '100%'}" maxlength="20" [yearRange]="yearRange"
+                      [showIcon]="true" [minDate]="minDate" [required]="portTypeOrder" [disabledDays]="[0,6]">
+          </p-calendar>
+
+
+        </div>
+        <div class="row" *ngIf="f.submitted && portTypeOrder && !requestedportdate?.valid">
+          <div class="error offset-sm-3">Please select a port date</div>
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="BANArray?.length > 1">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && BANArray?.length > 1 && !ban.valid }">
+          <label class="col-sm-3" for="ban">BAN</label>
+          <p-dropdown class="" [options]="BANArray" [(ngModel)]="model.banguid" name="ban" #ban="ngModel"
+                      filter="filter" [required]="BANArray?.length > 1"></p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && BANArray?.length > 1 && !ban.valid">
+          <div class="error offset-sm-3">Please select BAN</div>
+        </div>
+      </div>
+      <div class="form-group" *ngIf="BENArray?.length > 1">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && BENArray?.length > 1 && !ben.valid }">
+          <label class="col-sm-3" for="ben">BEN</label>
+          <p-dropdown class="" [options]="BENArray" [(ngModel)]="model.benguid" name="ben" #ben="ngModel"
+                      filter="filter" [required]="BENArray?.length > 1"></p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && BENArray?.length > 1 && !ben.valid">
+          <div class="error offset-sm-3">Please select BEN</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row"
+             [ngClass]="{ 'has-danger': f.submitted && (model.userguid == null || model.userguid == undefined) }">
+          <label class="col-sm-3" for="userguid">Employee Name</label>
+          <p-autoComplete-extended class="" [headermeta]="userFilterHeaderMeta" searchContainerWidth="50%"
+                                   maxwidth="400" [(ngModel)]="userFilter" [suggestions]="userFilterList"
+                                   (completeMethod)="completeMethodUserAccount($event)" [minLength]="3"
+                                   (onSelect)="onSelectUserAccount($event)" (onClear)="onClearUserAccount($event)" [required]="true"
+                                   forceSelection="true" placeholder="Search by name,staffid,Email" [dropdown]="false" name="userguid"
+                                   field="name" (onDropdownClick)="completeMethodUserAccount($event)">
+          </p-autoComplete-extended>
+          <input class="offset-sm-1 btn btn-primary" type="button" value="Add New User" (click)="addNewUser()" />
+        </div>
+        <div class="row"
+             *ngIf="f.submitted && (model.userguid == null || model.userguid == undefined)">
+          <div class="error offset-sm-3">Please select user</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-group row">
+          <label class="col-sm-3">Email Address</label>
+          <label class="text-message">{{ model.useremail }}</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup1guid?.valid}"
+             [hidden]="!(reportinggroup1Active)">
+          <label for="reportinggroup1guid" class="col-sm-3">{{reportinggroup1DisplayName}}:</label>
+          <p-dropdown [options]="reportinggroup1Array" [(ngModel)]="model.reportinggroup1guid"
+                      name="reportinggroup1guid" [autoWidth]="false" filter="filter" #reportinggroup1guid="ngModel"
+                      [required]="reportinggroup1Required" (onChange)="onChangeReportingGroup1()">
+          </p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && !reportinggroup1guid?.valid">
+          <div class="error offset-sm-3">Please select {{reportinggroup1DisplayName}}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup2guid.valid}"
+             [hidden]="!(reportinggroup2Active)">
+          <label for="reportinggroup2guid" class="col-sm-3">{{reportinggroup2DisplayName}}:</label>
+          <p-dropdown [options]="reportinggroup2Array" [(ngModel)]="model.reportinggroup2guid"
+                      name="reportinggroup2guid" [autoWidth]="false" filter="filter" #reportinggroup2guid="ngModel"
+                      [required]="reportinggroup2Required"
+                      (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup2,reportinggroup3Active)"
+                      [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup1guid)">
+          </p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && !reportinggroup2guid?.valid">
+          <div class="error offset-sm-3">Please select {{reportinggroup2DisplayName}}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup3guid.valid}"
+             [hidden]="!(reportinggroup3Active)">
+          <label for="reportinggroup3guid" class="col-sm-3">{{reportinggroup3DisplayName}}:</label>
+          <p-dropdown [options]="reportinggroup3Array" [(ngModel)]="model.reportinggroup3guid"
+                      name="reportinggroup3guid" [autoWidth]="false" filter="filter" #reportinggroup3guid="ngModel"
+                      [required]="reportinggroup3Required"
+                      (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup3,reportinggroup4Active)"
+                      [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup2guid)">
+          </p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && !reportinggroup3guid?.valid">
+          <div class="error offset-sm-3">Please select {{reportinggroup3DisplayName}}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup4guid.valid}"
+             [hidden]="!(reportinggroup4Active)">
+          <label for="reportinggroup4guid" class="col-sm-3">{{reportinggroup4DisplayName}}:</label>
+          <p-dropdown [options]="reportinggroup4Array" [(ngModel)]="model.reportinggroup4guid"
+                      name="reportinggroup4guid" [autoWidth]="false" filter="filter" #reportinggroup4guid="ngModel"
+                      [required]="reportinggroup4Required"
+                      (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup4,reportinggroup5Active)"
+                      [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup3guid)">
+          </p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && !reportinggroup4guid?.valid">
+          <div class="error offset-sm-3">Please select {{reportinggroup4DisplayName}}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup5guid.valid}"
+             [hidden]="!(reportinggroup5Active)">
+          <label for="reportinggroup5guid" class="col-sm-3">{{reportinggroup5DisplayName}}:</label>
+          <p-dropdown [options]="reportinggroup5Array" [(ngModel)]="model.reportinggroup5guid"
+                      name="reportinggroup5guid" [autoWidth]="false" filter="filter" #reportinggroup5guid="ngModel"
+                      [required]="reportinggroup5Required"
+                      (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup5,reportinggroup6Active)"
+                      [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1guid)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup4guid)">
+          </p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && !reportinggroup5guid?.valid">
+          <div class="error offset-sm-3">Please select {{reportinggroup5DisplayName}}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !reportinggroup6guid.valid}"
+             [hidden]="!(reportinggroup6Active)">
+          <label for="reportinggroup6guid" class="col-sm-3">{{reportinggroup6DisplayName}}:</label>
+          <p-dropdown [options]="reportinggroup6Array" [(ngModel)]="model.reportinggroup6guid"
+                      name="reportinggroup6guid" [autoWidth]="false" filter="filter" #reportinggroup6guid="ngModel"
+                      [required]="reportinggroup6Required"
+                      [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild
+                            &&  !model?.reportinggroup1guid) || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup5guid)">
+          </p-dropdown>
+        </div>
+        <div class="row" *ngIf="f.submitted && !reportinggroup6guid?.valid">
+          <div class="error offset-sm-3">Please select {{reportinggroup6DisplayName}}</div>
+        </div>
+      </div>
+
+      <br />
+      <div class="form-group" *ngIf="f.submitted && anyRefurbishedInvalid">
+        <div class="row">
+          <span class="col-sm-3 error">Highlighted devices have more quantity than available</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row">
+          <label class="col-sm-4">New Device</label>
+          <label class="col-sm-4" *ngIf="showRefubrished">Refurbished Device</label>
+          <label class="col-sm-4" *ngIf="qtyEnabled && !portTypeOrder">Quantity</label>
+        </div>
+
+        <div *ngFor="let q of model.lineitems; let i = index">
+          <div class="row">
+            <div class="col-sm-4"
+                 [ngClass]="{ 'has-danger': f.submitted && (!model.lineitems[i].device && !model.lineitems[i].refurbisheddevice) }">
+              <p-autoComplete-extended class="" [(ngModel)]="model.lineitems[i].device"
+                                       [suggestions]="q.devicefilter" [headermeta]="deviceFilterheadermeta"
+                                       searchContainerWidth="60%" maxwidth='600' (completeMethod)="completeMethodDevice($event,i)"
+                                       (onSelect)="onSelectDevice($event,i)" forceSelection="true" [inputStyle]="{'width':'80%'}"
+                                       [dropdown]="true" placeholder="Search by device name,type" field="device"
+                                       name="newDevice_{{i}}" (onClear)="clearModelDevice($event,i)"
+                                       [required]="!model.lineitems[i].refurbisheddevice" [disabled]="!model.ordertypeid">
+              </p-autoComplete-extended>
+            </div>
+            <div class="col-sm-4"
+                 [ngClass]="{ 'has-danger': f.submitted && ((!model.lineitems[i].device && !model.lineitems[i].refurbisheddevice) || model.lineitems[i].refurbishedinvalid) }"
+                 *ngIf="showRefubrished">
+              <p-autoComplete-extended class="" [(ngModel)]="model.lineitems[i].refurbisheddevice"
+                                       [suggestions]="refubrishedDeviceFilter" [headermeta]="refubrishedDeviceFilterheadermeta"
+                                       searchContainerWidth="60%" maxwidth='600'
+                                       (completeMethod)="reCompleteMethodDevice($event,i)" (onSelect)="onReSelectDevice($event,i)"
+                                       forceSelection="true" [inputStyle]="{'width':'80%'}" [dropdown]="true"
+                                       placeholder="Search by device name,type" field="device" name="newRefDevice_{{i}}"
+                                       (onClear)="clearReModelDevice($event,i)" [required]="!model.lineitems[i].device"
+                                       [disabled]="!model.ordertypeid">
+              </p-autoComplete-extended>
+            </div>
+            <div class="col-sm-4"
+                 [ngClass]="{ 'has-danger': f.submitted && (!model.lineitems[i].quantity || model.lineitems[i].quantity ==0  || model?.lineitems[i]?.validationmaxquantity>model.lineitems[i].quantity) }">
+              <p-spinner size="4" [min]="1" [max]="model?.lineitems[i]?.validationmaxquantity"
+                         *ngIf="qtyEnabled && !portTypeOrder" (onChange)="onChangeSpinner(i,$event)"
+                         name="model.lineItems_{{i}}.quantity" [(ngModel)]="model.lineitems[i].quantity"></p-spinner>
+              <input *ngIf="model.lineitems.length > 1 && qtyEnabled" type="button"
+                     class="offset-sm-1 btn btn-primary" value="Remove" (click)="removeClick(i)" />
+
+            </div>
+          </div>
+          <div class="row" style="height: 4px"></div>
+          <div class="row"
+               *ngIf="f.submitted && (!model.lineitems[i].device && !model.lineitems[i].refurbisheddevice)">
+            <div class="error col-sm-12">
+              Please select {{ showRefubrished ? " either a new " : '' }}device
+              {{ showRefubrished ? " or a refubrished device" : '' }}
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+      <div *ngIf="qtyEnabled == false" class="form-group">
+        <div class="form-group row">
+          <label class="col-sm-3" for="existingsim">Use Existing Sim</label>
+          <p-checkbox class="" binary="true" [(ngModel)]="model.useexistingsim" #useexistingsim="ngModel"
+                      name="existingsim"></p-checkbox>
+        </div>
+      </div>
+      <div *ngIf="model.useexistingsim" class="form-group"
+           [ngClass]="{ 'has-danger': f.submitted && !simnumber.valid &&  model.useexistingsim }">
+        <div class="row">
+          <label class="col-sm-3" for="simnumber">SIM Number</label>
+          <input class="form-control" type="text" [(ngModel)]="model.simnumber" #simnumber="ngModel"
+                 name="simnumber" [required]="model.useexistingsim" maxlength="20" pInputText
+                 [pKeyFilter]="simnumberregex" [pValidateOnly]="true" />
+        </div>
+        <div class="row" *ngIf="f.submitted && !simnumber.valid &&  model.useexistingsim">
+          <div class="error offset-sm-3">
+            Please enter a valid SIM number, starting with 89441, 19 or 20 digits
+            depending on network
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <div class="row">
+          <div class="col-sm-3">
+            <input *ngIf="qtyEnabled && !portTypeOrder" type="button" class="btn btn-primary" value="Add"
+                   (click)="click()" />
+          </div>
+          <div class="">
+            <input type="submit" value="Next" class="btn btn-primary" [disabled]="loading" />
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</div>

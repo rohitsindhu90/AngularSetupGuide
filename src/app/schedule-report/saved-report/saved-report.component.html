@@ -1,0 +1,59 @@
+﻿<p-dataTable #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" scrollWidth="100%"
+    class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}"
+    [rowsPerPageOptions]="[5,10,20]">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column [style]="{'width':'180px'}" field="reportname" header="Report Name" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'160px'}" header="Created By" field="createdby" filter="true" filterMatchMode="contains"
+        [sortable]="true"></p-column>
+    <p-column [style]="{'width':'100px'}" header="Created Date" field="createddatestring" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+    <!--<p-column [style]="{'width':'160px'}" header="Frequency" field="frequencydescription" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>-->
+    <p-column [style]="{'width':'90px'}" field="frequencydescription" header="Frequency" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qFrequencyfilter!=null"
+                (click)="qFrequencyfilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="frequencyfilter" [style]="{'width':'100%'}"
+                [(ngModel)]="qFrequencyfilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'280px'}" header="Recipients" field="recipientsemail" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'50px'}" header="View Report" field="createdby" [exportColumn]="false">
+        <ng-template let-data="rowData" pTemplate="item">
+            <div class="ui-helper-clearfix">
+                <i class="fa fa-list-ul fa-lg" (click)="onViewReport(data)" style="cursor:pointer"></i>
+            </div>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'40px'}" header="Edit" field="createdby" [exportColumn]="false">
+        <ng-template let-data="rowData" pTemplate="item">
+            <div class="ui-helper-clearfix">
+                <i class="fa fa-pencil-square-o fa-lg" (click)="onEdit(data)" style="cursor:pointer"></i>
+            </div>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'40px'}" header="Send Now" field="createdby" [exportColumn]="false">
+        <ng-template let-data="rowData" pTemplate="item">
+            <div class="ui-helper-clearfix">
+                <i class="fa fa-envelope fa-lg" size="7x" (click)="onSendNow(data)" style="cursor:pointer"></i>
+            </div>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'55px'}" header="Remove" field="createdby" [exportColumn]="false">
+        <ng-template let-data="rowData" pTemplate="item">
+            <div class="ui-helper-clearfix">
+                <i class="fa fa-times fa-lg" (click)="onDelete(data)" style="cursor:pointer"></i>
+            </div>
+        </ng-template>
+    </p-column>
+
+</p-dataTable>

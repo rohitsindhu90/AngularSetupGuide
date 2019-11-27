@@ -1,0 +1,35 @@
+﻿<h6><span>{{titleName + selectedcategory }}</span></h6>
+
+
+<!-- <div class="col-lg-12 col-md-12">
+    <div class="col-md-3"> -->
+<p-checkbox label="Active Mobile Numbers" #chkActive name="activemobile" [(ngModel)]="activemobile" binary="true"
+    (onChange)="checkboxChange(chkActive)" [disabled]="activedisabled">
+</p-checkbox>
+<br>
+<!-- </div>
+</div>
+<div class="col-lg-12 col-md-12">
+    <div class="col-md-3"> -->
+<p-checkbox #chkCancelled name="cancelledmobile" [(ngModel)]="cancelledmobile" binary="true"
+    (onChange)="checkboxChange(chkCancelled)" [disabled]="cancelleddisabled" label="Cancelled Mobile Numbers">
+</p-checkbox>
+<!-- </div>
+</div> -->
+<!-- 
+<p-checkbox #chkActive name="activemobile" [(ngModel)]="activemobile" binary="true" (onChange)="checkboxChange(chkActive)" [disabled]="activedisabled"></p-checkbox><label>Active Mobile Numbers</label>
+<br />
+<br />
+<p-checkbox #chkCancelled name="cancelledmobile" [(ngModel)]="cancelledmobile" binary="true" (onChange)="checkboxChange(chkCancelled)" [disabled]="cancelleddisabled" ></p-checkbox><label>Cancelled Mobile Numbers</label> -->
+{{error}}
+
+<div class="vert-offset-top-2">
+    <p-tabView (onChange)="onTabChange($event)" [ngClass]="{'ui-state-trigger':islinksourcetabclickEnable}">
+        <p-tabPanel header="Fleet">
+            <div #managefleetcontainer></div>
+        </p-tabPanel>
+        <p-tabPanel *ngFor="let tt of GetVisibleTabs()" [header]="tt.data['featuredescription']">
+            <div #managefleetdynamiccontainer [attr.data-key]="tt.data['featuredescription']"></div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

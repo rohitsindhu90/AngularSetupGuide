@@ -1,0 +1,58 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+    <div class="form-group" *ngIf="reportingGroupArray?.length > 1">
+        <div class="row">
+            <label class="col-sm-3" for="reportinggroup">Reporting Group</label>
+            <p-dropdown [options]="reportingGroupArray" [(ngModel)]="reportinggroupguid" name="reportinggroup" #reportinggroup="ngModel" (onChange)="onReportingGroupChange()"  filter="filter"></p-dropdown>
+        </div>
+    </div>
+    <div class="form-group" *ngIf="networkArray?.length > 1">
+        <div class="row">
+            <label class="col-sm-3" for="network">Network</label>
+            <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" #network="ngModel" (onChange)="onNetworkChange()"  filter="filter"></p-dropdown>
+        </div>
+    </div>
+    <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+        <div class="row">
+            <label class="col-sm-3" for="billingplatform">Billing Platform</label>
+            <p-dropdown [options]="billingPlatformArray" [disabled]="billingPlatformArray == null || billingPlatformArray == undefined || billingPlatformArray?.length <= 1" [(ngModel)]="billingplatformguid" name="billingplatform" #billingplatform="ngModel" (onChange)="onBillingPlatformChange()"
+                         filter="filter" [required]="billingPlatformArray?.length > 1"></p-dropdown>
+        </div>
+    </div>
+    <div class="form-group" *ngIf="BANArray?.length > 1">
+        <div class="row">
+            <label class="col-sm-3" for="ban">BAN</label>
+            <p-dropdown class="" [options]="BANArray" [(ngModel)]="banguid" name="ban" #ban="ngModel" filter="filter" (onChange)="onBANChange()"></p-dropdown>
+        </div>
+    </div>
+    <div class="form-group" *ngIf="BENArray?.length > 1">
+        <div class="row">
+            <label class="col-sm-3" for="ben">BEN</label>
+            <p-dropdown class="" [options]="BENArray" [(ngModel)]="benguid" name="ben" #ben="ngModel" filter="filter" (onChange)="onBENChange()"></p-dropdown>
+        </div>
+    </div>
+
+    <div class="vert-offset-top-1">
+        <p-dataTable #dt [value]="model" [rows]="10" [paginator]="true" scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}"
+                     class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="Historic Cost By Reporting Group" [rowsPerPageOptions]="[5,10,20]"
+                     frozenWidth="300px"
+                     unfrozenWidth="100%">
+            <p-header>
+                <div class="ui-helper-clearfix">
+                    <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+                </div>
+            </p-header>
+            <p-column [style]="{'width':'300px'}" frozen="true" field="description" header="{{header}}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column [style]="{'width':'180px'}" field="status" header="Status" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+            <p-column [style]="{'width':'200px'}" *ngFor="let column of monthColumn" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" sortable="custom" (sortFunction)="onCustomSort($event)">
+                <ng-template let-col let-cc="rowData" pTemplate="body">
+                    <span>{{cc[col.field] | stringToCurrencyFormat }}</span>
+                </ng-template>
+            </p-column>
+        </p-dataTable>
+    </div>
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

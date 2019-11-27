@@ -1,0 +1,18 @@
+﻿<p-dataTable class="ui-datatable-scroll-margin-fix" *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true"
+             [responsive]="true"
+
+           
+             selectionMode="single"
+             (onRowSelect)="handleRowSelect($event)"
+             [style]="{'margin-top':'30px'}"
+             exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel " (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+
+    <p-column [style]="{'width':'150px'}" field="description" header="{{ localactivetabname }}" [sortable]="true" filter="true" filterMatchMode="contains"></p-column>
+    <p-column [style]="{'width':'150px'}" field="count" header="Number of Mobile"  [sortable]="true"></p-column>
+</p-dataTable>
+<div #managelinkfleetcontainer></div>

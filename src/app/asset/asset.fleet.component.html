@@ -1,0 +1,95 @@
+﻿<p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true"
+    scrollable="true" unfrozenWidth="100%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}"
+    exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]" (onRowClick)="onRowSelect($event)"
+    selectionMode="single">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+
+    <p-column [style]="{'width':'200px'}" field="device" header="Device" filter="true" filterMatchMode="contains"
+        [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'150px'}" field="mobilenumber" header="Mobile Number" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'120px'}" field="networkdescription" header="Network" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qNetworkFilter!=null"
+                (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" field="billingplatformdescription" header="Billing Platform" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true" *ngIf="isbillingplatformxist">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qBillingPlatformFilter!=null"
+                (click)="qBillingPlatformFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qBillingPlatformFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" *ngFor="let column of datacolumns" [field]="column.field" rowspan="3"
+        [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" [filterMatchMode]="column.filtermode"
+        [sortable]="column.sortable">
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" field="imei" header="IMEI" filter="true" filterMatchMode="contains"
+        [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'150px'}" *ngIf="IsSupplierActive" field="supplier" header="Supplier" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'120px'}" field="serialnumber" header="Serial Number" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'150px'}" field="simnumber" header="SIM Number" filter="true" filterMatchMode="contains"
+        [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'120px'}" field="assetlocation" header="Location" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qAssetLocationFilter!=null"
+                (click)="qAssetLocationFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="assetlocationfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qAssetLocationFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'120px'}" field="assetstatus" header="Asset Status" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qassetstatusFilter!=null"
+                (click)="qassetstatusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="assetstatusfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qassetstatusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+
+    <!--<p-column [style]="{'width':'150px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" [filterMatchMode]="column.filtermode" [sortable]="column.sortable">
+    </p-column>-->
+    <p-column [style]="{'width':'120px'}" field="purchasedate" header="Purchase Date" filter="false" [sortable]="true"
+        *ngIf="ShowPOAgainstAssetActive"></p-column>
+
+    <p-column [style]="{'width':'120px'}" field="purchaseprice" header="Purchase Price" filter="false" [sortable]="true"
+        *ngIf="ShowPOAgainstAssetActive"></p-column>
+
+    <p-column [style]="{'width':'120px'}" field="ponumber" header="PO Number" filter="false" [sortable]="true"
+        *ngIf="ShowPOAgainstAssetActive"></p-column>
+    <p-column [style]="{'width':'120px'}" field="registerid" header="Register ID" filter="false" [sortable]="true"
+        *ngIf="isAssetRegisterIDActive"></p-column>
+</p-dataTable>

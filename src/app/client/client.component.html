@@ -1,0 +1,394 @@
+﻿<div class="col-sm-12" *ngIf="model.clientinfo && model.clientcontrolinfo">
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+
+
+        <h6><span>Client Config</span></h6>
+        <div class="col-sm-12">
+
+            <div class="form-group row "
+                [ngClass]="{ 'has-danger': f.submitted && (!supportname.valid || !supportnumber.valid)}">
+                <label class="col-sm-2" for="supportname">Support Name</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="supportname"
+                        [(ngModel)]="model.clientinfo[clientEnum.clientname-1].value" #supportname="ngModel" required
+                        maxlength="50" />
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !supportname.valid">This field is
+                        required</span>
+                </div>
+                <label class="col-sm-2" for="supportnumber">Support Number</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="supportnumber"
+                        [(ngModel)]="model.clientinfo[clientEnum.supportnumber-1].value" #supportnumber="ngModel"
+                        required maxlength="20" [pValidateOnly]="false" pInputText pKeyFilter="int" />
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !supportnumber.valid">This field
+                        is required</span>
+                </div>
+            </div>
+            <div class="form-group row "
+                [ngClass]="{ 'has-danger': f.submitted &&  (!supportemail.valid || !clienturl.valid) }">
+                <label class="col-sm-2" for="supportemail">Support Email</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="supportemail"
+                        [(ngModel)]="model.clientinfo[clientEnum.clientemail-1].value" #supportemail="ngModel"
+                        pattern="^[\w._-]+[+]?[\w._-]+@[\w.-]+\.[a-zA-Z]{2,4}$" required maxlength="50" />
+                    <span class="col-sm-5 form-control-feedback"
+                        *ngIf="f.submitted &&  supportemail.errors && supportemail.errors.required">This field is
+                        required</span>
+                    <span class="col-sm-5 form-control-feedback"
+                        *ngIf="f.submitted && supportemail.errors && supportemail.errors.pattern">Email is
+                        invalid</span>
+                    <!--<span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && supportemail.errors && supportemail.errors.pattern">Email is invalid</span>-->
+
+                </div>
+                <label class="col-sm-2" for="clienturl">Client URL</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="clienturl"
+                        [(ngModel)]="model.clientinfo[clientEnum.clienturl-1].value" #clienturl="ngModel" required
+                        maxlength="50" />
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !clienturl.valid">This field is
+                        required</span>
+                </div>
+            </div>
+            <!-- <div class="form-group row ">
+                <label class="col-sm-2" for="passwordregexp">Password Regex</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="passwordregexp"
+                        [(ngModel)]="model.clientinfo[clientEnum.passwordregexp-1].value" #passwordregexp="ngModel"
+                        maxlength="30" />
+                </div>
+                <label class="col-sm-2" for="passwordmessge">Password Message</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="passwordmessge"
+                        [(ngModel)]="model.clientinfo[clientEnum.passwordmessge-1].value" #passwordmessge="ngModel"
+                        maxlength="40" [pTooltip]="model.clientinfo[clientEnum.passwordmessge-1].value" tooltipPosition="bottom"/>
+
+                </div>
+            </div> -->
+
+        </div>
+
+        <h6><span>Reporting Groups</span></h6>
+        <div class="col-sm-12">
+            <div class="form-group row " *ngFor="let item of model.reportinggroupviewmodel"
+                [ngClass]="{ 'has-danger': f.submitted && !f.controls[item.description].valid}">
+                <label class="col-sm-2" [for]="item.description">{{item.description}}</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="{{item.description}}" [(ngModel)]="item.displayname"
+                        #itemdescription="ngModel" maxlength="50" required />
+                    <span class="col-sm-5 form-control-feedback"
+                        *ngIf="f.submitted && !f.controls[item.description].valid">This field is required</span>
+                </div>
+                <label class="col-sm-2">
+                    <p-checkbox binary="true" [(ngModel)]="item.active" [name]="item.description+'active'"></p-checkbox>
+                    Active?
+                </label>
+                <label class="col-sm-2">
+                    <p-checkbox binary="true" [(ngModel)]="item.isrequired" [name]="item.description+'requried'">
+                    </p-checkbox>Required?
+                </label>
+
+            </div>
+
+        </div>
+
+        <h6><span>System Related Setup</span></h6>
+        <div class="col-sm-12">
+            <div class="form-group row " [ngClass]="{ 'has-danger': f.submitted && !cancellationdays.valid }">
+                <label class="col-sm-2">Cancellation Days</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="cancellationdays"
+                        [(ngModel)]="model.clientinfo[clientEnum.partialcancelleddays-1].value"
+                        #cancellationdays="ngModel" required maxlength="3" [pValidateOnly]="false" pInputText
+                        pKeyFilter="int" />
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !cancellationdays.valid">This
+                        field is required</span>
+                </div>
+
+            </div>
+            <div class="form-group row " [ngClass]="{ 'has-danger': f.submitted && !quarantinedays.valid }">
+                <label class="col-sm-2">Quarantine Days</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="quarantinedays"
+                        [(ngModel)]="model.clientinfo[clientEnum.quarantinedays-1].value" #quarantinedays="ngModel"
+                        required maxlength="3" [pValidateOnly]="false" pInputText pKeyFilter="int" />
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !quarantinedays.valid">This field
+                        is required</span>
+                </div>
+
+            </div>
+
+
+            <ng-template ngFor let-item [ngForOf]="model.clientcontrolinfo" let-i="index">
+                <div class="form-group row " *ngIf="item.designcategory===designCategory.SystemRelatedSetup">
+                    <label class="col-sm-2">{{item.description}}</label>
+                    <div class="col-sm-8" style="display:flex;">
+                        <ng-template [ngIf]="item.description==='Cost Adjustment'" [ngIfElse]="divCheckBox">
+                            <p-dropdown [options]="costadjustmentarray" [name]="item.description" #active="ngModel"
+                                [(ngModel)]="item.active">
+                            </p-dropdown>
+                        </ng-template>
+                        <ng-template #divCheckBox>
+                            <p-checkbox binary="true" [(ngModel)]="item.active" [name]="item.description">
+                            </p-checkbox>
+                        </ng-template>
+                        <ng-template [ngIf]="item.ischildcontrol">
+                            <label class="col-sm-2" *ngIf="item.childcontroltype==='dropdown'">
+                                <p-dropdown [options]="costadjustmentarray" [name]="item.description+'dropdown'"
+                                    #active="ngModel" [(ngModel)]="item.active" required>
+                                </p-dropdown>
+                                <span class="col-sm-5 form-control-feedback"
+                                    *ngIf="f.submitted && !f.controls[item.description+'dropdown'].valid">This field is
+                                    required</span>
+                            </label>
+                            <label class="col-sm-2" *ngIf="item.childcontroltype==='checkbox'">
+                                <p-checkbox binary="true" [(ngModel)]="item.active" [name]="item.description+'active'">
+                                </p-checkbox>Active?
+                            </label>
+                            <label class="col-sm-5" *ngIf="item.childcontroltype==='text' && item.active">
+                                <input type="text" class="form-control" [name]="item.description+'text'"
+                                    [(ngModel)]="item.childcontrolvalue" required maxlength="10" pInputText
+                                    [pKeyFilter]="decimalregx" [pValidateOnly]="true" #costadjustmentvalue="ngModel" />
+                                <span class="col-sm-5 form-control-feedback"
+                                    *ngIf="(costadjustmentvalue.dirty || costadjustmentvalue.touched) && costadjustmentvalue.errors?.validatePattern">Purchase
+                                    price should be decimal(0.00)</span>
+                                <span class="col-sm-5 form-control-feedback"
+                                    *ngIf="f.submitted && costadjustmentvalue.errors && costadjustmentvalue.errors.required">This
+                                    field is required</span>
+                            </label>
+                        </ng-template>
+
+                    </div>
+
+                </div>
+            </ng-template>
+        </div>
+
+
+
+
+        <h6><span>Feature List</span></h6>
+        <div class="col-sm-10">
+            <div class="form-group row">
+                <!-- <p-treeTable [value]="model.featuretree" [style]="{'margin-top':'50px'}">
+                    <p-column field="featurename" header="Feature">
+                    </p-column>
+                    <p-column field="active" header="Include">
+                        <ng-template let-node="rowData" pTemplate="body">
+                            <input type="checkbox" [(ngModel)]="node.data.active" name="{{node.data.featurename+'1'}}" value="active" style="width:100%;border-width:0px 0px 1px 0px" (change)="onChangeIncudeChkbox(checked,node)">
+                        </ng-template>
+                    </p-column>
+
+                </p-treeTable> -->
+
+                <p-treeTable [value]="model.featuretree" [style]="{'margin-top':'50px'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th class="text-center">Feature</th>
+                            <th class="text-center">Include</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                        <tr>
+                            <td>
+                                <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                                {{rowData.featurename}}
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" [(ngModel)]="rowData.active" name="{{rowData.featurename+'1'}}"
+                                    value="active" (change)="onChangeIncudeChkbox(rowNode.node)">
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                </p-treeTable>
+            </div>
+        </div>
+
+        <h6><span>Functionality</span></h6>
+        <div class="col-sm-12">
+            <div class="form-group row ">
+                <ng-template ngFor let-item [ngForOf]="model.clientcontrolinfo" let-i="index">
+                    <ng-template [ngIf]="item.designcategory===designCategory.Functionality">
+
+                        <div class="col-sm-4" style="display:flex;">
+                            <p-checkbox binary="true" [(ngModel)]="item.active" [name]="item.description"
+                                [label]="item.description"></p-checkbox>
+                        </div>
+                    </ng-template>
+                </ng-template>
+            </div>
+        </div>
+
+
+        <h6><span>Fields</span></h6>
+        <div class="col-sm-12">
+
+            <ng-template ngFor let-item [ngForOf]="model.clientcontrolinfo" let-i="index">
+                <div class="form-group row " *ngIf="item.designcategory===designCategory.Fields">
+                    <div class="col-sm-4" style="display:flex;">
+                        <p-checkbox binary="true" [(ngModel)]="item.active" [name]="item.description"
+                            [label]="item.description"></p-checkbox>
+
+                    </div>
+                    <ng-template [ngIf]="item.ischildcontrol">
+                        {{fieldsChildValue[item.description]}}
+                        <label class="col-sm-2">
+                            <p-checkbox binary="true" [(ngModel)]="fieldsChildValue[item.id]"
+                                [name]="item.description+'childcontrolvalue'" label="Required?" [value]="'true'">
+                            </p-checkbox>
+                        </label>
+                    </ng-template>
+                </div>
+            </ng-template>
+        </div>
+
+        <h6><span>User Related</span></h6>
+        <div class="col-sm-12" *ngIf="model.clientinfo">
+            <div class="form-group row " [ngClass]="{ 'has-danger': f.submitted && !usernamedefault.valid }">
+                <label class="col-sm-2">Username Default</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <p-dropdown [options]="usernamearray" name="usernamedefault" #usernamedefault="ngModel"
+                        [(ngModel)]="model.clientinfo[clientEnum.newusername-1].value">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !usernamedefault.valid">This
+                        field is required</span>
+                </div>
+
+            </div>
+            <ng-template ngFor let-item [ngForOf]="model.clientcontrolinfo" let-i="index">
+                <div class="form-group row " *ngIf="item.designcategory===designCategory.UserRelated">
+                    <label class="col-sm-2">{{item.description}}</label>
+                    <div class="col-sm-3" style="display:flex;">
+                        <p-checkbox binary="true" [(ngModel)]="item.active" [name]="item.description"></p-checkbox>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+        <div class="col-sm-12" *ngIf="model.clientinfo">
+            <div class="form-group row " [ngClass]="{ 'has-danger': f.submitted && !password.valid }">
+                <label class="col-sm-2">Password</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <p-dropdown [options]="passwordarray" name="password" #password="ngModel"
+                        [(ngModel)]="selectedPassword">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !password.valid">This
+                        field is required</span>
+                </div>
+
+            </div>            
+        </div>
+
+        <h6><span>Account Related</span></h6>
+        <div class="col-sm-12">
+            <div class="form-group row " *ngIf="mobileOnlyDisplay">
+                <label class="col-sm-2">Mobile Only</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <p-radioButton [(ngModel)]="mobileOnlyValue" [name]="'MobileOnly'" value="true"
+                        #mobileonly="ngModel"></p-radioButton>
+                </div>
+
+            </div>
+
+            <div class="form-group row " *ngIf="mobileOnlyDisplay">
+                <label class="col-sm-2"> Mobile and Land Line/PB</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <p-radioButton [(ngModel)]="mobileOnlyValue" [name]="'MobileOnly'" value="false"
+                        #mobileonly="ngModel"></p-radioButton>
+                </div>
+
+            </div>
+            <div class="col-sm-10">
+                <div class="form-group row">
+
+                    <p-dataTable *ngIf="networkBillingPlatformArray!=null" #dt [value]="networkBillingPlatformArray"
+                        [rows]="10" [responsive]="true" unfrozenWidth="100%" class="ui-datatable-scroll-margin-fix"
+                        [style]="{'margin-top':'30px'}" selectionMode="single">
+                        <p-column [style]="{'width':'120px'}" field="networkdescription" header="Network"></p-column>
+                        <p-column [style]="{'width':'120px'}" field="billingplatformdescription"
+                            header="Billng Platform"></p-column>
+                        <p-column [style]="{'width':'120px'}" field="statusdescription" header="Status"></p-column>
+                        <!--<p-column [style]="{'width':'120px'}" field="statuschangedate  | date:'dd-MM-yyyy'" header="Status Change Date"></p-column>-->
+                        <p-column [style]="{'width':'120px'}" field="statuschangedate" header="Status Change Date">
+                            <ng-template let-col let-item="rowData" pTemplate="body">
+                                <span [style.color]="item[col.field]">{{item[col.field] | date:'dd-MM-yyyy'}}</span>
+                            </ng-template>
+                        </p-column>
+                        <p-column [style]="{'width':'120px'}" header="Action">
+                            <ng-template let-networkBillingPlatform="rowData" pTemplate="body">
+                                <button type="button" (click)="onClickStatusChange(networkBillingPlatform,$event)"
+                                    *ngIf="!networkBillingPlatform.status" class="btn btn-primary">Make Active</button>
+                                <button type="button" (click)="onClickStatusChange(networkBillingPlatform,$event)"
+                                    *ngIf="networkBillingPlatform.status" class="btn btn-primary">Make InActive</button>
+                            </ng-template>
+                        </p-column>
+                    </p-dataTable>
+                </div>
+            </div>
+            <div class="form-group row " *ngIf="bulkmanualcreditDisplay">
+                <label class="col-sm-2">Bulk Manual Credit</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <p-checkbox binary="true" [(ngModel)]="bulkmanualcredit.active"
+                        [name]="bulkmanualcredit.description"></p-checkbox>
+                </div>
+                <ng-template [ngIf]="bulkmanualcredit.active">
+                    <label class="col-sm-2">Bulk Credit Amount</label>
+                    <div class="col-sm-3" style="display:flex;">
+                        <input type="text" class="form-control" name="bulkcreditamount"
+                            [(ngModel)]="bulkmanualcredit.childcontrolvalue" #bulkcreditamount="ngModel" required
+                            maxlength="10" pInputText [pKeyFilter]="decimalregx" [pValidateOnly]="true" />
+                        <span class="col-sm-5 form-control-feedback"
+                            *ngIf="(bulkcreditamount.dirty || bulkcreditamount.touched) && bulkcreditamount.errors?.validatePattern">Purchase
+                            price should be decimal(0.00)</span>
+                        <span class="col-sm-5 form-control-feedback"
+                            *ngIf="f.submitted && bulkmanualcredit.active && bulkcreditamount.errors && bulkcreditamount.errors.required">This
+                            field is required</span>
+
+
+                    </div>
+                </ng-template>
+            </div>
+            <div *ngIf="bulkmanualcreditDisplay && bulkmanualcredit.active" class="form-group row "
+                [ngClass]="{ 'has-danger': f.submitted && !creditenddate.valid  }">
+                <label class="col-sm-2">Credit End Date</label>
+                <div class="col-sm-3" style="display:flex;">
+
+                    <p-calendar name="creditenddate" [(ngModel)]="model.clientinfo[clientEnum.creditenddate-1].value"
+                        #creditenddate="ngModel" maxlength="10" dateFormat="dd/mm/yy" [monthNavigator]="true"
+                        [yearNavigator]="true" required readonlyInput="true" yearRange="2000:2030" [showIcon]="true"
+                        class="form-control"></p-calendar>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !creditenddate.valid">This field
+                        is required</span>
+                </div>
+            </div>
+        </div>
+
+        <h6><span>Observations</span></h6>
+        <div class="col-sm-12">
+            <div class="form-group row ">
+                <label class="col-sm-2">Show Observations</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <p-checkbox binary="true" [(ngModel)]="showobservation.active" [name]="showobservation.description">
+                    </p-checkbox>
+                </div>
+            </div>
+            <div *ngIf="showobservation.active" class="form-group row "
+                [ngClass]="{ 'has-danger': f.submitted && !datathreshold.valid  }">
+                <label class="col-sm-2">Data Threshold (MB)</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" name="datathreshold"
+                        [(ngModel)]="showobservation.childcontrolvalue" #datathreshold="ngModel" maxlength="10"
+                        [pValidateOnly]="false" pInputText pKeyFilter="int" required />
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !datathreshold.valid">This field
+                        is required</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row text-center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

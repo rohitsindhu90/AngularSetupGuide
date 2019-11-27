@@ -1,0 +1,137 @@
+﻿<form name="form" (ngSubmit)="f.form.valid && save()" #f="ngForm" novalidate>
+    <div class="row" *ngIf="returndeviceoption?.length > 0">
+        <div class="form-group col-lg-4 col-sm-4">
+            <label for="returningdevice" class="form-label">Returning the device</label>
+            <p-dropdown [options]="returndeviceoption" [(ngModel)]="model.returningdevice" name="returningdevice"
+                #returningdevice="ngModel" required
+                (onChange)="model.returningdevice == 0 && model.otheraddress = false" 
+                filter="filter" [style]="{'width':'250px','height':'30px'}">
+            </p-dropdown>
+        </div>
+    </div>
+
+    <div *ngIf="model.returningdevice">
+
+        <div class="row">
+
+            <div class="form-group col-lg-4 col-sm-4" [ngClass]="{ 'has-danger': f.submitted && !collectiondate.valid}">
+                <label for="collectiondate" class="form-label">Collection Date</label>
+                <p-calendar class="form-control" [inputStyle]="{'max-width' : '100%'}" [style]="{'max-width':'100%'}"
+                    name="collectiondate" #collectiondate="ngModel" [(ngModel)]="model.collectiondate"
+                    readonlyInput="true" [showIcon]="true" [minDate]="minDate" required [disabledDays]="[0,6]">
+                </p-calendar>
+                <span class="form-control-feedback" *ngIf="f.submitted && collectiondate.errors?.required">This field is
+                    required</span>
+            </div>
+
+            <div class="form-group col-lg-4 col-sm-4"
+                [ngClass]="{ 'has-danger': f.submitted && !selectedaddress.valid && (model.otheraddress != true) }">
+                <label for="selectedaddress" class="form-label">Collection Address</label>
+                <p-dropdown [options]="addresslist" [(ngModel)]="model.selectedaddress" name="selectedaddress"
+                    [required]="model.returningdevice == 1" #selectedaddress="ngModel"
+                    [disabled]="model.otheraddress == true"  filter="filter"
+                    [style]="{'max-width':'100%','height':'30px'}">
+                </p-dropdown>
+                <span class="form-control-feedback" *ngIf="f.submitted && selectedaddress.errors?.required">This field
+                    is required</span>
+
+            </div>
+
+            <div class="form-group checkbox col-lg-4 col-sm4"
+                [ngClass]="{ 'has-danger': f.submitted && !selectedaddress.valid }">
+                <p-checkbox name="model.otheraddress" class="" label="Other Address" [(ngModel)]="model.otheraddress"
+                    #otheraddress="ngModel" binary="true" (ngModelChange)="model.selectedaddress = null"></p-checkbox>
+                <!--<input type="checkbox" name="model.otheraddress" class="" [(ngModel)]="model.otheraddress" #otheraddress="ngModel"  />Other-->
+            </div>
+
+        </div>
+
+        <div class="row">
+
+            <div class="form-group col-lg-4 col-sm-4" [ngClass]="{ 'has-danger': f.submitted && !contactname.valid }">
+                <label for="contactname" class="form-label">Contact Name</label>
+                <input type="text" class="form-control" name="contactname" [(ngModel)]="model.contactname"
+                    readonlyInput="true" maxlength="50" required #contactname="ngModel" />
+                <span class="form-control-feedback" *ngIf="f.submitted && contactname.errors?.required">This field is
+                    required</span>
+
+            </div>
+
+            <!--<div class="form-group col-lg-4 col-sm-4" [ngClass]="{ 'has-danger': f.submitted && (!contactnumber.valid || model.contactnumber?.length != 11 || model.contactnumber?.indexOf('0') != 0 )}">-->
+            <div class="form-group col-lg-4 col-sm-4" [ngClass]="{ 'has-danger': f.submitted && !contactnumber.valid }">
+                <label for="contactnumber" class="form-label">Contact Number</label>
+                <input type="text" class="form-control" name="contactnumber" [(ngModel)]="model.contactnumber"
+                    maxlength="11" readonlyInput="true" required #contactnumber="ngModel" pInputText
+                    pKeyFilter="pint" />
+                <span class="form-control-feedback" *ngIf="f.submitted && contactnumber.errors?.required">This field is
+                    required</span>
+            </div>
+
+
+
+        </div>
+
+    </div>
+
+    <div *ngIf="model.otheraddress">
+        <div class="row">
+            <div class="form-group col-lg-4 col-sm-4" [ngClass]="{ 'has-danger': f.submitted && !address1.valid }">
+                <label for="address1" class="form-label">Address Line 1</label>
+                <input type="text" class="form-control" [(ngModel)]="model.newaddress.address1" name="address1"
+                    readonlyInput="true" [required]="model.otheraddress" #address1="ngModel" maxlength="50" />
+                <span class="form-control-feedback" *ngIf="f.submitted && address1.errors?.required">This field is
+                    required</span>
+            </div>
+
+            <div class="form-group col-lg-4 col-sm-4">
+                <label for="city" class="form-label">Town</label>
+                <input type="text" class="form-control" [(ngModel)]="model.newaddress.city" name="city"
+                    readonlyInput="true" maxlength="50" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-4 col-sm-4">
+                <label for="addess2" class="form-label">Address Line 2</label>
+                <input type="text" class="form-control" [(ngModel)]="model.newaddress.address2" name="addess2"
+                    readonlyInput="true" maxlength="50" />
+            </div>
+            <div class="form-group col-lg-4 col-sm-4">
+                <label for="country" class="form-label">Country</label>
+                <input type="text" class="form-control" [(ngModel)]="model.newaddress.country" name="country"
+                    readonlyInput="true" maxlength="50" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-lg-4 col-sm-4">
+                <label for="address3" class="form-label">Address Line 3</label>
+                <input type="text" class="form-control" [(ngModel)]="model.newaddress.address3" name="address3"
+                    readonlyInput="true" maxlength="50" />
+            </div>
+            <div class="form-group col-lg-4 col-sm-4" [ngClass]="{ 'has-danger': f.submitted && !postcode.valid }">
+                <label for="postcode" class="form-label">Postcode</label>
+                <input type="text" class="form-control" [(ngModel)]="model.newaddress.postcode" name="postcode"
+                    readonlyInput="true" [required]="model.otheraddress" maxlength="10" #postcode="ngModel" />
+                <span class="form-control-feedback" *ngIf="f.submitted && postcode.errors?.required">This field is
+                    required</span>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-4 col-sm-4">
+            <label for="unallocatereason" class="form-label">Reason for Unallocation</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-12 col-sm-12">
+            <textarea class="form-control" name="unallocatereason" [(ngModel)]="model.unallocatereason" maxlength="300"
+                #unallocatereason="ngModel" rows="10"></textarea>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <input type="submit" value="Submit" class="btn btn-primary" />
+    </div>
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+</form>

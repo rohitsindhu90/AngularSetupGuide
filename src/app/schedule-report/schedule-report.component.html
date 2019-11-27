@@ -1,0 +1,104 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid  && targetFeatures?.length > 0 && save(f)" #f="ngForm" novalidate>
+        <div class="form-group " [ngClass]="{ 'has-danger': f.submitted && targetFeatures?.length < 1 }">
+            <label for="chooseReports" class="col-sm-2">Choose Reports:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-pickList [sourceStyle]="{'height':'250px','width':'250px'}"
+                    [targetStyle]="{'height':'250px','width':'250px'}" sourceFilterPlaceholder="Serach by name"
+                    targetFilterPlaceholder="Serach by name" [showSourceControls]="false" [showTargetControls]="false"
+                    [source]="sourceFeatures" [target]="targetFeatures" dragdrop="true" [responsive]="true"
+                    name="chooseReports" #chooseReports required>
+                    <ng-template let-rg pTemplate="item">
+                        <div class="ui-helper-clearfix">
+                            <div>{{rg.featurename}}</div>
+                        </div>
+                    </ng-template>
+                </p-pickList>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && targetFeatures?.length < 1">This
+                    field is required</span>
+            </div>
+            <small class="form-text text-muted">(Press and hold Ctrl to select multiple items)</small>
+            <!--<div class="form-group  ">
+            <label class="col-sm-12">(Press and hold Ctrl to select multiple items)</label>
+        </div>-->
+        </div>
+        <div class="form-group row marginZeroLeft" [ngClass]="{ 'has-danger': f.submitted && !name.valid }">
+            <label for="name" class="col-sm-2">Save As:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="name" [(ngModel)]="model.name" #name="ngModel" required
+                    maxlength="150" />
+
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !name.valid">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row marginZeroLeft" [ngClass]="{ 'has-danger': f.submitted && !frequency.valid }">
+            <label for="frequency" class="col-sm-2">Frequency:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-selectButton [options]="frequencyArray" [(ngModel)]="model.frequency" name="frequency"
+                    #frequency="ngModel" required></p-selectButton>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !frequency.valid">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group ">
+            <label for="roledescription" class="col-sm-2">Recipients:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <p-pickList [sourceStyle]="{'height':'250px','width':'450px'}"
+                    [targetStyle]="{'height':'250px','width':'450px'}" sourceFilterPlaceholder="Serach by name"
+                    targetFilterPlaceholder="Serach by name" [showSourceControls]="false" [showTargetControls]="false"
+                    sourceHeader="Available Recipients" targetHeader="Selected Recipients" [source]="sourceUserDetails"
+                    [target]="targetUserDetails" dragdrop="true" [responsive]="true">
+                    <ng-template let-rg pTemplate="item">
+                        <div class="ui-helper-clearfix">
+                            <div>{{rg.name}} - {{rg.emailaddress}}</div>
+                        </div>
+                    </ng-template>
+                </p-pickList>
+            </div>
+            <small class="form-text text-muted">(Press and hold Ctrl to select multiple items)</small>
+
+        </div>
+        <div class="form-group row marginZeroLeft"
+            [ngClass]="{ 'has-danger': f.submitted && ( (targetUserDetails?.length < 1 && otherEmails.errors?.required) || (otherEmails.errors && otherEmails.errors.validatePattern) )}">
+            <label class="col-sm-2">Other Emails:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="otherEmails" [(ngModel)]="model.otherEmails"
+                    #otherEmails="ngModel" [required]="targetUserDetails?.length < 1 && otherEmails" maxlength="100"
+                    aria-describedby="emailHelp" pInputText [pKeyFilter]="multipleEmailAddressregx"
+                    [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && targetUserDetails?.length < 1 && otherEmails.errors?.required">Please selected
+                    at least one user or enter at least one email</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && otherEmails.errors && otherEmails.errors.validatePattern">Email is
+                    invalid</span>
+            </div>
+            <div class="col-sm-8" style="display:flex;">
+                <label for="" class="col-sm-3"></label>
+                <small id="emailHelp" class="form-text text-muted">(Note: Multiple Emails should be separated by
+                    ";")</small>
+
+            </div>
+
+        </div>
+        <!--<div class="form-group row marginZeroLeft" >
+            <label  class="col-sm-2"></label>
+            <div class="col-sm-8" style="display:flex;">               
+                <small id="emailHelp" class="form-text text-muted">(Note: Multiple Emails should be separated by ";")</small>               
+            </div>
+        </div>-->
+
+        <div class="form-group row ">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!--<span style="color:white">{{dignose() }} </span>-->

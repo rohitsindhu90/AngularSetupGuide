@@ -1,0 +1,221 @@
+// :root {
+
+//   --theme-bgcolor: #006a60 ;
+//   --theme-textcolor: #fff ;
+//   --body-bg: #F9FDFF ;
+//   --body-bg-darken: #e9f7ff ;
+//   --input-bg-daylight: #fff ;
+//   --table-header-bg: #EEF2F4 ;
+//   --table-header-bg-darken-15: #c2d0d7 ;
+//   --table-header-bg-darken-25: #a4bac4 ;
+//   --table-header-bg-darken-20: #b3c5ce ;
+// }
+
+@import "day-light-var.scss";
+
+//background color
+$theme-bgcolor: var(--theme-bgcolor); //Change By Ajay
+$theme-textcolor-scss: #fff;
+$theme-textcolor: var(--theme-textcolor); //Change By Ajay
+$text-color-base: var(
+  --widget-text-color
+) !default; //#1d272e !default; //Change By Rohit Sindhu
+$body-bg: #f9fdff !default;
+$body-bg-color: var(--body-bg) !default;
+$table-header-bg: var(--table-header-bg) !default;
+$table-row-border: var(--table-header-bg-darken-15) !default;
+$component-bg: #fff !default;
+$ui-widget-color: $text-color-base !default;
+$neon-bright: $theme-bgcolor !default;
+//$neon-bright-scss: var(--theme-bgcolor);
+$neon-bright-scss: #006a60 !default;
+//#1d272e !default; //Change By Ajay
+$night-neon-bright: $theme-textcolor !default; //#00e9d3 !default; //Change By Ajay
+$bg-scroll-bar: var(--table-header-bg-darken-25) !default;
+$bg-color-base: var(--bg-color-base) !default;
+$ui-chkbox-box-border: $table-header-bg !default;
+
+/*$sideBarBgColor: darken($table-header-bg,15%) !default;*/
+$sideBarBgColor: $theme-bgcolor; //#192227 !default; //#0e2630; //Change
+/*$top-bar-color: darken($table-header-bg,5%) !default;*/
+$top-bar-color: $theme-bgcolor; //rgb(29, 39, 46) !default; //Change By Ajay
+$comms-logo: url(../images/logo/comms-logo.png) no-repeat center left/ 187px
+  70px;
+/*$comms-logo-margin: 5px 0px 17px 15px !default;*/
+//** `<input>` background color
+$input-bg: var(--input-bg-daylight) !default;
+$input-border-color: var(--neon-bright-darken-25) !default;
+//** Text color for `<input>`s
+$input-color: $neon-bright;
+
+$input-border-radius: 0rem;
+
+//** Placeholder text color
+$input-color-placeholder: $neon-bright;
+
+/*$user-info-bg-color: darken($table-header-bg,25%) !default;*/
+/*$user-info-text-color: $neon-bright !default;*/
+$user-info-bg-color: rgb(0, 233, 211) !default;
+$user-info-text-color: #1b252b !default;
+
+$dropdown-hover-color: var(--table-header-bg-darken-20) !default;
+
+/*$btn-primary-color: $neon-bright !default;
+$btn-primary-bg: darken($table-header-bg,20%) !default;
+
+$btn-secondary-color: darken($table-header-bg,20%) !default;
+$btn-secondary-bg: $neon-bright !default;*/
+$btn-primary-color: $theme-textcolor-scss !default; // Change By Ajay
+$btn-primary-bg: $neon-bright-scss !default; // Change By Ajay
+
+$btn-secondary-color: $theme-textcolor-scss !default; // Change By Ajay
+$btn-secondary-bg: $neon-bright-scss !default; // Change By Ajay
+
+$dropdown-item-hover: $night-neon-bright !default;
+
+$sidebar-font-color: $theme-bgcolor !default; // Change By Ajay
+//sidebar color
+$link-color: $theme-textcolor-scss !default; //#5885a7 !default; // Change By Ajay
+$link-color-focus: #00e9d3 !default; //$sidebar-font-color !default; // Change By Ajay
+$sidebar-menu-scroll-bg: #1f2c36 !default;
+$sidebar-menu-scroll-bar-thumb: #39454d !default;
+
+$labelColor: $theme-bgcolor !default; // Change By Ajay
+
+$background_color_14: $theme-textcolor !default;
+
+@import "style-bundle.scss";
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-weight: bold; // Change By Ajay
+}
+
+label {
+  font-weight: normal; // Change By Ajay
+}
+
+.ui-tabview .ui-tabview-nav li {
+  font-weight: bold; // Change By Ajay
+}
+
+body .ui-datatable .ui-datatable-thead > tr > th {
+  font-weight: bold; // Change By Ajay
+}
+
+.ui-button.ui-widget {
+  background-color: $theme-bgcolor;
+  color: $theme-textcolor;
+}
+
+.ui-datepicker {
+  .ui-datepicker-header {
+    select {
+      color: $theme-bgcolor !important;
+    }
+  }
+}
+
+.login-container > h6 {
+  color: $theme-textcolor;
+}
+
+#topbar {
+  color: $theme-textcolor;
+}
+
+// .jumbotron {
+//   background-color: $theme-textcolor;
+// }
+
+body {
+  color: $theme-bgcolor;
+}
+
+.company-name {
+  color: $theme-textcolor;
+}
+
+#layout-sidebar {
+  &::-webkit-scrollbar-thumb {
+    background-color: #a1b7c2;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #eef2f4;
+  }
+}
+
+.modal-header {
+  border-bottom: 1px solid $theme-bgcolor;
+}
+
+.ui-inputswitch {
+  background-color: $theme-bgcolor !important;
+}
+
+.ui-picklist-item.ui-state-highlight {
+  background-color: var(--table-header-bg-darken-20) !important;
+}
+
+.ui-selectbutton.ui-buttonset .ui-button.ui-state-active {
+  background-color: var(--table-header-bg-darken-20) !important;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-primary.disabled {
+  background-color: var(--theme-bgcolor);
+  border-color: var(--theme-bgcolor);
+  color: var(--link-color);
+}
+
+.btn-primary,
+.btn-secondary {
+  &:disabled {
+    background-color: var(--theme-bgcolor);
+    border-color: var(--theme-bgcolor);
+    color: var(--link-color);
+  }
+}
+
+.btn-primary,
+.btn-secondary {
+  &:hover,
+  &:focus {
+    background-color: var(--body-bg) !important;
+    border-color: var(--theme-bgcolor);
+    color: var(--theme-bgcolor);
+  }
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 1px var(--theme-bgcolor);
+}
+
+/*.ui-tabview.ui-tabview-top .ui-tabview-nav {
+  border: 1px solid $theme-bgcolor !important;
+}*/
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+  border: 1px solid $theme-bgcolor;
+}
+body .ui-datepicker table td.ui-datepicker-today > a {
+  background-color: $theme-bgcolor;
+}
+// div.jumbotron {
+//   color: var(--widget-text-color);
+//   background-color: none !important;
+// }
+body .ui-datepicker table td.ui-datepicker-today > span{
+  background-color: $theme-bgcolor;
+}

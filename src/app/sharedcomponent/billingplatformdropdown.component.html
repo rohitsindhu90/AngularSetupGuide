@@ -1,0 +1,6 @@
+﻿<div id="billingplatform-container" class="form-group" *ngIf="billingPlatformArray?.length > 1">
+    <label>Billing Platform</label>
+
+    <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()"  filter="filter">
+    </p-dropdown>
+</div>

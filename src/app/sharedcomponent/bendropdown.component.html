@@ -1,0 +1,7 @@
+﻿<div id="ben-container" class="form-group" *ngIf="benArray?.length > 1">
+    <label>BEN</label>
+
+    <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben"  filter="filter" (onChange)="onChangeBen()">
+
+    </p-dropdown>
+</div>

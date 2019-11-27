@@ -1,0 +1,78 @@
+
+<div class="col-lg-12 col-md-12">
+  <div class="form-group row">
+    <label>From Date:</label>
+    <div class="col-lg-2 col-sm-4" style="display:flex;">
+
+      <p-calendar [(ngModel)]="fromDate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" readonlyInput="true" (onSelect)="onSelect()"
+                  [yearNavigator]="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+
+    <label>To Date:</label>
+    <div class="col-lg-2 col-sm-4" style="display:flex;">
+      <p-calendar [(ngModel)]="toDate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" (onSelect)="onSelect()"
+                  readonlyInput="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+    <input type="button" value="Refresh" class="btn btn-primary" *ngIf="!error" (click)="loadData()" />
+    <span class="text-danger" *ngIf="error">From date must less than to date.</span>
+  </div>
+</div>
+
+<div class="col-lg-12 col-md-12" *ngIf="!error">
+  <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10"
+               [paginator]="true"
+               [responsive]="true"
+               scrollable="true"
+               class="ui-datatable-scroll-margin-fix"
+               [style]="{'margin-top':'30px'}"
+               exportFilename="care-report"
+               selectionMode="single"
+               (onRowSelect)="handleRowSelect($event)"
+               [rowsPerPageOptions]="[5,10,20]">
+    <p-header>
+      <div class="ui-helper-clearfix">
+        <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        <div class="text_container">
+          <ng-template ngFor let-label [ngForOf]="careissuetype" let-i="index">
+            <label>{{label.name}}: {{label.count}}</label>
+          </ng-template>
+        </div>
+      </div>
+    </p-header>
+
+    <p-column [style]="{'width':'100px'}" field="careref" header="CareRef" [sortable]="true" filter="true" filterMatchMode="contains">
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="name" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="staffid" header="Staff ID" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'180px'}" field="emailaddress" header="Email" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'120px'}" field="networkdescription" header="Network" filter="true" filterMatchMode="equals" [sortable]="true">
+      <ng-template pTemplate="filter" typeof="body" let-col>
+        <i class="fa fa-close" *ngIf="qNetworkFilter!=null" (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+        <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+      </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" [filterMatchMode]="column.filtermode" [sortable]="column.sortable">
+    </p-column>
+    <p-column [style]="{'width':'180px'}" field="productdescription" header="Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'180px'}" field="imei" header="IMEI" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'180px'}" field="issuetypedescription" header="Issue Type" filter="true" filterMatchMode="equals" [sortable]="true">
+      <ng-template pTemplate="filter" typeof="body" let-col>
+        <i class="fa fa-close" *ngIf="qIssueTypeFilter!=null" (click)="qIssueTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+        <p-dropdown appendTo="body" [options]="issuetypefilterset" [style]="{'width':'100%'}" [(ngModel)]="qIssueTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+      </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'180px'}" field="reporttypedescription" header="Report Type" filter="true" filterMatchMode="equals" [sortable]="true">
+      <ng-template pTemplate="filter" typeof="body" let-col>
+        <i class="fa fa-close" *ngIf="qReportTypeFilter!=null" (click)="qReportTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+        <p-dropdown appendTo="body" [options]="reporttypefilterset" [style]="{'width':'100%'}" [(ngModel)]="qReportTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+      </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'180px'}" field="iccid" header="SIM Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'180px'}" field="requestedby" header="Requested By" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'180px'}" field="createddatestringformat" header="Created Date" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+  </p-dataTable>
+</div>
+

@@ -1,0 +1,126 @@
+﻿<div class="col-lg-12 col-md-12 no-padding">
+    <form name="form" (ngSubmit)="f.form.valid && updateData(f)" #f="ngForm" novalidate class="form-horizontal">
+        <div class="form-group" id="company-container">
+            <label for="company" class="col-sm-3 control-label">
+                Company
+            </label>
+            <div class="col-sm-offset-3 col-sm-9">
+                <p-dropdown [options]="companyArray" [(ngModel)]="companyid" name="company"
+                    (onChange)="onCompanyChange($event)" filter="filter">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group" id="network-container" *ngIf=" networkArray?.length > 0">
+            <label class="col-sm-3 control-label">
+                Network
+            </label>
+            <div class="col-sm-offset-3 col-sm-9">
+                <p-dropdown [options]="networkArray" [(ngModel)]="networkid" name="network"
+                    (onChange)="onNetworkChange($event)" filter="filter" required>
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group" id="billingplatform-container" *ngIf="billingplatformArray?.length > 0">
+            <label for="billingplatform" class="col-sm-3 control-label">
+                Billing Platform
+            </label>
+            <div class="col-sm-offset-3 col-sm-9">
+                <p-dropdown [options]="billingplatformArray" [(ngModel)]="billingplatformid" name="billingplatform"
+                    (onChange)="onBillingplatformChange()" filter="filter">
+                </p-dropdown>
+            </div>
+        </div>
+        <div class="form-group" id="month-container" *ngIf="companyid?.id >0">
+            <label for="billingplatform" class="col-sm-3 control-label">
+                Invoice Month
+            </label>
+            <div class="col-sm-offset-3 col-sm-9">
+                <p-dropdown [options]="invoicemonthArray" [(ngModel)]="monthname" name="invoicemonth"
+                    (onChange)="onInvoiceMonthChange()" filter="filter">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group" id="datalimit-container" *ngIf="companyid?.id >0">
+            <label for="datalimit" class="col-sm-6 control-label">
+                Data Allowance Limit (GB)
+            </label>
+            <div class="col-sm-offset-12 col-sm-12">
+                <input type="number" name="datalimit" class="form-control" #datalimitvar="ngModel"
+                    [(ngModel)]="datalimit" maxlength="10" />
+            </div>
+        </div>
+
+
+        <div class="form-group" id="datalimit-container" *ngIf="monthname!=''">
+            <div class="col-sm-offset-3 col-sm-9">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+
+<div class="col-lg-12 col-md-12 no-padding">
+    <p-dataTable *ngIf="gridmodel!=null" #dt [value]="gridmodel" [rows]="10" [paginator]="true" [responsive]="true"
+        [style]="{'margin-top':'30px'}" (onRowSelect)="handleRowSelect($event)" selectionMode="single"
+        exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                    (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+
+        <p-column [style]="{'width':'200px'}" field="company" header="Company" filter="true" filterMatchMode="contains"
+            [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'250px'}" field="monthname" header="Month" filter="true" filterMatchMode="contains"
+            [sortable]="true"></p-column>
+
+
+        <p-column [style]="{'width':'120px'}" field="network" header="Network" filter="true" filterMatchMode="contains"
+            [sortable]="true">
+
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qFilter!=null"
+                    (click)="qFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="networkfilterset" [(ngModel)]="qFilter"
+                    (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+
+        </p-column>
+
+        <p-column [style]="{'width':'120px'}" field="billingplatform" header="Billing Platform" filter="true"
+            filterMatchMode="contains" [sortable]="true">
+
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="billingFilter!=null"
+                    (click)="billingFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}"
+                    [(ngModel)]="billingFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+                </p-dropdown>
+            </ng-template>
+
+        </p-column>
+
+        <p-column [style]="{'width':'150px'}" field="dataallowance" header="Data Allowance Limit (GB)"
+            styleClass="text-right" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'80px'}" field="createddatestring" header="Created Date" filter="true"
+            filterMatchMode="contains" [sortable]="true">
+            <!--<ng-ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc.createddate   | date:'dd MMM yyyy' }}</span>
+            </ng-ng-template>-->
+
+
+        </p-column>
+
+
+
+    </p-dataTable>
+</div>

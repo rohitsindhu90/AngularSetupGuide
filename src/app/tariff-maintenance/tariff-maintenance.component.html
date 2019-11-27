@@ -1,0 +1,212 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid && saveTariff(f)" #f="ngForm" novalidate>
+
+        <div *ngIf="!addNewTariff" class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && !tariffguid.valid }">
+            <label for="addNewTariff" class="col-sm-2">Tariff Name:</label>
+            <div class="col-sm-8">
+                <p-dropdown name="tariffguid" [hidden]="addNewTariff" [options]="tariffArray"
+                    [(ngModel)]="model.tariffguid" filter="filter" required #tariffguid="ngModel"
+                    (onChange)="onChangeTariff(null)"> </p-dropdown>
+                &nbsp;<label class="lbl-bold">
+                    <p-checkbox [(ngModel)]="addNewTariff" name="addNewTariff" (onChange)="checkboxChange(f)"
+                        binary="true"></p-checkbox>Add New
+                </label>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && tariffguid.errors && tariffguid.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div *ngIf="addNewTariff" class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && !tariffdescription.valid }">
+            <label for="tariffdescription" class="col-sm-2">Tariff Name:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="tariffdescription" [(ngModel)]="model.tariffdescription"
+                    #tariffdescription="ngModel" required maxlength="50" />
+                &nbsp;
+                <label>
+                    <p-checkbox [(ngModel)]="addNewTariff" name="addNewTariff" (onChange)="checkboxChange(f)"
+                        binary="true"></p-checkbox>Add New
+                </label>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !tariffdescription.valid">This field
+                    is required</span>
+            </div>
+        </div>
+
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && !tariffnetworkdescription.valid }">
+            <label for="tariffnetworkdescription" class="col-sm-2">Network Description:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="tariffnetworkdescription"
+                    [(ngModel)]="model.tariffnetworkdescription" #tariffnetworkdescription="ngModel" required
+                    maxlength="50" data-toggle="tooltip"
+                    pTooltip="Ensure you enter the Network Tariff Exactly as it appears on the Network" />
+
+
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !tariffnetworkdescription.valid">This
+                    field is required</span>
+            </div>
+        </div>
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && networkguid.errors && networkguid.errors.required }">
+            <label for="networkguid" class="col-sm-2">Network:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="networkArray" name="networkguid" #networkguid="ngModel"
+                    [(ngModel)]="model.networkguid" required (onChange)="OnNetworkChange()">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && networkguid.errors && networkguid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row required" *ngIf="model.networkguid && billingPlatformArray?.length >0 "
+            [ngClass]="{ 'has-danger': f.submitted && billingplatformguid.errors && billingplatformguid.errors.required }">
+            <label for="billingplatformguid" class="col-sm-2">Billing Platform:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="billingPlatformArray" name="billingplatformguid" #billingplatformguid="ngModel"
+                    [(ngModel)]="model.billingplatformguid" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && billingplatformguid.errors && billingplatformguid.errors.required">This field
+                    is required</span>
+            </div>
+        </div>
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && connectiontypeid.errors && connectiontypeid.errors.required }">
+            <label for="connectiontypeid" class="col-sm-2">Connection Type:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="connectiontypeArray" name="connectiontypeid" #connectiontypeid="ngModel"
+                    [(ngModel)]="model.connectiontypeid" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && connectiontypeid.errors && connectiontypeid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': (f.submitted && !linerental.valid) || ((linerental.dirty || linerental.touched) && linerental.errors?.validatePattern === false)  }">
+            <label for="linerental" class="col-sm-2">Line Rental:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="linerental" [(ngModel)]="model.linerental"
+                    #linerental="ngModel" required maxlength="10" pInputText [pKeyFilter]="decimalregx"
+                    [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && linerental.errors?.required">
+                    This field is required
+                </span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(linerental.dirty || linerental.touched) && linerental.errors?.validatePattern === false">
+                    Line rental should be decimal(0.00)
+                </span>
+            </div>
+        </div>
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': (f.submitted && !tariffcashback.valid) || ((tariffcashback.dirty || tariffcashback.touched) && tariffcashback.errors?.validatePattern === false) }">
+            <label for="tariffcashback" class="col-sm-2">Tariff Cashback:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="tariffcashback" [(ngModel)]="model.tariffcashback"
+                    #tariffcashback="ngModel" required maxlength="10" pInputText [pKeyFilter]="decimalregx"
+                    [pValidateOnly]="true" />
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && tariffcashback.errors?.required">
+                    This field is required</span>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="(tariffcashback.dirty || tariffcashback.touched) && tariffcashback.errors?.validatePattern === false">
+                    Tariff cashback should be decimal(0.00)</span>
+            </div>
+        </div>
+
+        <div class="form-group row required"
+            [ngClass]="{ 'has-danger': f.submitted && status.errors && status.errors.required }">
+            <label for="status" class="col-sm-2">Status:</label>
+            <div class="col-sm-8">
+                <p-dropdown [disabled]="addNewTariff" [options]="statusArray" name="status" #status="ngModel"
+                    [(ngModel)]="model.status" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && status.errors && status.errors.required">This field is required</span>
+            </div>
+        </div>
+
+
+        <div class="form-group row ">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+<p-dataTable *ngIf="tariffGrid!=null" #dt [value]="tariffGrid" [rows]="10" [paginator]="true" [responsive]="true"
+    scrollable="true" scrollWidth="100%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}"
+    exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]" selectionMode="single"
+    (onRowSelect)="onChangeTariff($event)">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-column [style]="{'width':'180px'}" field="tariffdescription" header="Tariff Name" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'160px'}" header="Network's Description" field="tariffnetworkdescription" filter="true"
+        filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'90px'}" field="networkdescrption" header="Network" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qNetworkFilter!=null"
+                (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'105px'}" field="billingplatformdescription" header="Billing Platform" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qBillingPlatformFilter!=null"
+                (click)="qBillingPlatformFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qBillingPlatformFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'105px'}" field="connectiontypedescription" header="Connection Type" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qConnectionTypeFilter!=null"
+                (click)="qConnectionTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="connectiontypefilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qConnectionTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'80px'}" header="Line Rental" field="linerental"
+        [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{ cc[col.field]  | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'100px'}" field="tariffcashback" header="Tariff Cashback"
+        [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{ cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'80px'}" field="statusdescrption" header="Status" filter="true"
+        filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qStatusFilter!=null"
+                (click)="qStatusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="statusfilterset" [style]="{'width':'100%'}"
+                [(ngModel)]="qStatusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+            </p-dropdown>
+        </ng-template>
+    </p-column>
+</p-dataTable>

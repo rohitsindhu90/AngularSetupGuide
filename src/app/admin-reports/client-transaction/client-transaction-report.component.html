@@ -1,0 +1,45 @@
+﻿<div class="row col-lg-8 vert-offset-top-1">
+    <div class="form-group" [ngClass]="{ 'has-danger':error}" style="padding-right: 5%;">
+        <label class="col-lg-5 col-sm-5">From Date</label>
+
+        <p-calendar [(ngModel)]="fromdate" showIcon="true" yearNavigator="true" monthNavigator="true" showButtonBar="true" readonlyInput="false" [maxDate]="todaydate" name="fromdate"
+                    yearRange="2017:2080" dateFormat="dd/mm/yy" (onSelect)="refreshData()"></p-calendar>
+    </div>
+
+    <div class="form-group">
+        <label class="col-lg-5 col-sm-5">To Date</label>
+
+        <p-calendar [(ngModel)]="todate" showIcon="true" yearNavigator="true" monthNavigator="true" showButtonBar="true" readonlyInput="false" [maxDate]="todaydate" name="todate"
+                    yearRange="2017:2080" dateFormat="dd/mm/yy" (onSelect)="refreshData()"></p-calendar>
+    </div>
+
+    <div *ngIf="error" class="error">{{error}}</div>
+
+</div>
+
+
+<div class="vert-offset-top-2 col-lg-6  no-padding">
+    <p-dataTable #dt [value]="summarymodel" [rows]="10" [responsive]="true" scrollable="true" scrollWidth="60%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}">
+        <p-column field="totalorders" styleClass="text-right" header="Total Orders"></p-column>
+        <p-column field="totalchanges" styleClass="text-right" header="Total Changes"></p-column>
+        <p-column field="totalcarerequests" styleClass="text-right" header="Total Care Requests"></p-column>
+        <p-column field="totalrequests" styleClass="text-right" header="Total Requests"></p-column>
+    </p-dataTable>
+</div>
+
+<div class="vert-offset-top-2 col-lg-9  no-padding">
+
+
+    <p-dataTable #dt1 [value]="detailmodel" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" scrollWidth="60%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}" [rowsPerPageOptions]="[5,10,20]" exportFilename="{{csvfilename}}">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt1.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column field="companyname" header="Company"></p-column>
+        <p-column field="newconnectionorderrequest" styleClass="text-right" header="New Connections"></p-column>
+        <p-column field="hardwareorderrequest" styleClass="text-right" header="Orders"></p-column>
+        <p-column field="changerequest" styleClass="text-right" header="Change Requests"></p-column>
+        <p-column field="carerequest" styleClass="text-right" header="Care Requests"></p-column>
+    </p-dataTable>
+</div>

@@ -1,0 +1,14 @@
+﻿
+<div class="">
+
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" selectionMode="single" [responsive]="true"  exportFilename="company" 
+        (onRowSelect)="handleRowSelect($event)" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'180px'}" field="companydescription" header="Company Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    </p-dataTable>
+    
+</div>

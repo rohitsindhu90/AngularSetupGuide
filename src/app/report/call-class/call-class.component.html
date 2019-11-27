@@ -1,0 +1,117 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+    <div class="row col-lg-12 form-inline label-inline">
+        <!--<div class="form-group">
+            <label>   Invoice Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="invoicedateguid" name="invoicemonth" (onChange)="onInvoiceMonthChange()"  filter="filter">
+
+            </p-dropdown>
+        </div>-->
+        <div class="form-group" [ngClass]="{ 'has-danger':error}">
+            <label>   From Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="fromdate" name="invoicemonth" (onChange)="onInvoiceMonthChange()"  filter="filter">
+
+            </p-dropdown>
+        </div>
+
+        <div class="form-group" [ngClass]="{ 'has-danger':error}">
+            <label>   To Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="todate" name="invoicemonth" (onChange)="onInvoiceMonthChange()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+
+        <div class="form-group">
+
+            <label> Network</label>
+
+            <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="onChangeNetwork()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+            <label> Billing Platform</label>
+
+            <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="benArray?.length > 1">
+            <label> BEN</label>
+
+            <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown" (onChange)="refreshData()"  filter="filter">
+            </p-dropdown>
+
+        </div>
+
+        <div class="form-group" *ngIf="banArray?.length > 1">
+            <label> BAN</label>
+
+            <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown" (onChange)="refreshData()"  filter="filter">
+            </p-dropdown>
+
+        </div>
+
+    </div>
+
+
+    <reportinggroup-dropdown [(reportinggroup1guid)]=reportinggroup1guid
+                             [(reportinggroup2guid)]=reportinggroup2guid
+                             [(reportinggroup3guid)]=reportinggroup3guid
+                             [(reportinggroup4guid)]=reportinggroup4guid
+                             [(reportinggroup5guid)]=reportinggroup5guid
+                             [(reportinggroup6guid)]=reportinggroup6guid
+                             [IsRequiredActiveOnly]="false"
+                             [rgModelArray]="rgModelArray"
+                             (onChangeReportingGroupEvent)="onChangeReportingGroupEvent($event)"></reportinggroup-dropdown>
+
+
+
+    <!--<div *ngIf="departmentlist.length>0">
+        <ng-select [allowClear]="true"
+                   [(items)]="departmentlist"
+                    [(ngModel)]="departmentguid"
+                   (selected)="selected($event)"
+                   placeholder="ALL">
+        </ng-select>
+    </div>-->
+
+    <div *ngIf="error" class="error">{{error}}</div>
+
+    <div class="vert-offset-top-1 text-right">
+        <h5>
+            <i class="fa fa-info-circle" pTooltip="Click on switch button to switch the chart between Cost & Usage"  tooltipPosition="left"></i>
+        </h5>
+        <p-inputSwitch onLabel="Usage" offLabel="Cost" [(ngModel)]="charttypeusage" class="float-right"></p-inputSwitch>
+        <p-chart type="bar" #costchart *ngIf="chartData!=null && !charttypeusage" [data]="chartData" [options]="chartOptions" (onDataSelect)="selectData($event)"></p-chart>
+        <p-chart type="bar" #usagechart [hidden]="usageChartData==null || !charttypeusage" [data]="usageChartData" [options]="usagechartOptions" (onDataSelect)="selectData($event)"></p-chart>
+    </div>
+
+    <div class="vert-offset-top-3">
+        <p-tabView (onChange)="onTabChange($event)" [activeIndex]="activeIndex" [ngClass]="{'ui-state-trigger':islinksourcetabclickEnable}">
+            <p-tabPanel header="Fleet">
+                <div #callclassfleetcontainer></div>
+            </p-tabPanel>
+            <p-tabPanel *ngFor="let tt of GetVisibleTabs()" [header]="tt.data['featuredescription']">
+                <div #callclassfleetdynamiccontainer [attr.data-key]="tt.data['featuredescription']"></div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+
+
+
+    <div class="vert-offset-top-2" style="text-align:center;">
+        There may be a slight discrepancy between the reports and the invoice, due to the
+        rounding rules used to display the report information.<br />
+        The amount you are charged is as shown on your invoice.
+    </div>
+
+</div>
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

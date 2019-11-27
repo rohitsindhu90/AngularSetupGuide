@@ -1,0 +1,56 @@
+<div class="col-sm-12" *ngIf="modelSendNow">
+    <form name="form" (ngSubmit)="f.form.valid && sendNow()" #f="ngForm" novalidate>
+
+        <div class=" row required">
+            <label for="addNewTariff" class="col-sm-2 font-weight-bold">From:</label>
+            <div class="col-sm-8">
+
+                <span class="col-sm-51 form-control-feedback1">{{modelSendNow.fromemail}}</span>
+            </div>
+        </div>
+        <div class=" row required">
+            <label for="addNewTariff" class="col-sm-2 font-weight-bold">To:</label>
+            <div class="col-sm-8">
+
+                <span class="col-sm-51 form-control-feedback1">{{modelSendNow.toemail}}</span>
+            </div>
+        </div>
+        <div class=" row required">
+            <label for="addNewTariff" class="col-sm-2 font-weight-bold">Subject:</label>
+            <div class="col-sm-8">
+
+                <span class="col-sm-51 form-control-feedback1">{{modelSendNow.clientname}} - Your Report is ready</span>
+            </div>
+        </div>
+        <div class=" row required">
+            <label class="col-sm-2 font-weight-bold">Body:</label>
+        </div>
+
+        <h6><span>{{modelSendNow.reportname}}</span></h6>
+
+        Reports for {{modelSendNow.latestinvoicemonth}} billing data is ready. Please click on below link to view the
+        report.
+        <br />
+        <table>
+            <tr *ngFor="let link of model">
+                <td>
+                    <a [routerLink]="link.url" style="text-decoration:underline;color: #5885a7;"
+                        (click)="onClick()">{{link.name}} </a>
+                    <br />
+                </td>
+            </tr>
+
+        </table>
+        <div class="form-group row ">
+            <div class="col-sm-8 ">
+
+            </div>
+        </div>
+        <div class="form-group row ">
+            <div class="col-sm-8 ">
+                <input type="submit" value="Send" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+</div>

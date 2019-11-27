@@ -1,0 +1,252 @@
+<div class="form-group row" *ngIf="model.orderstatus==orderStatusEnum.Partial && orderGuidExist">
+  <input type="button" class="btn btn-primary" (click)="goback()" value="Back" />
+</div>
+<div class="col-sm-12" *ngIf="model && orderGuidExist">
+  <div class="form-group row " *ngIf="model.orderstatus && model.orderstatus!=orderStatusEnum.Partial;">
+    <label class="col-sm-9">
+      <b>
+        Thank you for your order. It is now being processed and we will update you shortly.<br />
+        Your Reference number is {{model.orderreferencenumber}}.
+      </b> <br />
+      <!--Your OrderGuid is {{model.orderguid}}.-->
+    </label>
+  </div>
+  <form name="form" class="modal-form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate
+        *ngIf="model.orderstatus==orderStatusEnum.Partial;">
+    <h6><span>Device</span></h6>
+    <div class="row" *ngFor="let item of model.productlist">
+      <label class="col-sm-5 lblmaginleft text-message">{{item.quantity}} - {{item.productdescription}}</label>
+    </div>
+
+    <div *ngIf="model.ordertypeid">
+      <h6><span>Tariff</span></h6>
+      <div class="row">
+        <label class="col-sm-5 lblmaginleft text-message">
+          {{calculateTotalQuantity()}}&nbsp;
+          &nbsp;{{model.tariffdescription}}
+        </label>
+      </div>
+      <div class="row">
+        <label class="col-sm-2 lblmaginleft text-message">{{model.tariffprice|currencyFormat}} each</label>
+      </div>
+    </div>
+    <h6><span>Total Cost</span></h6>
+    <div class="form-group row">
+      <label class="col-sm-2 lblmaginleft text-message">{{model.totalcost |currencyFormat}}</label>
+    </div>
+
+
+    <div class="form-group row" *ngIf="model.ispoactive"
+         [ngClass]="{ 'has-danger': f.submitted && purchaseordernumber.errors?.required}">
+      <label for="purchaseordernumber" class="col-sm-2">Purchase Order Number:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="purchaseordernumber"
+               [(ngModel)]="model.purchaseordernumber" #purchaseordernumber="ngModel" maxlength="50"
+               [required]="model.isporequired" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && purchaseordernumber.errors?.required">This field is required.</span>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="orderreferencenumber" class="col-sm-2">Order Number:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="orderreferencenumber"
+               [(ngModel)]="model.orderreferencenumber" #orderreferencenumber="ngModel" maxlength="50"
+               readonly="readonly" />
+      </div>
+    </div>
+    <div class="form-group row" *ngIf="model.ispaymentmethodactive"
+         [ngClass]="{ 'has-danger': f.submitted && paymentmethodid.errors?.required}">
+      <label for="paymentmethodid" class="col-sm-2">Payment Method:</label>
+      <div class="col-sm-8">
+        <p-dropdown [options]="paymentMethodArray" name="paymentmethodid" #paymentmethodid="ngModel"
+                    [(ngModel)]="model.paymentmethodid" required>
+        </p-dropdown>
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && paymentmethodid.errors && paymentmethodid.errors.required">
+          This field is
+          required
+        </span>
+      </div>
+    </div>
+
+
+    <div class="form-group row" *ngIf="model.isauthorizedbyactive"
+         [ngClass]="{ 'has-danger': f.submitted && authorizedby.errors?.required}">
+      <label for="authorizedby" class="col-sm-2">Authorized By:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="authorizedby" [(ngModel)]="model.authorizedby"
+               #authorizedby="ngModel" maxlength="50" [required]="model.isauthorizedbyrequired" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && authorizedby.errors && authorizedby.errors.required">
+          This field is
+          required
+        </span>
+      </div>
+    </div>
+    <!--[ngClass]="{ 'has-danger':!model.isotheraddress && f.submitted && deliveryaddressid.errors && deliveryaddressid.errors.required }"-->
+    <div class="form-group row">
+      <label for="deliveryaddressid" class="col-sm-2">Delivery Address:</label>
+      <div class="col-sm-8">
+        <p-dropdown [options]="addressArray" name="deliveryaddressid" #deliveryaddressid="ngModel"
+                    [(ngModel)]="model.deliveryaddressid"
+                    [disabled]="model.isotheraddress || model.issaveaddress"
+                    [required]="!model.isotheraddress || !model.issaveaddress" (onChange)="onChangeAddress()"
+                    filter="filter">
+        </p-dropdown>
+        &nbsp;<label>
+          <p-checkbox [(ngModel)]="model.isotheraddress" name="isotheraddress" (onChange)="checkboxChange(1)"
+                      binary="true"></p-checkbox>Other Address
+        </label>
+        &nbsp;<label *ngIf="model.isotheraddress">
+          <p-checkbox [(ngModel)]="model.issaveaddress" name="issaveaddress" (onChange)="checkboxChange(2)"
+                      binary="true"></p-checkbox>Save Address
+        </label>
+        <!--<span class="col-sm-5 form-control-feedback" *ngIf="!model.isotheraddress && f.submitted && deliveryaddressid.errors && deliveryaddressid.errors.required">This field is required</span>-->
+      </div>
+    </div>
+    <div *ngIf="model.issaveaddress" class="form-group row"
+         [ngClass]="{ 'has-danger': (addressshortname?.errors?.remoteurlvalidation) ||(f.submitted &&  addressshortname.errors && addressshortname.errors.required)}">
+      <label for="addressshortname" class="col-sm-2">Address Short Name:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="addressshortname" [(ngModel)]="model.addressshortname"
+               #addressshortname="ngModel" maxlength="100" [required]="model.issaveaddress"
+               url="/Order/CheckAddressShortNameExist?description="
+               [ngControlOptions]="{ updateOn: 'keyup', debounce: '300' }" ng2-remote-validator
+               [disabled]="model.deliveryaddressid" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && addressshortname.errors && addressshortname.errors.required">
+          This field is
+          required
+        </span>
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf=" addressshortname?.errors?.remoteurlvalidation">{{addressshortname.errors?.remoteurlvalidation}}</span>
+      </div>
+    </div>
+    <div class="form-group row"
+         [ngClass]="{ 'has-danger':  f.submitted && deliveryfao.errors && deliveryfao.errors.required}">
+      <label for="deliveryfao" class="col-sm-2">Delivery FAO:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="deliveryfao" [(ngModel)]="model.deliveryfao"
+               #deliveryfao="ngModel" maxlength="50" required />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && deliveryfao.errors && deliveryfao.errors.required">
+          This field is
+          required
+        </span>
+      </div>
+    </div>
+    <div class="form-group row"
+         [ngClass]="{ 'has-danger':(contactnumber.dirty || contactnumber.touched) && contactnumber.errors?.validatePattern===false}">
+      <label for="contactnumber" class="col-sm-2">Recipient Number:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="contactnumber" pInputText [pKeyFilter]="mobilenumberregx"
+               [pValidateOnly]="true" [(ngModel)]="model.contactnumber" #contactnumber="ngModel" maxlength="15" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="(contactnumber.dirty || contactnumber.touched) && contactnumber.errors?.validatePattern===false">
+          Recipient
+          number should be numeric and max to 15 digits
+        </span>
+      </div>
+    </div>
+    <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !contactemail.valid }">
+      <label for="contactemail" class="col-sm-2">Recipient Email:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="contactemail" [(ngModel)]="model.contactemail"
+               #contactemail="ngModel" maxlength="50" [pattern]="mailRegex" [required]="!model.contactnumber" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="!model.contactnumber && f.submitted && contactemail.errors && contactemail.errors.required">
+          Please
+          enter either the Recipient Number or Email.
+        </span>
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && contactemail.errors && contactemail.errors.pattern">
+          Recipient Email is
+          invalid
+        </span>
+      </div>
+    </div>
+    <div class="form-group row"
+         [ngClass]="{ 'has-danger': f.submitted &&  otheraddress1.errors && otheraddress1.errors.required}">
+      <label for="otheraddress1" class="col-sm-2">Address Line 1:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="otheraddress1" [(ngModel)]="model.otheraddress1"
+               #otheraddress1="ngModel" maxlength="100" required [disabled]="model.deliveryaddressid" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && otheraddress1.errors && otheraddress1.errors.required">
+          This field is
+          required
+        </span>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2">Address Line 2:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="otheraddress2" [(ngModel)]="model.otheraddress2"
+               #otheraddress2="ngModel" maxlength="50" [disabled]="model.deliveryaddressid" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2">Address Line 3:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="otheraddress3" [(ngModel)]="model.otheraddress3"
+               #otheraddress3="ngModel" maxlength="50" [disabled]="model.deliveryaddressid" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2">Address Line 4:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="otheraddress4" [(ngModel)]="model.otheraddress4"
+               #otheraddress4="ngModel" maxlength="50" [disabled]="model.deliveryaddressid" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2">Town:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="othertown" [(ngModel)]="model.othertown"
+               #othertown="ngModel" maxlength="50" [disabled]="model.deliveryaddressid" />
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-2">County:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="othercounty" [(ngModel)]="model.othercounty"
+               #othercounty="ngModel" maxlength="50" [disabled]="model.deliveryaddressid" />
+      </div>
+    </div>
+    <div class="form-group row" *ngIf="model.deliveryaddressid">
+      <label class="col-sm-2">Country:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="othercountry" [(ngModel)]="model.othercountry"
+               #othercountry="ngModel" maxlength="50" disabled />
+      </div>
+    </div>
+    <div class="form-group row"
+         [ngClass]="{ 'has-danger': f.submitted && otherpostcode.errors && otherpostcode.errors.required }">
+      <label for="otherpostcode" class="col-sm-2">Postcode:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <input type="text" class="form-control" name="otherpostcode" [(ngModel)]="model.otherpostcode"
+               #otherpostcode="ngModel" maxlength="10" required [disabled]="model.deliveryaddressid" />
+        <span class="col-sm-5 form-control-feedback"
+              *ngIf="f.submitted && otherpostcode.errors && otherpostcode.errors.required">
+          This field is
+          required
+        </span>
+      </div>
+    </div>
+    <div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !deliverynotes.valid }">
+      <label for="deliverynotes" class="col-sm-2">Delivery Notes:</label>
+      <div class="col-sm-8" style="display:flex;">
+        <textarea type="multiline" class="form-control" name="deliverynotes" [(ngModel)]="model.deliverynotes"
+                  #deliverynotes="ngModel" maxlength="150"></textarea>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-8">
+        <input type="submit" value="Save" class="btn btn-primary" />
+      </div>
+    </div>
+  </form>
+</div>

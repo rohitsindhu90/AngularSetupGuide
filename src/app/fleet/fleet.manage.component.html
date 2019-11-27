@@ -1,0 +1,90 @@
+﻿<p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true"
+             [responsive]="true"
+             scrollable="true"
+             unfrozenWidth="100%"
+             selectionMode="single"
+             (onRowSelect)="handleRowSelect($event)"
+             exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+
+
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel " (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+
+    <p-column [style]="{'width':'150px'}" field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+    <p-column [style]="{'width':'120px'}" field="statusdisplay" header="Status" filter="true" filterMatchMode="contains" [sortable]="true">
+
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qStatusFilter!=null" (click)="qStatusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="statusfilterset" [style]="{'width':'100%'}" [(ngModel)]="qStatusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <!--<p-column [style]="{'width':'120px'}" field="status" header="Status" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qStatusFilter!=null" (click)="qStatusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="statusfilterset" [style]="{'width':'100%'}" [(ngModel)]="qStatusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>-->
+    <p-column [style]="{'width':'120px'}" field="network" header="Network" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qNetworkFilter!=null" (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" field="billingplatform" header="Billing Platform" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true" *ngIf="isbillingplatformxist">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qBillingPlatformFilter!=null" (click)="qBillingPlatformFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="billingplatformfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBillingPlatformFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" field="tariff" header="Tariff" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+    <p-column [style]="{'width':'80px'}" field="bendescription" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true" *ngIf="isbenexist">
+        <ng-template pTemplate="filter" typeof="body" let-col>
+            <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+            <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+        </ng-template>
+    </p-column>
+
+
+    <p-column [style]="{'width':'160px'}" field="simnumber" header="SIM Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="device" header="Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="imei" header="IMEI" [hidden]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="serialnumber" header="Serial Number" [hidden]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="employeename" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="staffid" header="StaffID" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="username" header="User Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+    <p-column [style]="{'width':'150px'}" field="email" header="Email" filter="true" filterMatchMode="contains" [sortable]="true" [hidden]="true"></p-column>
+
+
+    <p-column [style]="{'width':'150px'}" *ngFor="let column of datacolumns" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [filter]="column.filter" [filterMatchMode]="column.filtermode" [sortable]="column.sortable">
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" field="bars" header="Bars" [exportColumn]="false" *ngIf="isShowBars">
+        <!--<ng-ng-template let-col let-cc="rowData" pTemplate="body">
+            <div [innerHTML]="generateImageTag(cc['databarredimagepath'], cc['internationalbarredimagepath'], cc['roamingbarredimagepath'])">
+
+            </div>
+
+        </ng-template>-->
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span *ngIf="cc['internationalbarredimagepath'].indexOf('barred') != -1" class="grid-template-icon color-red" title="International Barred">I</span>
+            <span *ngIf="cc['internationalbarredimagepath'].indexOf('ubar') != -1" class="grid-template-icon color-green" title="International Unbarred">I</span>
+            <span *ngIf="cc['databarredimagepath'].indexOf('barred') != -1" class="grid-template-icon color-red" title="Data Barred">D</span>
+            <span *ngIf="cc['databarredimagepath'].indexOf('ubar') != -1" class="grid-template-icon color-green" title="Data Unbarred">D</span>
+            <span *ngIf="cc['roamingbarredimagepath'].indexOf('barred') != -1" class="grid-template-icon color-red" title="Roaming Barred">R</span>
+            <span *ngIf="cc['roamingbarredimagepath'].indexOf('ubar') != -1" class="grid-template-icon color-green" title="Roaming Unbarred">R</span>
+        </ng-template>
+    </p-column>
+    <p-column field="internationalbarred" [hidden]="true" header="International Bar" *ngIf="isShowBars"></p-column>
+    <p-column field="databarred" [hidden]="true" header="Data Bar" *ngIf="isShowBars"></p-column>
+    <p-column field="roamingbarred" [hidden]="true" header="Roaming Bar" *ngIf="isShowBars"></p-column>
+
+
+</p-dataTable>

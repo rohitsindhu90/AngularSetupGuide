@@ -1,0 +1,91 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+        <div class="form-group">
+            <div class="form-inline label-inline">
+                <div class="form-group">
+                    <label>Assign to Mobile Number:</label>
+                    <p-autoComplete-extended [(ngModel)]="mobileFilter" [suggestions]="mobileFilterList" [headermeta]="mobileFilterHeaderMeta" appendToTagName="ngb-modal-window" 
+                                             containerWidthClass="modal-body"  searchContainerWidth="50%" maxwidth='400' (completeMethod)="completeMethodMobile($event)" 
+                                             (onSelect)="onSelectMobile($event)" forceSelection="true" [minLength]="4" [dropdown]="false"
+                                             placeholder="Search by Mobile, Status, Name" field="mobilenumber" name="ctndetailsguid" (onClear)="clearModelMobile($event)">
+                    </p-autoComplete-extended>
+
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="mobileFilter?.mobilenumber">
+            <div class="form-group row" *ngIf="model.employeestaffid">
+                <label [class]="labelClass">Staff ID:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.employeestaffid}}
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="model.employeename">
+                <label [class]="labelClass">Name:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.employeename}}
+                </div>
+            </div>
+
+
+            <div class="form-group row" *ngIf="model.employeeemail">
+                <label [class]="labelClass">Email Address:</label>
+                <div class="col-sm-8 text-message">
+                    {{model.employeeemail}}
+                </div>
+            </div>
+
+
+            <div class="form-group row required" *ngIf="reportinggroup1Active">
+                <label for="reportinggroup1id" [class]="labelClass">{{reportinggroup1DisplayName}}:</label>
+                <div class="col-sm-8 text-message" style="display:flex;">
+                    {{model.reportinggroup1description}}
+                </div>
+            </div>
+
+            <div class="form-group row required" *ngIf="reportinggroup2Active">
+                <label for="reportinggroup1id" [class]="labelClass">{{reportinggroup2DisplayName}}:</label>
+                <div class="col-sm-8 text-message" style="display:flex;">
+                    {{model.reportinggroup2description}}
+                </div>
+            </div>
+
+            <div class="form-group row required" *ngIf="reportinggroup3Active">
+                <label for="reportinggroup3id" [class]="labelClass">{{reportinggroup3DisplayName}}:</label>
+                <div class="col-sm-8 text-message" style="display:flex;">
+                    {{model.reportinggroup3description}}
+                </div>
+            </div>
+
+            <div class="form-group row required" *ngIf="reportinggroup4Active">
+                <label for="reportinggroup4id" [class]="labelClass">{{reportinggroup4DisplayName}}:</label>
+                <div class="col-sm-8 text-message" style="display:flex;">
+                    {{model.reportinggroup4description}}
+                </div>
+            </div>
+
+            <div class="form-group row required" *ngIf="reportinggroup5Active">
+                <label for="reportinggroup5id" [class]="labelClass">{{reportinggroup5DisplayName}}:</label>
+                <div class="col-sm-8 text-message" style="display:flex;">
+                    {{model.reportinggroup5description}}
+                </div>
+            </div>
+
+
+            <div class="form-group row required" *ngIf="reportinggroup6Active">
+                <label for="reportinggroup6id" [class]="labelClass">{{reportinggroup6DisplayName}}:</label>
+                <div class="col-sm-8 text-message" style="display:flex;">
+                    {{model.reportinggroup6description}}
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,27 @@
+﻿<form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+    <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !orderreferencenumber1.valid }">
+            <label for="orderrefno" class="col-md-3">Order Ref No :</label>
+            <input type="text" style="margin-left:10px;" class="form-control col-md-6" name="orderreferencenumber"
+                [(ngModel)]="orderreferencenumber" maxlength="50" minlength="6" #orderreferencenumber1="ngModel"
+                pInputText pKeyFilter="int" required />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row" [ngClass]="{ 'has-danger': f.submitted && !orderreferencenumber1.valid }">
+            <div class="col-md-3"></div>
+            <span class="col-md-9 form-control-feedback" *ngIf="f.submitted && !orderreferencenumber1.valid">Enter Min 6
+                Digit Order Reference</span>
+
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="row col-md-4"></div>
+            <div class="row col-md-5">
+                <input type="submit" value="Update" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+</form>

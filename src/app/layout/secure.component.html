@@ -1,0 +1,208 @@
+<terms-condition>
+
+</terms-condition>
+
+<div class="layout-wrapper secure">
+
+  <div id="layout-sidebar" [ngClass]="{'active':mobileMenuActive}">
+    <a href="#" id="menu-button-mobile" class="fa fa-bars" (click)="toggleMenu($event)"
+      [ngClass]="{'active':mobileMenuActive}">
+
+    </a>
+    <div class="layout-logo">
+      <div class="sidebar-logo">
+      </div>
+
+
+      <!--<a href="#" id="menu-button-mobile" (click)="toggleMenu($event)" [ngClass]="{'active':mobileMenuActive}">
+          <img alt="logo" src="../../resources/images/menuicon.svg" />
+      </a>-->
+      <!--<a id="menu-toggle-button">
+              <i class="fa fa-arrow-left"></i>
+      </a>-->
+    </div>
+    <span *ngIf="companyname" class="company-name">{{companyname}}</span>
+    <!--<div class="profile">
+
+        <div class="profile-image"></div>
+        <a id="menu_input" #loggedinuser [class.active-menuitem]="loggedinuser.id == activeMenuId" (click)="togglemenuitem(loggedinuser.id)">
+
+            <span>
+                {{loggedInUser}}
+            </span>
+            <i class="fa fa-angle-down"></i>
+        </a>
+    </div>
+    <div class="profile-menu" [ngClass]="{submenushow: (loggedinuser.id == activeMenuId), 'submenuhide': (loggedinuser.id != activeMenuId)}">
+
+        <a (click)="logout();">
+            <i class="fa fa-sign-out"></i>
+            <span>log Out</span>
+        </a>
+    </div>
+    <div class="vert-offset-bottom-1">
+    </div>-->
+    <ng-template ngFor let-feature [ngForOf]="featureList" let-i="index">
+
+      <!--if not having child then add route to the link-->
+      <a *ngIf="!feature?.subfeatures?.length" routerLinkActive="active-menuitem" id="menu_input"
+        [routerLink]="feature.routepath" (click)="onMenuClick(i,$event)">
+        <i *ngIf="feature.menuicon" class="fa" [ngClass]="feature.menuicon"></i>
+        <span>
+          {{feature.featurename}}
+        </span>
+      </a>
+      <!--if having child then no routeLink Attribute-->
+      <a *ngIf="feature?.subfeatures?.length" id="menu_input" [class.active-menuitem]="(i==activeMenuId)"
+        (click)="onMenuClick(i,feature.subfeatures,$event,submenudropdown)">
+        <i *ngIf="feature.menuicon" class="fa" [ngClass]="feature.menuicon"></i>
+        <span>
+          {{feature.featurename}}
+        </span>
+        <i *ngIf="feature.subfeatures.length" class="submenuicon fa fa-angle-down"></i>
+      </a>
+      <div *ngIf="feature?.subfeatures?.length"
+        [ngClass]="{submenushow: (i== activeMenuId), 'submenuhide': (i != activeMenuId)}">
+        <ng-template ngFor let-sub [ngForOf]="feature.subfeatures">
+          <a [routerLink]="sub.routepath" routerLinkActive="active-menuitem" (click)="mobileMenuActive = false">
+            <i *ngIf="sub.menuicon" class="img fa" [ngClass]="sub.menuicon"></i><span>{{sub.featurename}}</span>
+          </a>
+        </ng-template>
+      </div>
+    </ng-template>
+  </div>
+
+
+  <div id="layout-content">
+
+
+    <p-dialog header="Session Timeout" [(visible)]="displaySession" [modal]="false" [responsive]="true"
+      [style]="{width: '350px', minWidth: '200px'}" [minY]="70" [baseZIndex]="10000">
+      <p>{{overlayText}}</p>
+    </p-dialog>
+
+    <!-- <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog> -->
+    <p-confirmDialog key="infoDialog" icon="fa fa-question-circle" [closeOnEscape]="false" [closable]="false" #info>
+      <p-footer>
+        <div class="form-inline">
+          <div class="form-group margin-auto">
+            <button type="button" class="btn btn-secondary" (click)="info.accept()">OK</button>
+          </div>
+        </div>
+      </p-footer>
+    </p-confirmDialog>
+
+    <p-confirmDialog icon="fa fa-question-circle" #cd>
+      <p-footer>
+        <div class="form-inline">
+          <div class="form-group margin-auto">
+            <button class="btn btn-secondary" (click)="cd.accept()">Yes</button>
+          </div>
+          &nbsp;
+          <div class="form-group margin-auto">
+            <button class="btn btn-secondary" (click)="cd.reject()">No</button>
+
+          </div>
+        </div>
+      </p-footer>
+    </p-confirmDialog>
+    <p-confirmDialog key="confirmation-dialog-without-icon" appendTo="body" #cdd>
+      <p-footer>
+        <div class="form-inline">
+          <div class="form-group margin-auto">
+            <button class="btn btn-secondary" (click)="cdd.accept()">Yes</button>
+          </div>
+          &nbsp;
+          <div class="form-group margin-auto">
+            <button class="btn btn-secondary" (click)="cdd.reject()">No</button>
+
+          </div>
+        </div>
+      </p-footer>
+    </p-confirmDialog>
+
+    <!--use this where we want to do some action based on parameter when clicked on "no" button as well,instead for just closing-->
+    <!-- <p-confirmDialog key="confirmation-dialog" icon="fa fa-question-circle" #cdp>
+        <p-footer>
+            <div class="form-inline">
+                <div class="form-group margin-auto">
+                    <input type="button" class="btn btn-secondary" (click)="cdp.accept(true)" value="Yes" />
+                </div>
+                &nbsp;
+                <div class="form-group margin-auto">
+                    <input type="button" class="btn btn-secondary" (click)="cdp.accept(false)" value="No" />
+                </div>
+            </div>
+        </p-footer>
+    </p-confirmDialog> -->
+    <p-confirmDialog key="dialog" icon="" #dialog>
+      <p-footer>
+        <div class="form-inline">
+          <div class="form-group margin-auto">
+            <button class="btn btn-secondary" (click)="dialog.accept()">OK</button>
+          </div>
+        </div>
+      </p-footer>
+    </p-confirmDialog>
+    <div id="topbar">
+      <div class="page-header">
+        <a href="#" id="menu-button" (click)="toggleMenu($event)" [ngClass]="{'active':mobileMenuActive}">
+          <i class="fa fa-bars"></i>
+        </a>
+        <div #submenudropdown="ngbDropdown" ngbDropdown id="sub-menu-button" [ngClass]="{'active-sub':subMenuActive}"
+          (openChange)="subMenuEvent($event)">
+          <a id="sub-menu-dropdown" class="fa" [ngClass]="{'fa-bars': !subMenuOpen, 'fa-times': subMenuOpen}"
+            ngbDropdownToggle></a>
+
+          <div class="dropdown-menu" aria-labelledby="sub-menu-dropdown">
+            <ng-template ngFor let-sub [ngForOf]="subfeatureList">
+              <a [routerLink]="sub.routepath" class="dropdown-item" routerLinkActive="active"
+                (click)="mobileMenuActive = false">
+                <i *ngIf="sub.menuicon" class="img fa" [ngClass]="sub.menuicon"></i><span>{{sub.featurename}}</span>
+              </a>
+            </ng-template>
+          </div>
+        </div>
+
+        <div class="header-text">
+          {{pageTitle}}
+        </div>
+      </div>
+
+      <div ngbDropdown class="user-info-section">
+        <div class="user-details">
+          <span class="user-name">{{userDetail.name}}</span><button class="user-info" id="dropdownBasic2"
+            ngbDropdownToggle>
+            {{usernamechar}}
+          </button>
+        </div>
+
+        <div ngbDropdownMenu class="dropdown-menu" aria-labelledby="dropdownManual">
+          <div class="break"></div>
+          <a class="dropdown-item" ngbDropdownItem (click)="changepassword();"
+            *ngIf="(userDetail.isclient && !userDetail.adminuser) || !userDetail.isclient">Change Password</a>
+          <a class="dropdown-item" (click)="confirm();">Logout</a>
+          <div class="break"></div>
+          <!--<a class="dropdown-item disabled">Feedback</a>
+                    <div class="break"></div>-->
+          <a *ngIf="(userDetail.isclient && userDetail.adminuser)" ngbDropdownItem class="dropdown-item"
+            (click)="reloadFeature();" id="backToAdmin">Back to Admin</a>
+          <div *ngIf="backToAdminBtnDisplay" class="break"></div>
+          <ng-template ngFor let-theme [ngForOf]="themelist">
+            <a class="dropdown-item" ngbDropdownItem (click)="toggleTheme(theme);">
+              <i *ngIf="theme.cssname==currentheme" class="fa fa-check"></i>{{theme.displayname}}
+            </a>
+          </ng-template>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="main-container">
+      <theme-builder *ngIf="userDetail?.roleid === 1"></theme-builder>
+      <!-- <theme-builder ></theme-builder> -->
+      <router-outlet></router-outlet>
+
+    </div>
+  </div>
+</div>

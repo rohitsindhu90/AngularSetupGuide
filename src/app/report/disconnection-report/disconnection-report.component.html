@@ -1,0 +1,66 @@
+﻿
+
+<div class="form-group row">
+    <label style="width:80px;">From Date:</label>
+    <div class="col-sm-4" style="display:flex;">
+      
+        <p-calendar [(ngModel)]="fromDate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" readonlyInput="true" (onSelect)="onSelect()" [maxDate]="maxDate"
+                    [yearNavigator]="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+
+    <label style="width:80px;">To Date:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-calendar [(ngModel)]="toDate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true" (onSelect)="onSelect()" [maxDate]="maxDate"
+                    readonlyInput="true" yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+</div>
+
+<div *ngIf="error" class="error">{{error}}</div>
+
+
+<div class="col-lg-12 col-md-12">
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true" unfrozenWidth="100%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+
+        <p-column [style]="{'width':'100px'}" field="createddate" header="Date" [sortable]="true">          
+        </p-column>
+        <p-column [style]="{'width':'150px'}"  field="mobilenumber" header="Mobile Number" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'120px'}" field="type" header="Type" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qTypeFilter!=null" (click)="qTypeFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="typefilterset" [style]="{'width':'100%'}" [(ngModel)]="qTypeFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'120px'}" field="networkdescription" header="Network" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qNetworkFilter!=null" (click)="qNetworkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}" [(ngModel)]="qNetworkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'180px'}" field="employeename" header="Employee Name" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" field="staffid" header="StaffID" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'180px'}" field="productdescription" header="Device" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[0].active" field="reportinggroup1description" header="{{ reportingList[0].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[1].active" field="reportinggroup2description" header="{{ reportingList[1].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[2].active" field="reportinggroup3description" header="{{ reportingList[2].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[3].active" field="reportinggroup4description" header="{{ reportingList[3].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[4].active" field="reportinggroup5description" header="{{ reportingList[4].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" *ngIf="reportingList != null && reportingList[5].active" field="reportinggroup6description" header="{{ reportingList[5].displayname }}" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'80px'}" field="bendescription" header="BEN" filter="true" filterMatchMode="contains" [sortable]="true" [editable]="true" *ngIf="isbenexist">
+            <ng-template pTemplate="filter" typeof="body" let-col>
+                <i class="fa fa-close" *ngIf="qBenFilter!=null" (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+    </p-dataTable>
+</div>
+

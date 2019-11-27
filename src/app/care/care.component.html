@@ -1,0 +1,299 @@
+<div class="col-sm-12">
+    <form name="form" class="modal-form" (ngSubmit)=" f.form.valid && save(f)" #f="ngForm" novalidate>
+
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <!--<p-autoComplete-extended [(ngModel)]="selectedAsset" [suggestions]="assetFilterList" [headermeta]="assetFilterheadermeta" searchContainerWidth="60%" maxwidth='600'
+                                         (completeMethod)="completeMethodAsset($event)" (onSelect)="onSelectAsset($event)" forceSelection="true" [minLength]="4" [dropdown]="false"
+                                         placeholder="Search by Staff ID, User, Mobile No or Device" field="device" name="mobilefilter" (onClear)="clearModelAsset($event)"
+                                         [style]="{'min-width':'368px'}">
+
+                </p-autoComplete-extended>-->
+                <label class="col-sm-2 zeroPaddngleft font-weight-bold">Mobile Number:</label>
+                <p-autoComplete-extended #autoCompleteRef class="exclude_readonly" [suggestions]="filteredMobile"
+                    [headermeta]="mobilenumberheadermeta" searchContainerWidth="60%" maxwidth="600"
+                    (completeMethod)="filterMobile($event)" (onSelect)="handleSelectClick($event)" forceSelection="true"
+                    [minLength]="4" placeholder="Search by Staff ID, User, Mobile No or Device" [dropdown]="false"
+                    field="mobilenumber" name="mobilefilter" (onClear)="onClearMobile($event)"
+                    [style]="{'min-width':'340px'}">
+
+                </p-autoComplete-extended>
+            </div>
+        </div>
+        <!--<div class="form-group row" [ngClass]="{ 'has-danger': f.submitted && productid.errors && productid.errors.required }">
+            <label for="productid" [class]="labelClass">Asset:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="productLibraryArray" name="productid" #productid="ngModel" [(ngModel)]="model.productid"  required [filter]="true">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && productid.errors && productid.errors.required">This field is required</span>
+            </div>
+        </div>-->
+
+        <div *ngIf="showFields">
+            <div class="form-group row">
+                <label class="col-sm-2">Sim Number:</label>
+                <div class="col-sm-4 text-message">
+                    {{model.iccid}}
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2">Employee Name:</label>
+                <div class="col-sm-4 text-message">
+                    {{model.name}}
+                </div>
+                <label class="col-sm-2">Email:</label>
+                <div class="col-sm-4 text-message">
+                    {{model.emailaddress}}
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="(reportinggroup1Active || reportinggroup2Active)">
+                <label class="col-sm-2" *ngIf="reportinggroup1Active">{{reportinggroup1DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup1Active">
+                    {{model.reportinggroup1description}}
+                </div>
+                <label class="col-sm-2" *ngIf="reportinggroup2Active">{{reportinggroup2DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup2Active">
+                    {{model.reportinggroup2description}}
+                </div>
+
+            </div>
+            <div class="form-group row" *ngIf="(reportinggroup3Active ||  reportinggroup4Active)">
+                <label class="col-sm-2" *ngIf="reportinggroup3Active">{{reportinggroup3DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup3Active">
+                    {{model.reportinggroup3description}}
+                </div>
+                <label class="col-sm-2" *ngIf="reportinggroup4Active">{{reportinggroup4DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup4Active">
+                    {{model.reportinggroup4description}}
+                </div>
+
+            </div>
+            <div class="form-group row" *ngIf="( reportinggroup5Active ||  reportinggroup6Active)">
+                <label class="col-sm-2" *ngIf="reportinggroup5Active">{{reportinggroup5DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup5Active">
+                    {{model.reportinggroup5description}}
+                </div>
+                <label class="col-sm-2" *ngIf="reportinggroup6Active">{{reportinggroup6DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup6Active">
+                    {{model.reportinggroup6description}}
+                </div>
+
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Device:</label>
+                <div class="col-sm-4 text-message">
+                    {{model.productdescription}}
+                </div>
+                <label class="col-sm-2">IMEI Number:</label>
+                <div class="col-sm-4 text-message">
+                    {{model.imei}}
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-2">Supplier:</label>
+                <div class="col-sm-4 text-message">
+                    {{model.supplierdescription}}
+                </div>
+            </div>
+
+            <!--<div class="form-group row" >
+                <label class="col-sm-2" for="issuetypeid">Issue Type:</label>
+                <div class="col-sm-4" style="display:flex;">
+                    <p-dropdown [options]="issueTypeArray" [(ngModel)]="model.issuetypeid" name="issuetypeid"  filter="filter" #issuetypeid="ngModel" required (onChange)="onChangeIssuetypeid($event)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted  && issuetypeid.errors && issuetypeid.errors.required">This field is required</span>
+                </div>
+
+                <label class="col-sm-2" for="reporttypeid">Report Type:</label>
+                <div class="col-sm-4" style="display:flex;">
+                    <p-dropdown [options]="reportTypeArray" [(ngModel)]="model.reporttypeid" name="reporttypeid"  filter="filter" #reporttypeid="ngModel" required
+                                [disabled]="!model.issuetypeid" (onChange)="onChangeReporttypeid($event)">
+                    </p-dropdown>
+                    <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && reporttypeid.errors && reporttypeid.errors.required">This field is required</span>
+                </div>
+
+            </div>
+
+
+            <div class="form-group row" *ngIf="( reportinggroup5Active ||  reportinggroup6Active)">
+                <label class="col-sm-2" *ngIf="reportinggroup5Active">{{reportinggroup5DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup5Active">
+                    {{model.reportinggroup5description}}
+                </div>
+                <label class="col-sm-2" *ngIf="reportinggroup6Active">{{reportinggroup6DisplayName}}:</label>
+                <div class="col-sm-4 text-message" *ngIf="reportinggroup6Active">
+                    {{model.reportinggroup6description}}
+                </div>
+
+            </div>-->
+            <!--*ngIf=" model.issuetypeid==careIssueTypeEnum.Device ">-->
+            <div class="form-inline row label-inline">
+                <div class="form-group" [ngClass]="{ 'has-danger': f.submitted  && !issuetypeid.valid}">
+                    <label class="col-sm-2" for="issuetypeid">Issue Type:</label>
+                    <div class="col-sm-12" style="display:flex;">
+                        <p-dropdown [options]="issueTypeArray" [(ngModel)]="model.issuetypeid" name="issuetypeid"
+                            filter="filter" #issuetypeid="ngModel" required (onChange)="onChangeIssuetypeid($event)">
+                        </p-dropdown>
+                        <!--<span class="col-sm-5 form-control-feedback" *ngIf="f.submitted  && issuetypeid.errors && issuetypeid.errors.required">This field is required</span>-->
+                    </div>
+                    <div class="row" *ngIf="f.submitted &&  !issuetypeid.valid">
+                        <div class="error offset-sm-1">Please select Issue Type</div>
+                    </div>
+                </div>
+                <div class="form-group" *ngIf=" model.issuetypeid==careIssueTypeEnum.Device"
+                    [ngClass]="{ 'has-danger': f.submitted  && !reporttypeid.valid}">
+
+                    <label class="col-sm-2" for="reporttypeid">Report Type:</label>
+                    <div class="col-sm-12" style="display:flex;">
+                        <p-dropdown [options]="reportTypeArray" [(ngModel)]="model.reporttypeid" name="reporttypeid"
+                            filter="filter" #reporttypeid="ngModel" required [disabled]="!model.issuetypeid"
+                            (onChange)="onChangeReporttypeid($event)">
+                        </p-dropdown>
+                        <!--<span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && reporttypeid.errors && reporttypeid.errors.required">This field is required</span>-->
+                    </div>
+                    <div class="row" *ngIf="f.submitted &&  !reporttypeid.valid">
+                        <div class="error offset-sm-1">Please select Report Type</div>
+                    </div>
+                </div>
+                <div class="form-group" [ngClass]="{ 'has-danger': f.submitted  && !reportreasonid.valid}">
+                    <label class="col-sm-2" for="reportreasonid">Report Reason:</label>
+                    <div class="col-sm-12" style="display:flex;">
+                        <p-dropdown [options]="faultReasonArray" [(ngModel)]="model.reportreasonid"
+                            name="reportreasonid" filter="filter" #reportreasonid="ngModel" required
+                            [disabled]="!model.reporttypeid">
+                        </p-dropdown>
+                        <!--<span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && reportreasonid.errors && reportreasonid.errors.required">This field is required</span>-->
+                    </div>
+                    <div class="row" *ngIf="f.submitted &&  !reportreasonid.valid">
+                        <div class="error offset-sm-1">Please select Report Reason</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div *ngIf=" model.issuetypeid==careIssueTypeEnum.Network">
+                <div class="form-group row col-sm-9">
+                    <div class="col-sm-4 text-right"><label class="font-weight-bold">Examples:</label> </div>
+                    <div class="col-sm-4 text-right"> <span *ngIf="msg"
+                            [ngClass]="{ 'error': msg}">&nbsp;&nbsp;{{ msg}}</span></div>
+                </div>
+                <div class="form-group  row col-sm-9">
+                    <div class="col-sm-3">
+
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="font-weight-bold"> Date of Example</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="font-weight-bold">Time of Example (HH:MM)</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="font-weight-bold">Number called or received</label>
+                    </div>
+
+                </div>
+
+                <div class="form-group row col-sm-9" *ngFor='let item of model.networkfaultdetaillist; let i = index;'>
+                    <div class="col-sm-3 text-right">
+                        <label>{{i+1}} .</label>
+                    </div>
+                    <div class="col-sm-3"
+                        [ngClass]="{ 'has-danger': f.submitted && ( model.networkfaultdetaillist[i].faulttime || model.networkfaultdetaillist[i].mobilenumber) && !model.networkfaultdetaillist[i].faultdate}">
+                        <p-calendar name="faultdate_{{i}}" [(ngModel)]="model.networkfaultdetaillist[i].faultdate"
+                            maxlength="10" dateFormat="dd/mm/yy" [monthNavigator]="true" [yearNavigator]="true"
+                            yearRange="2000:2030" [showIcon]="true" class="form-control controlWidth"
+                            #faultdate="ngModel" (onBlur)="onBlurDate($event)"
+                            [required]="model.networkfaultdetaillist[i].mobilenumber || model.networkfaultdetaillist[i].faulttime">
+                        </p-calendar>
+                        <div class="row" *ngIf="f.submitted &&  f.submitted && faultdate.errors?.required">
+                            <div class="error offset-sm-1">Please enter Date</div>
+                        </div>
+
+                    </div>
+                    <div class="col-sm-3"
+                        [ngClass]="{ 'has-danger': f.submitted && ( model.networkfaultdetaillist[i].faultdate || model.networkfaultdetaillist[i].mobilenumber) && !model.networkfaultdetaillist[i].faulttime}">
+                        <p-calendar name="faulttime_{{i}}" [(ngModel)]="model.networkfaultdetaillist[i].faulttime"
+                            class="form-control controlWidth" maxlength="5" #faulttime="ngModel" [timeOnly]="true"
+                            (onBlur)="onBlurTime($event)"
+                            [required]="model.networkfaultdetaillist[i].mobilenumber || model.networkfaultdetaillist[i].faultdate">
+                        </p-calendar>
+                        <div class="row" *ngIf="f.submitted && faulttime.errors?.required">
+                            <div class="error offset-sm-1">Please enter Time</div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3"
+                        [ngClass]="{ 'has-danger': f.submitted && ( model.networkfaultdetaillist[i].faultdate || model.networkfaultdetaillist[i].faulttime) && !model.networkfaultdetaillist[i].mobilenumber}">
+                        <input type="text" class="form-control controlWidth" name="CTNnumber_{{i}}"
+                            [(ngModel)]="model.networkfaultdetaillist[i].mobilenumber" maxlength="11"
+                            #CTNnumber="ngModel" pInputText [pKeyFilter]="onlyNumberregx" [pValidateOnly]="true"
+                            [required]="model.networkfaultdetaillist[i].faulttime || model.networkfaultdetaillist[i].faultdate" />
+
+                        <div class="row" *ngIf="f.submitted &&  CTNnumber.errors?.required">
+                            <div class="error offset-sm-1">Please enter Number</div>
+                        </div>
+
+                        <div class="row" *ngIf="CTNnumber.errors?.validatePattern">
+                            <div class="error offset-sm-1">Invalid Number</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-inline label-inline">
+                <div class="form-group"
+                    [ngClass]="{ 'has-danger': f.submitted && model.issuetypeid==careIssueTypeEnum.Other   }">
+                    <label class="col-sm-2 zeroPaddngleft" for="notes">Notes:</label>
+                    <div class="col-sm-6 zeroPaddngleft" style="display:flex;">
+                        <textarea class="form-control" name="notes" [(ngModel)]="model.notes" #notes="ngModel" rows="05"
+                            cols="100" maxlength="300"
+                            [required]="model.issuetypeid==careIssueTypeEnum.Other"></textarea>
+
+                    </div>
+                    <div class="col-sm-6 zeroPaddngleft"
+                        *ngIf="f.submitted &&  model.issuetypeid==careIssueTypeEnum.Other && !notes.valid">
+                        <div class="error">Please enter Notes</div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group row">
+
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-2"></div>
+
+                <div class="col-sm-8">
+
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--<div  class="form-group row required" [ngClass]="{ 'has-danger': f.submitted  && !issuetypeid.valid}">
+    <label class="col-sm-2">Issue Type:</label> for="{{model.issuetypeid==careIssueTypeEnum.Other ? 'notes':'test' }}"
+    <div class="col-sm-4" style="display:flex;">
+        <p-dropdown [options]="issueTypeArray" [(ngModel)]="model.issuetypeid" name="issuetypeid"  filter="filter" #issuetypeid="ngModel" required (onChange)="onChangeIssuetypeid($event)">
+        </p-dropdown>
+        <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && issuetypeid.errors && issuetypeid.errors.required">This field is required</span>
+    </div>
+
+    <label class="col-sm-2">Report Type:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-dropdown [options]="reportTypeArray" [(ngModel)]="model.reporttypeid" name="reporttypeid"  filter="filter" #reporttypeid="ngModel" required (onChange)="onChangeReporttypeid($event)">
+        </p-dropdown>
+        <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && reporttypeid.errors && reporttypeid.errors.required">This field is required</span>
+    </div>
+
+    <label class="col-sm-2">Report Reason:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-dropdown [options]="faultReasonArray" [(ngModel)]="model.reportreasonid" name="reportreasonid"  filter="filter" #reportreasonid="ngModel" required (onChange)="onChangeReporttypeid($event)">
+        </p-dropdown>
+        <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted  && reportreasonid.errors && reportreasonid.errors.required">This field is required</span>
+    </div>
+</div>-->

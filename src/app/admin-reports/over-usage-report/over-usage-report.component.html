@@ -1,0 +1,71 @@
+﻿<div class="row col-lg-12 form-inline label-inline">
+
+    <div class="form-group">
+        <label> Invoice Month</label>
+        <p-dropdown [options]="invoicemonthArray" [(ngModel)]="monthname" name="invoicemonth"
+            (onChange)="onInvoiceMonthChange()" filter="filter">
+        </p-dropdown>
+    </div>
+
+
+    <div class="form-group">
+        <label> Status</label>
+        <p-dropdown [options]="statusArray" [(ngModel)]="status" name="status" (onChange)="onStatusChange()"
+            filter="filter">
+        </p-dropdown>
+    </div>
+
+    <div class="form-group">
+        <label> Network</label>
+        <p-dropdown [options]="networkArray" [(ngModel)]="networkid" name="network" (onChange)="onNetworkChange()"
+            filter="filter">
+        </p-dropdown>
+    </div>
+
+
+    <div class="form-group" *ngIf="IsbillingPlatformExist">
+        <label> Billing Platform</label>
+        <p-dropdown [options]="billingplatformArray" [(ngModel)]="billingplatformid" name="billingplatform"
+            (onChange)="onBillingplatformChange()" filter="filter">
+        </p-dropdown>
+    </div>
+
+
+
+</div>
+
+<div class="col-lg-12 col-md-12 no-padding">
+    <p-dataTable *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true" [responsive]="true"
+        [style]="{'margin-top':'30px'}" exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                    (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+
+        <p-column [style]="{'width':'200px'}" field="company" header="Company" filter="true" filterMatchMode="contains"
+            [sortable]="true"></p-column>
+
+        <p-column field="network" header="Network" filter="true" filterMatchMode="contains" [sortable]="true">
+
+        </p-column>
+
+        <p-column field="billingplatform" header="Billing Platform" filter="true" filterMatchMode="contains"
+            [sortable]="true"></p-column>
+
+        <p-column field="status" header="Data Allowance Limit Exceeded" filter="true" filterMatchMode="contains"
+            [sortable]="true"></p-column>
+
+        <p-column field="dataallowance" header="Data Allowance (GB)" styleClass="text-right" filter="true"
+            filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column field="actualdataused" header="Actual Data Used (GB)" styleClass="text-right" filter="true"
+            filterMatchMode="contains" [sortable]="true"></p-column>
+
+        <p-column field="datausagedifference" header="Data Usage Difference (GB)" styleClass="text-right" filter="true"
+            filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+    </p-dataTable>
+</div>

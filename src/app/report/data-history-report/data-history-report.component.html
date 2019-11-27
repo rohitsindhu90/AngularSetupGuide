@@ -1,0 +1,95 @@
+<div *ngIf="noInvoiceAvailable==false">
+  <div class="row col-lg-12 form-inline label-inline">
+    <div class="form-group" [ngClass]="{ 'has-danger':error}">
+      <label>From Month</label>
+      <p-dropdown [options]="invoicemonthArray" [(ngModel)]="fromdate" name="invoicemonth" (onChange)="onInvoiceMonthChange()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" [ngClass]="{ 'has-danger':error}">
+      <label>To Month</label>
+      <p-dropdown [options]="invoicemonthArray" [(ngModel)]="todate" name="invoicemonth" (onChange)="onInvoiceMonthChange()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" [ngClass]="{ 'has-danger':error}">
+      <label>Network</label>
+      <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="onChangeNetwork()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+      <div class="form-group" [ngClass]="{ 'has-danger':error}">
+        <label>Billing Platform</label>
+        <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()" filter="filter">
+        </p-dropdown>
+      </div>
+    </div>
+
+    <div class="form-group" *ngIf="benArray?.length > 1">
+      <label>BEN</label>
+      <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown"
+                  (onChange)="refreshData()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <div class="form-group" *ngIf="banArray?.length > 1">
+      <label>BAN</label>
+      <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown"
+                  (onChange)="refreshData()" filter="filter">
+      </p-dropdown>
+    </div>
+
+    <reportinggroup-dropdown [(reportinggroup1guid)]=reportinggroup1guid
+                             [(reportinggroup2guid)]=reportinggroup2guid
+                             [(reportinggroup3guid)]=reportinggroup3guid
+                             [(reportinggroup4guid)]=reportinggroup4guid
+                             [(reportinggroup5guid)]=reportinggroup5guid
+                             [(reportinggroup6guid)]=reportinggroup6guid
+                             [IsRequiredActiveOnly]="false"
+                             [rgModelArray]="rgModelArray"
+                             (onChangeReportingGroupEvent)="onChangeReportingGroupEvent($event)">
+    </reportinggroup-dropdown>
+
+    <div *ngIf="error" class="error">{{error}}</div>
+
+  </div>
+
+  <div class="vert-offset-top-1" *ngIf="model">
+    <p-dataTable #dt [value]="model" [rows]="10" [paginator]="true" scrollable="true" scrollWidth="100%" [style]="{'margin-top':'30px'}"
+                 class="ui-datatable-scroll-margin-fix" [responsive]="true" exportFilename="Data History Report by CTN" [rowsPerPageOptions]="[5,10,20]"
+                 frozenWidth="150px"
+                 unfrozenWidth="100%">
+      <p-header>
+        <div class="ui-helper-clearfix">
+          <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+      </p-header>
+      <p-column [style]="{'width':'150px'}" frozen="true" field="mobilenumber" header="CTN" [filter]="canApplyCTNFilter" filterMatchMode="contains" [sortable]="true"></p-column>
+      <p-column styleClass="text-right" [style]="{'width':'150px'}" *ngFor="let column of monthColumn" [field]="column.field" [header]="column.header" [hidden]="column.hidden" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field]}}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" *ngIf="monthCount >=3" [style]="{'width':'200px'}" field="3mAVG" header="3 Months Average(MB)" filter="true" filterMatchMode="contains" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field]}}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" *ngIf="monthCount >=6" [style]="{'width':'200px'}" field="6mAVG" header="6 Months Average(MB)" filter="true" filterMatchMode="contains" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field]}}</span>
+        </ng-template>
+      </p-column>
+      <p-column styleClass="text-right" *ngIf="monthCount >=12" [style]="{'width':'200px'}" field="12mAVG" header="12 Months Average(MB)" filter="true" filterMatchMode="contains" [sortable]="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+          <span>{{cc[col.field]}}</span>
+        </ng-template>
+      </p-column>
+    </p-dataTable>
+  </div>
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+  <app-no-invoice-available></app-no-invoice-available>
+</div>

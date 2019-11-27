@@ -1,0 +1,108 @@
+﻿<div class="form-group row">
+    <label style="width:80px;" for="dateassigned">From Date:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-calendar name="fromdate" [(ngModel)]="fromdate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true"
+            [yearNavigator]="true" (onSelect)="onSelect()" [maxDate]="maxDate" readonlyInput="true"
+            yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+
+    <label style="width:80px;" for="dateassigned">To Date:</label>
+    <div class="col-sm-4" style="display:flex;">
+        <p-calendar name="todate" [(ngModel)]="todate" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true"
+            [yearNavigator]="true" (onSelect)="onSelect()" [maxDate]="maxDate" readonlyInput="true"
+            yearRange="2000:2030" [showIcon]="true" class="form-control"></p-calendar>
+    </div>
+</div>
+
+<div *ngIf="error" class="error">{{error}}</div>
+
+<div class="vert-offset-top-2 col-lg-12  no-padding">
+    <p-dataTable *ngIf="model!=null" #dt [value]="excelmodel" [rows]="10" [paginator]="true" [responsive]="true"
+        scrollWidth="100%" scrollable="true" [style]="{'margin-top':'30px'}" [rowsPerPageOptions]="[5,10,20]"
+        exportFilename="{{csvfilename}}">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                    (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'90px'}" field="requesteddate" header="Date" filter="true"
+            filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'130px'}" field="changetype" header="Change Type" filter="true"
+            filterMatchMode="contains">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'120px'}" field="mobilenumber" header="Mobile Number" filter="true"
+            filterMatchMode="contains" [sortable]="true"></p-column>
+
+
+        <p-column [style]="{'width':'100px'}" field="networkdescription" header="Network" filter="true"
+            filterMatchMode="contains" [sortable]="true" *ngIf="isnetworkdisplay">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="networkFilter!=null"
+                    (click)="networkFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="networkfilterset" [style]="{'width':'100%'}"
+                    [(ngModel)]="networkFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+                </p-dropdown>
+            </ng-template>
+        </p-column>
+
+
+        <p-column [style]="{'width':'100px'}" field="bendescription" header="BEN" filter="true"
+            filterMatchMode="contains" [sortable]="true" *ngIf="isbenexist">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBenFilter!=null"
+                    (click)="qBenFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="benfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBenFilter"
+                    (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column styleClass="text-right" [style]="{'width':'100px'}" field="bandescription" header="BAN" filter="true"
+            filterMatchMode="contains" [sortable]="true" *ngIf="isbanexist">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="qBanFilter!=null"
+                    (click)="qBanFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="banfilterset" [style]="{'width':'100%'}" [(ngModel)]="qBanFilter"
+                    (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)"></p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'100px'}" field="status" header="Status" filter="true" filterMatchMode="contains"
+            [sortable]="true" *ngIf="isnetworkdisplay">
+            <ng-template pTemplate="filter" let-col>
+                <i class="fa fa-close" *ngIf="statusFilter!=null"
+                    (click)="statusFilter=null;dt.filter(null,col.field,col.filterMatchMode)"></i>
+                <p-dropdown appendTo="body" [options]="statusfilterset" [style]="{'width':'100%'}"
+                    [(ngModel)]="statusFilter" (onChange)="dt.filter($event.value,col.field,col.filterMatchMode)">
+                </p-dropdown>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'170px'}" field="oldvalue" header="Old Value" filter="true"
+            filterMatchMode="contains">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'170px'}" field="newvalue" header="New Value" filter="true"
+            filterMatchMode="contains">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'120px'}" field="requestedby" header="Requested By" [sortable]="true" filter="true"
+            filterMatchMode="contains"></p-column>
+        <p-column [style]="{'width':'120px'}" field="changeeffectivedate" header="Change Effective Date" filter="true"
+            filterMatchMode="contains" [sortable]="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span [innerHTML]="cc[col.field]" style="white-space: pre-line"></span>
+            </ng-template>
+        </p-column>
+    </p-dataTable>
+
+</div>

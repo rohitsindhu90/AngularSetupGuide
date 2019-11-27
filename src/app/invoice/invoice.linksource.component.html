@@ -1,0 +1,140 @@
+﻿<p-dataTable class="ui-datatable-scroll-margin-fix" *ngIf="model!=null" #dt [value]="model" [rows]="10" [paginator]="true"
+             [responsive]="true"
+             scrollable="true"
+             frozenWidth="150px"
+             unfrozenWidth="100%"
+             selectionMode="single"
+             (onRowSelect)="handleRowSelect($event)"
+             [style]="{'margin-top':'30px'}"
+             exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+    <p-header>
+        <div class="ui-helper-clearfix">
+            <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel " (click)="dt.exportExcel(true)" style="float:left"></button>
+        </div>
+    </p-header>
+    <p-headerColumnGroup>
+        <p-row>
+            <p-column [style]="{'width': '2400px'}" styleClass="col-group-header" colspan="16"></p-column>
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'150px'}" frozen="true" field="description" rowspan="3" header="Description" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right table-border-right" field="count" rowspan="3" header="Number of Users" filter="true" filterMatchMode="contains" [sortable]="true">
+            </p-column>
+
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Mintues" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Text" colspan="2"></p-column>
+            <p-column [style]="{'width':'300px'}" styleClass="text-center" header="Data(UK)" colspan="2"></p-column>
+            <p-column [style]="{'width':'450px'}" styleClass="text-center" header="Roamed" colspan="3"></p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="monthlinerental" header="Service Charge" sortable="true">
+
+            </p-column>
+
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="linerentalcredit" header="Service Credit" sortable="true">
+
+            </p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="usagecharge" header="Usage Charge" sortable="true">
+
+            </p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="othercharge" header="Other Charge" sortable="true">
+
+            </p-column>
+            <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="totalcost" header="Total" sortable="true">
+
+            </p-column>
+        </p-row>
+        <p-row>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mintuesduration" header="Duration(Mins.)" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="mintuescost" header="Cost" sortable="true"></p-column>
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="text" header="Count" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="textcost" header="Cost" sortable="true"></p-column>
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="data" header="MB" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="datacost" header="Cost" sortable="true"></p-column>
+
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roameddata" header="MB" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedduration" header="Duration(Mins.)" sortable="true"></p-column>
+            <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedcost" header="Cost" sortable="true"></p-column>
+        </p-row>
+
+    </p-headerColumnGroup>
+    <p-column [style]="{'width':'150px'}" frozen="true" field="description" header="Description"></p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="count" header="Number of Users" filter="true" filterMatchMode="contains" [sortable]="true" displaysum="true">
+
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="minutesduration" header="Minutes - Duration(Mins.)" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="minutescost" header="Mintues - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="text" header="Text - Count" sortable="true" displaysum="true"></p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="textcost" header="Text - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="data" header="Data - MB" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="datacost" header="Data - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roameddata" header="Roamed - MB" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedduration" header="Roamed - Duration(Mins.)" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | number:'1.2-2' }}</span>
+        </ng-template>
+    </p-column>
+    <p-column [style]="{'width':'150px'}" styleClass="text-right" field="roamedcost" header="Roamed - Cost" sortable="true" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="monthlinerental" header="Service Charge" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" rowspan="3" field="linerentalcredit" header="Service Credit" displaysum="true" sortable="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="usagecharge" header="Usage Charge" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="othercharge" header="Other Charge" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+    <p-column styleClass="text-right" [style]="{'width':'150px'}" field="totalcost" header="Total" displaysum="true">
+        <ng-template let-col let-cc="rowData" pTemplate="body">
+            <span>{{cc[col.field] | currencyFormat }}</span>
+        </ng-template>
+    </p-column>
+
+</p-dataTable>
+<div #linkfleetcontainer></div>

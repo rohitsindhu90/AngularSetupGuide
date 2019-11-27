@@ -1,0 +1,136 @@
+﻿<div *ngIf="noInvoiceAvailable==false">
+    <div class="row col-lg-12 form-inline label-inline">
+        <div class="form-group">
+            <label>   Invoice Month</label>
+
+            <p-dropdown [options]="invoicemonthArray" [(ngModel)]="invoicedateguid" name="invoicemonth" (onChange)="onInvoiceMonthChange($event)"  filter="filter">
+
+            </p-dropdown>
+        </div>
+
+        <div class="form-group">
+
+            <label> Network</label>
+
+            <p-dropdown [options]="networkArray" [(ngModel)]="networkguid" name="network" (onChange)="OnNetworkChange()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="billingPlatformArray?.length > 1">
+            <label> Billing Platform</label>
+
+            <p-dropdown [options]="billingPlatformArray" [(ngModel)]="billingplatformguid" name="billingPlatform" (onChange)="onChangeBillingPlatForm()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="benArray?.length > 1">
+            <label> BEN</label>
+
+            <p-dropdown [options]="benArray" [(ngModel)]="benguid" name="ben" class="ben-dropdown" (onChange)="refreshData()"  filter="filter">
+
+            </p-dropdown>
+
+        </div>
+        <div class="form-group" *ngIf="banArray?.length > 1">
+            <label> BAN</label>
+
+            <p-dropdown [options]="banArray" [(ngModel)]="ban" name="ban" class="ban-dropdown" (onChange)="refreshData()"  filter="filter">
+            </p-dropdown>
+
+        </div>
+    </div>
+
+    <!--<p-dataTable #dt id="grid-euro-world-traveller" class="ui-datatable-scroll-margin-fix" *ngIf="model != undefined && showfirstgrid"
+                 [value]="model.euroworldtravellersavingsviewmodellist"
+                 [rows]="10"
+                 [paginator]="true"
+                 [rowsPerPageOptions]="[5,10,20]"
+                 scrollable="true"
+                 scrollWidth="100%"
+                 [style]="{'margin-top':'30px'}"
+                 selectionMode="single"
+                 [responsive]="true">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa-file-o" iconPos="left" label="CSV" (click)="dt.exportCSV(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'150px'}" field="phonenumber" header="Phone Number" styleClass="text-left" filter="true" filterMatchMode="contains" ></p-column>
+        <p-column [style]="{'width':'150px'}" field="daysroamed" header="Days Roamed EU" styleClass="text-right" ></p-column>
+        <p-column [style]="{'width':'150px'}" field="daysroamedworld" header="Days Roamed World" styleClass="text-right" ></p-column>
+        <p-column [style]="{'width':'150px'}" field="eurotravellercost" header="Euro Traveller Cost" styleClass="text-right">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="worldtravellercost" header="World Traveller Cost" styleClass="text-right">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="outofbundle" header="Out of Bundle" styleClass="text-right">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="totalcost" header="Total Cost" styleClass="text-right">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="currentcost" header="Current Cost" styleClass="text-right">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+
+        <p-column [style]="{'width':'150px'}" field="savings" header="Savings" styleClass="text-right">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+
+    </p-dataTable>-->
+
+    <br />
+    <br />
+
+    <p-dataTable #dt2 id="grid-euro-world-traveller-internatioanl" class="ui-datatable-scroll-margin-fix" *ngIf="model != undefined"
+                 [value]="model"
+                 [rows]="10"
+                 [paginator]="true"
+                 [rowsPerPageOptions]="[5,10,20]"
+                 scrollable="true"
+                 scrollWidth="100%"
+                 [style]="{'margin-top':'30px'}"
+                 selectionMode="single"
+                 [responsive]="true"
+                 (onRowSelect)="handleRowSelect($event)"
+                 exportFilename="Euro World Report">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel" (click)="dt2.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'150px'}" field="countryoforigin" header="Country of origin" styleClass="text-left" filter="true" filterMatchMode="contains" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="duration" header="Duration" styleClass="text-right" displaysum="true" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="text" header="Text" styleClass="text-right" displaysum="true" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="data" header="Data (MB)" styleClass="text-right" displaysum="true" [sortable]="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | number:'1.2-2' }}</span>
+            </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}" field="cost" header="Cost" styleClass="text-right" displaysum="true" [sortable]="true">
+            <ng-template let-col let-cc="rowData" pTemplate="body">
+                <span>{{cc[col.field] | currencyFormat }}</span>
+            </ng-template>
+        </p-column>
+
+    </p-dataTable>
+</div>
+
+<div *ngIf="noInvoiceAvailable">
+    <app-no-invoice-available></app-no-invoice-available>
+</div>

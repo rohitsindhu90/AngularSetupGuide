@@ -1,0 +1,12 @@
+﻿
+<div class="col-sm-12">
+    <h1 *ngIf="ispopup==true"> Access Denied!!</h1>
+    <div class="alert alert-danger">
+        You are not authorize to access this page.
+    </div>
+    <div class="form-group">
+        <button *ngIf="(userDetail && userDetail.isclient && userDetail.adminuser)" class="btn btn-primary button" (click)="backToAdmin();">BACK TO ADMIN</button>
+        <button *ngIf="!ispopup" class="btn btn-primary button" [routerLink]="['/home']">BACK TO HOME PAGE</button>
+        <button *ngIf="ispopup" class="btn btn-primary button" (click)="closePopup()">Close</button>
+    </div>
+</div>

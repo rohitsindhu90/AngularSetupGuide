@@ -1,0 +1,158 @@
+﻿<div class="row inline_item" *ngIf="model">
+    <div class="col-lg-6 row">
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Care Ref No:</div>
+            <div class="col-md-6 text-message">{{model.careref}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Name:</div>
+            <div class="col-md-6 text-message">{{model.name}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Staff ID: </div>
+            <div class="col-md-6 text-message">{{model.staffid}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Email: </div>
+            <div class="col-md-6 text-message wrodWrap">{{model.emailaddress}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Issue Type: </div>
+            <div class="col-md-6 text-message">{{model.issuetypedescription}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Report Type: </div>
+            <div class="col-md-6 text-message">{{model.reporttypedescription}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Report Reason: </div>
+            <div class="col-md-6 text-message">{{model.reportreason}}</div>
+        </div>
+    </div>
+    <div class="col-lg-6 row">
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Requested Date: </div>
+            <div class="col-md-6 text-message">{{model.createddatestringformat}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Requested By: </div>
+            <div class="col-md-6 text-message">{{model.requestedby}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">Device: </div>
+            <div class="col-md-6 text-message">{{model.productdescription}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">IMEI: </div>
+            <div class="col-md-6 text-message">{{model.imei}}</div>
+        </div>
+        <div class="col-lg-12 row vert-offset-bottom-1">
+            <div class="col-md-6">SIM Number: </div>
+            <div class="col-md-6 text-message">{{model.iccid}}</div>
+        </div>
+        <ng-template ngFor let-rr [ngForOf]="datacolumns" let-i="index">
+            <div class="col-lg-12 row vert-offset-bottom-1">
+                <div class="col-md-6">{{rr.header}}: </div>
+                <div class="col-md-6 text-message">{{model[rr.field]}}</div>
+            </div>
+        </ng-template>
+
+    </div>
+    <div class="col-lg-12 row vert-offset-bottom-1">
+        <div class="col-lg-5">Notes: </div>
+        <div class="col-lg-7 text-message">{{model.notes}}</div>
+    </div>
+
+    <div class="col-lg-8" *ngIf="model?.networkfaultdetaillist && model?.networkfaultdetaillist.length>0">
+        <div class="col-lg-5 no-padding">Example:</div>
+        <p-dataTable #dt [value]="model.networkfaultdetaillist"
+                     [responsive]="true"
+                     selectionMode="single">
+            <p-column [style]="{'width':'150px'}" field="faulttime" header="Date" [sortable]="true">
+                <ng-template let-col let-cc="rowData" pTemplate="body">
+                    <div>{{cc[col.field] | date:'dd/MM/yyyy hh:mm:ss' }}</div>
+                </ng-template>
+            </p-column>
+            <p-column [style]="{'width':'150px'}" field="mobilenumber" header="Mobile Number" [sortable]="true"></p-column>
+        </p-dataTable>
+    </div>
+</div>
+
+<!--<div class="inline_item" *ngIf="model">
+    <div class="col-lg-6 no-padding">
+        <div class="form-group">
+            <div class="col-lg-4">Care Ref No:</div>
+            <div class="col-lg-7 text-message"> {{model.careref}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4">Name:</div>
+            <div class="col-lg-7 text-message">{{model.name}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4">Staff ID: </div>
+            <div class="col-lg-7 text-message">{{model.staffifd}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4">Email: </div>
+            <div class="col-lg-7 text-message">{{model.emailaddress}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4">Issue Type: </div>
+            <div class="col-lg-7 text-message">{{model.issuetypedescription}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4">Report Type: </div>
+            <div class="col-lg-7 text-message">{{model.reporttypedescription}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4">Report Reason: </div>
+            <div class="col-lg-7 text-message">{{model.reportreason}}</div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 no-padding">
+        <div class="form-group">
+            <div class="col-lg-5">Requested Date: </div>
+            <div class="col-lg-6 text-message">{{model.createddatestringformat}}</div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-5">Requested By: </div>
+            <div class="col-lg-6 text-message">{{model.requestedby}}</div>
+        </div>
+
+
+        <div class="form-group">
+            <div class="col-lg-5">Device: </div>
+            <div class="col-lg-6 text-message">{{model.productdescription}}</div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-5">IMEI: </div>
+            <div class="col-lg-6 text-message">{{model.imei}}</div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-5">SIM Number: </div>
+            <div class="col-lg-6 text-message">{{model.iccid}}</div>
+        </div>
+    </div>-->
+<!--<div class="col-lg-12 vert-offset-bottom-1">
+    <div class="col-lg-5">Notes: </div>
+    <div class="col-lg-7 text-message">{{model.notes}}</div>
+</div>
+
+<div class="col-lg-8 " *ngIf="model?.networkfaultdetaillist && model?.networkfaultdetaillist.length>0">
+    <div class="col-lg-5">Example:</div>
+    <p-dataTable #dt [value]="model.networkfaultdetaillist"
+                 [responsive]="true"
+                 selectionMode="single"
+                 (onRowSelect)="handleRowSelect($event)">
+        <p-column [style]="{'width':'150px'}"  field="faulttime" header="Date" [sortable]="true">
+                <ng-template let-col let-cc="rowData" pTemplate="body">
+                    <div>{{cc[col.field] | date }}</div>
+                </ng-template>
+        </p-column>
+        <p-column [style]="{'width':'150px'}"  field="mobilenumber" header="Mobile Number" [sortable]="true"></p-column>
+    </p-dataTable>
+</div>-->
+<!--</div>-->

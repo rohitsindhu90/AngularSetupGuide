@@ -1,0 +1,106 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+
+        <div *ngIf="!addNewRole" class="form-group row" [ngClass]="{ 'has-danger': f.submitted && !id.valid }">
+            <label for="id" class="col-sm-2">Role:</label>
+            <div class="col-sm-8">
+                <p-dropdown name="id" [hidden]="addNewRole" [options]="roleArray" [(ngModel)]="model.id"
+                     filter="filter" required #id="ngModel" (onChange)="onChangeRole()">
+                </p-dropdown>
+                &nbsp;<label *ngIf="isclient">
+                    <p-checkbox [(ngModel)]="addNewRole" name="addNewRole" (onChange)="checkboxChange(f)" binary="true">
+                    </p-checkbox>Add New
+                </label>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && id.errors && id.errors.required">This
+                    field is required</span>
+            </div>
+        </div>
+        <div *ngIf="addNewRole" class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && !roledescription.valid }">
+            <label for="roledescription" class="col-sm-2">Role:</label>
+            <div class="col-sm-8" style="display:flex;">
+                <input type="text" class="form-control" name="roledescription" [(ngModel)]="model.roledescription"
+                    #roledescription="ngModel" required maxlength="100" />
+                &nbsp;
+                <label *ngIf="isclient">
+                    <p-checkbox [(ngModel)]="addNewRole" name="addNewRole" (onChange)="checkboxChange(f)" binary="true">
+                    </p-checkbox>Add New
+                </label>
+                <span class="col-sm-5 form-control-feedback" *ngIf="f.submitted && !roledescription.valid">This field is
+                    required</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && active.errors && active.errors.required }">
+            <label for="active" class="col-sm-2">Status:</label>
+            <div class="col-sm-8">
+                <p-dropdown [disabled]="addNewRole" [options]="statusarray" name="active" #active="ngModel"
+                    [(ngModel)]="model.active"  required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && active.errors && active.errors.required">This field is required</span>
+            </div>
+        </div>
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && defaultfeatureid.errors && defaultfeatureid.errors.required }">
+            <label for="defaultfeatureid" class="col-sm-2">Landing Page:</label>
+            <div class="col-sm-8">
+                <p-dropdown [options]="landingPagearray" name="defaultfeatureid" #defaultfeatureid="ngModel"
+                    [(ngModel)]="model.defaultfeatureid"  required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && defaultfeatureid.errors && defaultfeatureid.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+
+            <p-treeTable [value]="featureTree" [style]="{'margin-top':'50px'}">
+                <ng-template pTemplate="caption">
+                    Select Feature for above Role
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center">Feature</th>
+                        <th class="text-center">Read</th>
+                        <th class="text-center">Write</th>
+                        <th class="text-center">Hidden</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+                    <tr >
+                        <td>
+                            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                            {{rowData.featuredescription}}
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [(ngModel)]="rowData.isreadonly"
+                                name="{{rowData.featuredescription+'1'}}" value="isreadonly"
+                                (change)="checkboxChangeisreadonly(rowNode.node)">
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [(ngModel)]="rowData.iswriteonly"
+                                name="{{rowData.featuredescription+'2'}}" value="iswriteonly"
+                                (change)="checkboxChangeiswriteonly(rowNode.node)"></td>
+                        <td class="text-center">
+                            <input type="checkbox" [(ngModel)]="rowData['isvisibleonly']"
+                                name="{{rowData.featuredescription+'3'}}" value="isvisibleonly"
+                                [disabled]="rowData.isvisibleonly" (change)="checkboxChangeisvisibleonly(rowNode.node)">
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-treeTable>
+
+
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+
+    </form>
+</div>

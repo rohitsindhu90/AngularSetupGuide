@@ -1,0 +1,56 @@
+﻿<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid &&  save(f)" #f="ngForm" novalidate>
+        <div class="col-sm-12">
+            <div class="form-group row ">
+
+                <label class="col-sm-9">Please note - multiple emails can be entered, separated by ;</label>
+
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row ">
+
+                <label class="col-sm-2"></label>
+                <div class="col-sm-3" style="display:flex;">
+                    <label class="lbl-bold">Email To</label>
+                </div>
+                <div class="col-sm-3" style="display:flex;">
+                    <label class="lbl-bold">Email CC</label>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group row " *ngFor="let item of model"
+                [ngClass]="{ 'has-danger': f.submitted &&  (!f.controls[item.templatename+'_emailto'].valid || !f.controls[item.templatename+'_emailcc'].valid)}">
+
+                <label class="col-sm-2">{{item.templatename |capitalize:true}}</label>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" [name]="item.templatename+'_emailto'"
+                        [(ngModel)]="item.emailto" maxlength="200" pInputText [pKeyFilter]="multipleEmailAddressregx"
+                        [pValidateOnly]="true" />
+                    <span class="col-sm-5 form-control-feedback"
+                        *ngIf="f.submitted && f.controls[item.templatename+'_emailto'].errors && f.controls[item.templatename+'_emailto'].errors.validatePattern">Email
+                        is invalid</span>
+                </div>
+                <div class="col-sm-3" style="display:flex;">
+                    <input type="text" class="form-control" [name]="item.templatename+'_emailcc'"
+                        [(ngModel)]="item.emailcc" maxlength="200" pInputText [pKeyFilter]="multipleEmailAddressregx"
+                        [pValidateOnly]="true" />
+                    <span class="col-sm-5 form-control-feedback"
+                        *ngIf="f.submitted && f.controls[item.templatename+'_emailcc'].errors && f.controls[item.templatename+'_emailcc'].errors.validatePattern">Email
+                        is invalid</span>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="form-group row text-center">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 ">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,396 @@
+﻿<!--<div class="form-group row" *ngIf="isComingFromFleet">
+    <input type="button" class="btn btn-primary" (click)="goBack()" value="Back" />
+</div>-->
+<div class="col-sm-12">
+    <form name="form" (ngSubmit)="f.form.valid && save(f)" #f="ngForm" novalidate>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                <p-autoComplete-extended class="exclude_readonly" [(ngModel)]="selectedAsset"
+                    [suggestions]="assetFilterList" [headermeta]="assetFilterheadermeta" searchContainerWidth="100%"
+                    maxwidth='650' (completeMethod)="completeMethodAsset($event)" (onSelect)="onSelectAsset($event)"
+                    forceSelection="true" [minLength]="4" [dropdown]="false"
+                    placeholder="Search by IMEI, Serial No, Mobile No, User or Device" field="device"
+                    name="mobilefilter" (onClear)="clearModelAsset($event)" [style]="{'min-width':'368px'}">
+
+                </p-autoComplete-extended>
+            </div>
+        </div>
+
+
+        <div class="form-group row " *ngIf="model.assetguid && (displayLabel || isclient)">
+            <label class="col-sm-2">Device:</label>
+            <div class="col-sm-8  text-message" style="display:flex;">
+                {{model.device}}
+            </div>
+        </div>
+
+
+        <div class="form-group row"
+            [ngClass]="{ 'has-danger': f.submitted && productdescription?.errors && productdescription?.errors.required }"
+            *ngIf="model.assetguid && (!displayLabel && !isclient)">
+            <span class="col-sm-2">
+                <label for="productdescription" class="lbl-bold">Device:</label>
+            </span>
+            <div class="col-sm-8">
+                <p-dropdown [options]="productLibraryArray" name="productdescription" #productdescription="ngModel"
+                    [(ngModel)]="model.productdescription" required [filter]="true">
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && productdescription?.errors && productdescription?.errors.required">This field
+                    is required</span>
+            </div>
+        </div>
+
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label class="col-sm-2">IMEI:</label>
+            <div class="col-sm-8  text-message" style="display:flex;">
+                {{model.imei}}
+            </div>
+            <!--<div class="col-sm-8" style="display:flex;" *ngIf="!displayLabel && !isclient">
+            <input type="text" class="form-control" name="imei" [(ngModel)]="model.imei" #imei="ngModel" maxlength="15" (keypress)="onlyNumberKey($event)" (blur)="imeiOnBlur($event)" />
+
+        </div>-->
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <!-- [ngClass]="{ 'has-danger': !displayLabel && !model.imei && f.submitted && !serialnumber.valid }"> -->
+            <label for="serialnumber" class="col-sm-2">Serial No:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.serialnumber}}
+            </div>
+            <!--<div class="col-sm-8" style="display:flex;" [hidden]=" displayLabel || isclient">
+            <input type="text" class="form-control" name="serialnumber" [(ngModel)]="model.serialnumber" #serialnumber="ngModel" [required]="!model.imei" maxlength="30" />
+            <span class="col-sm-5 form-control-feedback" *ngIf="!model.imei && f.submitted  && !displayLabel && !isclient && !serialnumber.valid">Please enter either the Serial Number or the valid IMEI.</span>
+        </div>-->
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid"
+            [ngClass]="{ 'has-danger': f.submitted && !displayLabel && assetstatusid?.errors && assetstatusid?.errors.required  }">
+            <label for="assetstatusid" class="col-sm-2">Current Status:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.assetstatusdescription}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" [hidden]="displayLabel">
+                <p-dropdown [options]="assetStatusArray" [(ngModel)]="model.assetstatusid" name="assetstatusid"
+                    filter="filter" #assetstatusid="ngModel" (onChange)="loadAssetLocationDropdown()" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && !displayLabel && assetstatusid?.errors && assetstatusid?.errors.required">This
+                    field is required</span>
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid"
+            [ngClass]="{ 'has-danger': f.submitted && !displayLabel && assetlocationid?.errors && assetlocationid?.errors.required  }">
+            <label for="assetlocationid" class="col-sm-2">Current Location:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.assetlocationdescription}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" [hidden]="displayLabel">
+                <p-dropdown [options]="assetLocationArray" [(ngModel)]="model.assetlocationid" name="assetlocationid"
+                    filter="filter" #assetlocationid="ngModel" (onChange)="onAssetLocationDropdownChange()" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && !displayLabel && assetlocationid?.errors && assetlocationid?.errors.required">This
+                    field is required</span>
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid"
+            [ngClass]="{ 'has-danger': f.submitted && !displayLabel && assetownershipid?.errors && assetownershipid?.errors.required  }">
+            <label for="assetownershipid" class="col-sm-2">Ownership:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.assetownershipdescription}}
+            </div>
+            <div class="col-sm-8" [hidden]="displayLabel">
+                <p-dropdown [options]="assetownershiparray" name="assetownershipid" #assetownershipid="ngModel"
+                    [(ngModel)]="model.assetownershipid" required>
+                </p-dropdown>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && !displayLabel && assetownershipid?.errors && assetownershipid?.errors.required">This
+                    field is required</span>
+            </div>
+        </div>
+
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label class="col-sm-2">Supplier:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.supplierdescription}}
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label for="ctndetailsguid" class="col-sm-2">Assigned Mobile Number:</label>
+
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="model.imei">
+                <div style="width: 280px;">
+                    {{model.mobilenumber}}
+                </div>
+                <input type="button" *ngIf="isAssignMobileNumber" value="Assign Mobile"
+                    class="btn btn-primary left-10 btn-height" (click)="onAssignMobileNumber()" />
+                <input type="button" *ngIf="model.mobilenumber && isAssignMobileNumber" value="Disassociate Mobile"
+                    class="btn btn-primary left-10 btn-height" (click)="onDisassociateMobile()" />
+                <!--<input type="button"  *ngIf="isAssignMobileNumber && isAdmin" value="Add New Mobile" class="btn btn-primary left-10 btn-height" (click)="onAddNewMobile()" />-->
+            </div>
+
+            <!--<div class="col-sm-2" style="display:flex;" *ngIf="model.imei ">
+            {{model.mobilenumber}}
+        </div>
+
+        <div class="col-sm-6 form-inline" *ngIf="model.imei">
+            <input type="button"  value="Assign Mobile" class="btn btn-primary left-10" (click)="onAssignMobileNumber()" />
+            <input type="button"  *ngIf="model.mobilenumber" value="Disassociate Mobile" class="btn btn-primary left-10" (click)="onDisassociateMobile()" />
+            <input type="button"  *ngIf="isAdmin" value="Add New Mobile" class="btn btn-primary left-10" (click)="onAddNewMobile()" />
+        </div>-->
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label class="col-sm-2">SIM Number:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.simnumber}}
+            </div>
+        </div>
+
+
+        <div class="form-group row" id="reportinggroup1-container" *ngIf="model.assetguid && reportinggroup1Active">
+            <label for="reportinggroup1" class="col-sm-2">{{reportinggroup1DisplayName}}:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.reportinggroup1description}}
+            </div>
+            <div class="col-sm-8 " style="display:flex;" *ngIf="!displayLabel">
+                <p-dropdown [options]="reportinggroup1Array" [(ngModel)]="model.reportinggroup1id"
+                    name="reportinggroup1guid" filter="filter" #reportinggroup1guid="ngModel"
+                    (onChange)="onChangeReportingGroup1()">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group row" id="reportinggroup2-container" *ngIf="model.assetguid && reportinggroup2Active">
+            <label for="reportinggroup2" class="col-sm-2">{{reportinggroup2DisplayName}}:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.reportinggroup2description}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" *ngIf="!displayLabel">
+                <p-dropdown [options]="reportinggroup2Array" [(ngModel)]="model.reportinggroup2id"
+                    name="reportinggroup2" filter="filter" #reportinggroup2guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup2,reportinggroup3Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup1id)">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group row" id="reportinggroup3-container" *ngIf="model.assetguid && reportinggroup3Active">
+            <label for="reportinggroup3" class="col-sm-2">{{reportinggroup3DisplayName}}:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.reportinggroup3description}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" *ngIf="!displayLabel">
+                <p-dropdown [options]="reportinggroup3Array" [(ngModel)]="model.reportinggroup3id"
+                    name="reportinggroup3" filter="filter" #reportinggroup3guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup3,reportinggroup4Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup2id)">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group row" id="reportinggroup4-container" *ngIf="model.assetguid && reportinggroup4Active">
+            <label for="reportinggroup4" class="col-sm-2">{{reportinggroup4DisplayName}}:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.reportinggroup4description}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" *ngIf="!displayLabel">
+                <p-dropdown [options]="reportinggroup4Array" [(ngModel)]="model.reportinggroup4id"
+                    name="reportinggroup4" filter="filter" #reportinggroup4guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup4,reportinggroup5Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup3id)">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group row" id="reportinggroup5-container" *ngIf="model.assetguid && reportinggroup5Active">
+            <label for="reportinggroup5" class="col-sm-2">{{reportinggroup5DisplayName}}:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.reportinggroup5description}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" *ngIf="!displayLabel">
+                <p-dropdown [options]="reportinggroup5Array" [(ngModel)]="model.reportinggroup5id"
+                    name="reportinggroup5" filter="filter" #reportinggroup5guid="ngModel"
+                    (onChange)="onChangeReportingGroup(reportingGroupTypeEnum.ReportingGroup5,reportinggroup6Active)"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild &&  !model?.reportinggroup1id)
+                            || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup4id)">
+                </p-dropdown>
+            </div>
+        </div>
+
+        <div class="form-group row" id="reportinggroup6-container" *ngIf="model.assetguid && reportinggroup6Active">
+            <label for="reportinggroup6" class="col-sm-2">{{reportinggroup6DisplayName}}:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.reportinggroup6description}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" *ngIf="!displayLabel">
+                <p-dropdown [options]="reportinggroup6Array" [(ngModel)]="model.reportinggroup6id"
+                    name="reportinggroup6" filter="filter" #reportinggroup6guid="ngModel"
+                    [disabled]=" (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.ParentChild
+                            &&  !model?.reportinggroup1id) || (reportingGroupCascade?.IsCasCade && reportingGroupCascade?.CascadeValue == reportingGroupRelationshipType.DaisyChain &&  !model?.reportinggroup5id)">
+                </p-dropdown>
+            </div>
+        </div>
+
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label for="userguid" class="col-sm-2">Employee Name:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                <div style="width: 280px;">
+                    {{model.employeename}}
+
+                </div>
+                <!--</div>
+            <div class="col-sm-6 form-inline" *ngIf="!model.isuserdeattch">-->
+                <!-- || model.isctndeattch
+                //*ngIf="model.isuserdeattch">
+                <p-autoComplete-extended
+
+                [(ngModel)]="userFilter" [headermeta]="userFilterHeaderMeta" searchContainerWidth="50%" maxwidth='500' [suggestions]="userFilterList" (completeMethod)="completeMethodUserAccount($event)" [minLength]="3" (onSelect)="onSelectUserAccount($event)" (onClear)="onClearUserAccount($event)"
+                                     forceSelection="true" placeholder="{{searchuserautocompletePlaceHolderText}}" [dropdown]="false" name="userguid" field="name" (onDropdownClick)="completeMethodUserAccount($event)">
+            </p-autoComplete-extended>-->
+
+                <input type="button"
+                    *ngIf="(isEdit && model.assetownershipid!=2) || (isEdit && model.assetownershipid==2 && !model.employeename)"
+                    value="Assign  User" class="btn btn-primary left-10" (click)="onAddNewUser()" />
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label class="col-sm-2">Email:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.employeeemail}}
+            </div>
+
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid">
+            <label class="col-sm-2">Staff ID:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.employeestaffid}}
+            </div>
+        </div>
+
+
+        <div class="form-group row " *ngIf="model.assetguid"
+            [ngClass]="{ 'has-danger': f.submitted && !displayLabel && !dateassigneddisplay.valid }">
+            <label for="dateassigneddisplay" class="col-sm-2">Date Assigned:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.dateassigneddisplay}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" [hidden]="displayLabel">
+                <p-calendar name="dateassigneddisplay" [(ngModel)]="model.dateassigneddisplay"
+                    #dateassigneddisplay="ngModel" maxlength="100" dateFormat="dd/mm/yy" [monthNavigator]="true"
+                    [yearNavigator]="true" readonlyInput="true" class="form-control" [inputStyle]="{'width':'100%'}"
+                    yearRange="2000:2030" [showIcon]="true"></p-calendar>
+
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid && ShowPOAgainstAssetActive">
+            <label class="col-sm-2">Purchase Date:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.purchasedatedisplay}}
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid && ShowPOAgainstAssetActive">
+            <label class="col-sm-2">Purchase Price(£):</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.purchaseprice}}
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid && ShowPOAgainstAssetActive">
+            <label class="col-sm-2">PO Number:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.ponumber}}
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid && ShowPOAgainstAssetActive">
+            <label class="col-sm-2">Order Number:</label>
+            <div class="col-sm-8 text-message" style="display:flex;">
+                {{model.ordernumber}}
+            </div>
+        </div>
+
+        <div class="form-group row " *ngIf="model.assetguid"
+            [ngClass]="{ 'has-danger': f.submitted && !displayLabel && note?.errors && note?.errors.required  }">
+            <label for="note" class="col-sm-2">Note:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.note}}
+            </div>
+            <div class="col-sm-8" [hidden]="displayLabel">
+                <textarea class="form-control" name="note" [(ngModel)]="model.note" #note="ngModel" rows="05" cols="40"
+                    maxlength="250"></textarea>
+                <span class="col-sm-5 form-control-feedback"
+                    *ngIf="f.submitted && !displayLabel && note?.errors && note?.errors.required">This field is
+                    required</span>
+            </div>
+        </div>
+
+
+        <div class="form-group row " *ngIf="model.assetguid && isAssetRegisterIDActive">
+            <label for="registerid" class="col-sm-2">Register ID:</label>
+            <div class="col-sm-8 text-message" style="display:flex;" *ngIf="displayLabel">
+                {{model.registerid}}
+            </div>
+            <div class="col-sm-8" style="display:flex;" [hidden]="displayLabel">
+                <input type="text" class="form-control" name="registerid" [(ngModel)]="model.registerid"
+                    #registerid="ngModel" maxlength="50" />
+            </div>
+        </div>
+        <div class="form-group row " *ngIf="model.assetguid && displayLabel && !isEdit">
+            <!--<label [class]="labelClass">Asset:</label>-->
+            <div class="col-sm-10">
+                This is a {{model.assetstatusdescription}} asset, therefore no transactions are possible.
+            </div>
+        </div>
+        <div class="form-group row" *ngIf="model.assetguid">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-7">
+
+                <input *ngIf="displayLabel && isEdit" type="button" value="Edit Information" class="btn btn-primary"
+                    (click)="changeControlState(false)" />
+                <input *ngIf="!displayLabel" type="submit" value="Save Changes" class="btn btn-primary" />
+                &nbsp;&nbsp;
+                <input *ngIf="!displayLabel" type="button" value="Cancel" class="btn btn-primary"
+                    (click)="changeControlState(true)" />
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<div class="col-lg-12 col-md-12" *ngIf="model.assetguid">
+    <label class="lbl-bold" style="font-size: large">History</label>
+</div>
+<div class="col-lg-12 col-md-12" *ngIf="model.assetguid">
+    <p-dataTable #dt [value]="gridmodel" [rows]="10" [paginator]="true" [responsive]="true" scrollable="true"
+        unfrozenWidth="100%" class="ui-datatable-scroll-margin-fix" [style]="{'margin-top':'30px'}"
+        exportFilename="{{csvfilename}}" [rowsPerPageOptions]="[5,10,20]">
+        <p-header>
+            <div class="ui-helper-clearfix">
+                <button type="button" pButton icon="fa fa-file-o" iconPos="left" label="Export To Excel"
+                    (click)="dt.exportExcel(true)" style="float:left"></button>
+            </div>
+        </p-header>
+        <p-column [style]="{'width':'150px'}" field="date" header="Date" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="change" header="Change Type" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="oldvalue" header="Old Value" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="newvalue" header="New Value" [sortable]="true"></p-column>
+        <p-column [style]="{'width':'150px'}" field="requestedby" header="Requested By" [sortable]="true"></p-column>
+
+    </p-dataTable>
+</div>

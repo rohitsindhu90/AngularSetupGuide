@@ -1,0 +1,12 @@
+﻿<p-dialog header="User Terms" [(visible)]="display" height="500" [style]="{'max-width':'500px'}" modal="modal" [contentStyle]="{'overflow-y':'auto','max-height':'80%'}" [responsive]="true" (onHide)="setTermConditionFlag()" [closable]="false" [draggable]="false" [resizable]="false">
+    <div [innerHtml]="content | safeHtml" class="custom-class">
+      
+    </div>
+    <div class="form-inline">
+        <div class="form-group margin-auto">
+            <input type="button" class="btn btn-secondary" (click)="handledialog(true)" value="Accept" />
+            &nbsp;&nbsp;
+            <input type="button" class="btn btn-secondary" (click)="logout()" value="Decline" />
+        </div>       
+    </div>   
+</p-dialog>

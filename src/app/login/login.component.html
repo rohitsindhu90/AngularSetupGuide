@@ -1,0 +1,24 @@
+<div class="login-container col-sm-12">
+  <h6>Login</h6>
+  <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+    <div class="form-group" [ngClass]="{ 'has-danger': f.submitted && !username.valid }">
+      <!--<label for="username">Username</label>-->
+      <input type="text" class="form-control" placeholder="Username" name="username" [(ngModel)]="model.username"
+        #username="ngModel" required />
+      <div *ngIf="f.submitted && !username.valid" class="form-control-feedback">Username is required</div>
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-danger': f.submitted && !password.valid }">
+      <!--<label for="password">Password</label>-->
+      <input type="password" placeholder="Password" class="form-control" name="password" [(ngModel)]="model.password"
+        #password="ngModel" required />
+      <div *ngIf="f.submitted && !password.valid" class="form-control-feedback">Password is required</div>
+    </div>
+    <div class="form-group">
+      <input type="submit" [disabled]="loading" value="Login" class="btn btn-primary" />
+      <!--<button [disabled]="loading" class="btn button">Login</button>-->
+      <a class="link" href="" (click)="redirectToReset()">Forgotten Password</a>
+    </div>
+    <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+  </form>
+  <!--</fieldset>-->
+</div>

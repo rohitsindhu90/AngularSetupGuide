@@ -1,0 +1,6 @@
+@import 'style-var.scss';
+@import 'style-bundle.scss';
+
+body .ui-tabview.ui-tabview-top .ui-tabview-nav{
+    border: 1px solid var(--neon-bright);
+  }
